@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class SOSemergencia {
+package workwell.WorkWell.entity;
+
+public class SOSemergencia {
 }

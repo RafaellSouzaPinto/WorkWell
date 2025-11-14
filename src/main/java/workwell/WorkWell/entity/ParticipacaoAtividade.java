@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class ParticipacaoAtividade {
+package workwell.WorkWell.entity;
+
+public class ParticipacaoAtividade {
 }

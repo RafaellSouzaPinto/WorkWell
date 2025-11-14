@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class AvaliacaoProfunda {
+package workwell.WorkWell.entity;
+// (semanal)
+public class AvaliacaoProfunda {
 }

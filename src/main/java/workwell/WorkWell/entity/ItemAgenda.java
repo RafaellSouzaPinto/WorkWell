@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class ItemAgenda {
+package workwell.WorkWell.entity;
+
+public class ItemAgenda {
 }

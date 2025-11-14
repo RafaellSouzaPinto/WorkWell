@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class Empresa {
+package workwell.WorkWell.entity;
+
+public class Empresa {
 }

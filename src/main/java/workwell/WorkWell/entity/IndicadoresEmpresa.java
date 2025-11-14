@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class IndicadoresEmpresa {
+package workwell.WorkWell.entity;
+
+public class IndicadoresEmpresa {
 }

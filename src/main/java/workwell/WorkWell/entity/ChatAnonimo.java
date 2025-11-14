@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class ChatAnonimo {
+package workwell.WorkWell.entity;
+
+public class ChatAnonimo {
 }

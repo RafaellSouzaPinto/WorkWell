@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class AgendaFuncionario {
+package workwell.WorkWell.entity;
+
+public class AgendaFuncionario {
 }

@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class RiscoPsicossocial {
+package workwell.WorkWell.entity;
+
+public class RiscoPsicossocial {
 }

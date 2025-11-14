@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class PerfilEmocional {
+package workwell.WorkWell.entity;
+// Onboarding
+public class PerfilEmocional {
 }

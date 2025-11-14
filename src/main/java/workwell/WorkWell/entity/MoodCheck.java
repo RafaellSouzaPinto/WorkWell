@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class MoodCheck {
+package workwell.WorkWell.entity;
+// (diário)
+public class MoodCheck {
 }

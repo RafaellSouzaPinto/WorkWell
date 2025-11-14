@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class Setor {
+package workwell.WorkWell.entity;
+
+public class Setor {
 }

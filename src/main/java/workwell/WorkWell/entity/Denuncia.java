@@ -1,2 +1,4 @@
-package workwell.WorkWell.entity;public class Denuncia {
+package workwell.WorkWell.entity;
+
+public class Denuncia {
 }
