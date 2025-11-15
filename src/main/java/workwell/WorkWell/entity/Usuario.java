@@ -15,10 +15,12 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +34,7 @@ public class Usuario implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
 	private UUID id;
 
 	@Column(nullable = false, length = 120)
@@ -58,21 +61,21 @@ public class Usuario implements UserDetails {
 	@Column(nullable = false)
 	private boolean ativo = true;
 
-	@Column(nullable = false, updatable = false)
-	private Instant createdAt;
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt;
 
-	@Column(nullable = false)
-	private Instant updatedAt;
+	@Column(name = "updated_at", nullable = false)
+	private LocalDateTime updatedAt;
 
 	@PrePersist
 	void onCreate() {
-		this.createdAt = Instant.now();
+		this.createdAt = LocalDateTime.now();
 		this.updatedAt = this.createdAt;
 	}
 
 	@PreUpdate
 	void onUpdate() {
-		this.updatedAt = Instant.now();
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public UUID getId() {
@@ -139,11 +142,11 @@ public class Usuario implements UserDetails {
 		this.ativo = ativo;
 	}
 
-	public Instant getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public Instant getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 

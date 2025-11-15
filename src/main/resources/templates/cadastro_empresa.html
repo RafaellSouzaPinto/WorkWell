@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadastro de Empresa | WorkWell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <main class="container py-5">
+      <section class="text-center mb-5">
+        <h1 class="fw-bold">Bem-vindo ao WorkWell</h1>
+        <p class="text-muted">
+          Para iniciar, cadastre sua empresa e receba o token exclusivo que será
+          usado pelos colaboradores.
+        </p>
+        <button id="btnAbrirFormulario" class="btn btn-primary btn-lg mt-3">
+          Cadastrar Empresa
+        </button>
+      </section>
+
+      <section
+        id="formSection"
+        class="card shadow-sm mx-auto"
+        style="max-width: 640px; display: none"
+      >
+        <div class="card-body p-4">
+          <h2 class="h4 mb-4">Dados da empresa</h2>
+          <form id="empresaForm" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Nome da empresa *</label>
+              <input
+                type="text"
+                class="form-control"
+                name="nome"
+                maxlength="120"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">CNPJ *</label>
+              <input
+                type="text"
+                class="form-control"
+                name="cnpj"
+                placeholder="Somente números"
+                pattern="\\d{14}"
+                required
+              />
+              <small class="text-muted">Ex.: 12345678000199 (14 dígitos)</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <textarea
+                class="form-control"
+                name="descricao"
+                rows="2"
+                maxlength="255"
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email do administrador *</label>
+              <input type="email" class="form-control" name="email" required />
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Senha *</label>
+              <input
+                type="password"
+                class="form-control"
+                name="senha"
+                minlength="8"
+                required
+              />
+              <small class="text-muted">Mínimo de 8 caracteres.</small>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-grow-1">
+                Cadastrar
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="btnCancelar"
+              >
+                Cancelar
+              </button>
+            </div>
+            <div class="alert alert-danger mt-3 d-none" id="alertErro"></div>
+          </form>
+        </div>
+      </section>
+
+      <section class="mt-5">
+        <div class="text-center mb-4">
+          <h2 class="fw-semibold">Cadastrar equipe</h2>
+          <p class="text-muted">
+            Compartilhe o token exibido no modal com sua equipe e use um dos
+            formulários abaixo para registrar cada perfil.
+          </p>
+        </div>
+        <div class="row g-4">
+          <div class="col-12 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <span class="badge text-bg-primary mb-2">Funcionário</span>
+                <h3 class="h5">Acesso padrão</h3>
+                <p class="text-muted small">
+                  Para colaboradores gerais. Necessita do token corporativo.
+                </p>
+                <form
+                  class="usuario-form mt-3"
+                  data-role-form="FUNCIONARIO"
+                  novalidate
+                >
+                  <div class="mb-2">
+                    <label class="form-label small">Nome *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="nome"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-sm"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Senha *</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-sm"
+                      name="senha"
+                      minlength="8"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Token da empresa *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="tokenEmpresa"
+                      required
+                    />
+                  </div>
+                  <div class="alert alert-success small d-none"></div>
+                  <div class="alert alert-danger small d-none"></div>
+                  <button
+                    class="btn btn-primary btn-sm w-100 mt-2"
+                    type="submit"
+                  >
+                    Cadastrar funcionário
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <span class="badge text-bg-success mb-2">Psicólogo</span>
+                <h3 class="h5">Atendimento clínico</h3>
+                <p class="text-muted small">
+                  Além do token, é obrigatório informar o CRP.
+                </p>
+                <form
+                  class="usuario-form mt-3"
+                  data-role-form="PSICOLOGO"
+                  novalidate
+                >
+                  <div class="mb-2">
+                    <label class="form-label small">Nome *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="nome"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-sm"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Senha *</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-sm"
+                      name="senha"
+                      minlength="8"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Token da empresa *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="tokenEmpresa"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">CRP *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="crp"
+                      required
+                    />
+                  </div>
+                  <div class="alert alert-success small d-none"></div>
+                  <div class="alert alert-danger small d-none"></div>
+                  <button
+                    class="btn btn-success btn-sm w-100 mt-2"
+                    type="submit"
+                  >
+                    Cadastrar psicólogo
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <span class="badge text-bg-warning mb-2 text-dark">RH</span>
+                <h3 class="h5">Equipe de RH</h3>
+                <p class="text-muted small">
+                  Acesso às ferramentas de clima e denúncias internas.
+                </p>
+                <form class="usuario-form mt-3" data-role-form="RH" novalidate>
+                  <div class="mb-2">
+                    <label class="form-label small">Nome *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="nome"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-sm"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Senha *</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-sm"
+                      name="senha"
+                      minlength="8"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Token da empresa *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      name="tokenEmpresa"
+                      required
+                    />
+                  </div>
+                  <div class="alert alert-success small d-none"></div>
+                  <div class="alert alert-danger small d-none"></div>
+                  <button
+                    class="btn btn-warning btn-sm w-100 mt-2"
+                    type="submit"
+                  >
+                    Cadastrar RH
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="tokenModal"
+      tabindex="-1"
+      aria-labelledby="tokenModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="tokenModalLabel">
+              Token da organização
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-2">
+              Compartilhe este token apenas com pessoas da sua empresa. Ele será
+              solicitado no cadastro de funcionários, psicólogos e RH.
+            </p>
+            <div class="border rounded p-3 text-center bg-light">
+              <code id="tokenValue" class="fs-5"></code>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const btnAbrirFormulario = document.getElementById("btnAbrirFormulario");
+      const formSection = document.getElementById("formSection");
+      const btnCancelar = document.getElementById("btnCancelar");
+      const empresaForm = document.getElementById("empresaForm");
+      const alertErro = document.getElementById("alertErro");
+      const tokenValue = document.getElementById("tokenValue");
+      const tokenModal = new bootstrap.Modal(
+        document.getElementById("tokenModal")
+      );
+
+      btnAbrirFormulario.addEventListener("click", () => {
+        formSection.style.display = "block";
+        formSection.scrollIntoView({ behavior: "smooth" });
+      });
+
+      btnCancelar.addEventListener("click", () => {
+        empresaForm.reset();
+        formSection.style.display = "none";
+        alertErro.classList.add("d-none");
+      });
+
+      empresaForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        alertErro.classList.add("d-none");
+
+        const formData = new FormData(empresaForm);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/api/empresas", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.message || "Não foi possível cadastrar a empresa."
+            );
+          }
+
+          const data = await response.json();
+          tokenValue.textContent = data.token;
+          tokenModal.show();
+          empresaForm.reset();
+        } catch (error) {
+          alertErro.textContent = error.message;
+          alertErro.classList.remove("d-none");
+        }
+      });
+
+      const usuarioForms = document.querySelectorAll(".usuario-form");
+
+      usuarioForms.forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const successAlert = form.querySelector(".alert-success");
+          const errorAlert = form.querySelector(".alert-danger");
+          successAlert.classList.add("d-none");
+          errorAlert.classList.add("d-none");
+
+          const formData = new FormData(form);
+          const payload = Object.fromEntries(formData.entries());
+          payload.tipoUsuario = form.dataset.roleForm;
+
+          if (payload.tipoUsuario !== "PSICOLOGO") {
+            payload.crp = payload.crp || null;
+          }
+
+          try {
+            const response = await fetch("/api/usuarios", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                errorData.message || "Não foi possível concluir o cadastro."
+              );
+            }
+
+            form.reset();
+            successAlert.textContent = "Cadastro realizado com sucesso!";
+            successAlert.classList.remove("d-none");
+          } catch (error) {
+            errorAlert.textContent = error.message;
+            errorAlert.classList.remove("d-none");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
