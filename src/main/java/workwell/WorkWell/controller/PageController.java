@@ -30,5 +30,10 @@ public class PageController {
 	public String cadastroRh() {
 		return "cadastro_rh";
 	}
+
+	@GetMapping("/login")
+	public String loginPage() {
+		return "login";
+	}
 }
 
