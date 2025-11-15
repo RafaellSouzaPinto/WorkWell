@@ -33,7 +33,8 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/cadastro/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+				.requestMatchers("/", "/empresa", "/funcionario", "/psicologo", "/rh", "/css/**", "/js/**", "/images/**",
+					"/favicon.ico").permitAll()
 				.requestMatchers("/api/empresas", "/api/auth/**", "/api/usuarios").permitAll()
 				.anyRequest().authenticated())
 			.authenticationProvider(authenticationProvider())
