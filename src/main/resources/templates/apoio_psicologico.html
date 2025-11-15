@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WorkWell | Espaço de Apoio Psicológico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <div class="min-vh-100 d-flex flex-column">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="container py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <a
+                href="/dashboard"
+                class="btn btn-link text-decoration-none p-0 mb-2"
+                >&larr; Voltar</a
+              >
+              <h1 class="h4 mb-0 fw-bold">Espaço de Apoio Psicológico</h1>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-muted small" id="usuarioInfo"></span>
+              <button id="btnLogout" class="btn btn-outline-danger btn-sm">
+                Sair
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="flex-grow-1 bg-light">
+        <div class="container py-5">
+          <!-- CONTEÚDO PARA FUNCIONÁRIO E RH (Agendamento) -->
+          <div id="conteudoAgendamento" style="display: none">
+            <div class="row mb-4">
+              <div class="col-12">
+                <p class="text-muted">
+                  Agende uma consulta com um psicólogo da sua empresa.
+                </p>
+              </div>
+            </div>
+
+            <section class="card shadow-sm mb-4">
+              <div class="card-body">
+                <h2 class="h5 mb-4">Novo agendamento</h2>
+                <form id="agendamentoForm" class="row g-3" novalidate>
+                  <div class="col-md-6">
+                    <label class="form-label">Psicólogo *</label>
+                    <select
+                      class="form-select"
+                      id="psicologoSelect"
+                      required
+                    ></select>
+                  </div>
+                  <div class="col-md-6 d-none" id="funcionarioWrapper">
+                    <label class="form-label">Funcionário *</label>
+                    <select class="form-select" id="funcionarioSelect"></select>
+                    <small class="text-muted"
+                      >Selecione o funcionário para o qual deseja agendar</small
+                    >
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Data *</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="dataInput"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Horário *</label>
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="horaInput"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Duração (min) *</label>
+                    <select class="form-select" id="duracaoSelect">
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                      <option value="60" selected>60</option>
+                      <option value="90">90</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Local *</label>
+                    <div class="d-flex gap-3">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="localRadio"
+                          id="localOnline"
+                          value="ONLINE"
+                          checked
+                        />
+                        <label class="form-check-label" for="localOnline"
+                          >Online</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="localRadio"
+                          id="localPresencial"
+                          value="PRESENCIAL"
+                        />
+                        <label class="form-check-label" for="localPresencial"
+                          >Presencial</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 d-none" id="salaWrapper">
+                    <label class="form-label">Sala *</label>
+                    <select class="form-select" id="salaSelect">
+                      <option value="">Selecione</option>
+                      <option value="SALA01">Sala 01</option>
+                      <option value="SALA02">Sala 02</option>
+                      <option value="SALA03">Sala 03</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">Observações</label>
+                    <textarea
+                      class="form-control"
+                      id="observacoesInput"
+                      rows="2"
+                      maxlength="255"
+                    ></textarea>
+                  </div>
+                  <div class="col-12">
+                    <div
+                      class="alert alert-success d-none"
+                      id="formSuccess"
+                    ></div>
+                    <div class="alert alert-danger d-none" id="formError"></div>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit">
+                      Agendar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <section class="row g-4">
+              <div class="col-12 col-lg-4">
+                <div class="card shadow-sm h-100">
+                  <div class="card-body">
+                    <h3 class="h5">Meus agendamentos</h3>
+                    <p class="text-muted small">Consultas que você agendou.</p>
+                    <div id="meusAgendamentosLista" class="vstack gap-2"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- CONTEÚDO PARA PSICÓLOGO (Dashboard) -->
+          <div id="conteudoPsicologo" style="display: none">
+            <div class="row mb-4">
+              <div class="col-12">
+                <h2 class="h4 mb-2">Dashboard do Psicólogo</h2>
+                <p class="text-muted">
+                  Gerencie suas consultas, visualize solicitações e acompanhe
+                  seu histórico de atendimentos.
+                </p>
+              </div>
+            </div>
+
+            <section class="row g-4">
+              <div class="col-12 col-lg-4">
+                <div class="card shadow-sm h-100">
+                  <div class="card-body">
+                    <h3 class="h5">Solicitações dos pacientes</h3>
+                    <p class="text-muted small">
+                      Confirme ou recuse os agendamentos solicitados pelos
+                      funcionários.
+                    </p>
+                    <div id="solicitacoesLista" class="vstack gap-2"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="card shadow-sm h-100">
+                  <div class="card-body">
+                    <h3 class="h5">Próximos atendimentos</h3>
+                    <p class="text-muted small">
+                      Consultas confirmadas e agendadas.
+                    </p>
+                    <div
+                      id="proximosAtendimentosLista"
+                      class="vstack gap-2"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="card shadow-sm h-100">
+                  <div class="card-body">
+                    <h3 class="h5">Histórico de atendimentos</h3>
+                    <p class="text-muted small">
+                      Visualize todas as consultas concluídas, canceladas e
+                      registros passados.
+                    </p>
+                    <div
+                      id="historicoAtendimentosLista"
+                      class="vstack gap-2"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="bg-white border-top py-4 mt-auto">
+        <div class="container text-center text-muted small">
+          <p class="mb-0">
+            &copy; 2025 WorkWell. Todos os direitos reservados.
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const token = localStorage.getItem("token");
+      const userRole = localStorage.getItem("userRole");
+
+      if (!token) {
+        window.location.href = "/login";
+      }
+
+      const conteudoAgendamento = document.getElementById(
+        "conteudoAgendamento"
+      );
+      const conteudoPsicologo = document.getElementById("conteudoPsicologo");
+      const usuarioInfo = document.getElementById("usuarioInfo");
+      const btnLogout = document.getElementById("btnLogout");
+
+      // Elementos do formulário de agendamento
+      const agendamentoForm = document.getElementById("agendamentoForm");
+      const psicologoSelect = document.getElementById("psicologoSelect");
+      const funcionarioWrapper = document.getElementById("funcionarioWrapper");
+      const funcionarioSelect = document.getElementById("funcionarioSelect");
+      const dataInput = document.getElementById("dataInput");
+      const horaInput = document.getElementById("horaInput");
+      const duracaoSelect = document.getElementById("duracaoSelect");
+      const salaWrapper = document.getElementById("salaWrapper");
+      const salaSelect = document.getElementById("salaSelect");
+      const observacoesInput = document.getElementById("observacoesInput");
+      const formSuccess = document.getElementById("formSuccess");
+      const formError = document.getElementById("formError");
+      const meusAgendamentosLista = document.getElementById(
+        "meusAgendamentosLista"
+      );
+
+      // Elementos do dashboard do psicólogo
+      const solicitacoesLista = document.getElementById("solicitacoesLista");
+      const proximosAtendimentosLista = document.getElementById(
+        "proximosAtendimentosLista"
+      );
+      const historicoAtendimentosLista = document.getElementById(
+        "historicoAtendimentosLista"
+      );
+
+      const securedFetch = async (url, options = {}) => {
+        if (!token) {
+          throw new Error("Sessão expirada. Faça login novamente.");
+        }
+        const headers = options.headers ? { ...options.headers } : {};
+        headers.Authorization = `Bearer ${token}`;
+        headers["Content-Type"] = headers["Content-Type"] || "application/json";
+        const response = await fetch(url, { ...options, headers });
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userRole");
+          window.location.href = "/login";
+          return Promise.reject(new Error("Sessão expirada."));
+        }
+        return response;
+      };
+
+      const init = () => {
+        usuarioInfo.textContent = `Perfil: ${userRole || "Usuário"}`;
+
+        // Mostrar conteúdo baseado no role
+        if (userRole === "PSICOLOGO") {
+          conteudoPsicologo.style.display = "block";
+          conteudoAgendamento.style.display = "none";
+          carregarDashboardPsicologo();
+        } else if (userRole === "FUNCIONARIO" || userRole === "RH") {
+          conteudoAgendamento.style.display = "block";
+          conteudoPsicologo.style.display = "none";
+          carregarFormularioAgendamento();
+        } else {
+          // Admin ou outros roles - redirecionar
+          window.location.href = "/dashboard";
+        }
+
+        registrarEventos();
+      };
+
+      const carregarFormularioAgendamento = async () => {
+        psicologoSelect.innerHTML = '<option value="">Carregando...</option>';
+
+        // Carregar meus agendamentos
+        await carregarMeusAgendamentos();
+
+        // Mostrar campo de funcionário se for RH
+        if (userRole === "RH") {
+          funcionarioWrapper.classList.remove("d-none");
+          funcionarioSelect.required = true;
+          await carregarFuncionarios();
+        } else {
+          funcionarioWrapper.classList.add("d-none");
+          funcionarioSelect.required = false;
+        }
+
+        // Carregar psicólogos
+        await carregarPsicologos();
+
+        // Event listeners para o formulário
+        const localRadios = document.querySelectorAll(
+          'input[name="localRadio"]'
+        );
+        localRadios.forEach((radio) =>
+          radio.addEventListener("change", () => {
+            if (radio.value === "PRESENCIAL" && radio.checked) {
+              salaWrapper.classList.remove("d-none");
+              salaSelect.required = true;
+            } else if (radio.checked) {
+              salaWrapper.classList.add("d-none");
+              salaSelect.required = false;
+            }
+          })
+        );
+      };
+
+      const carregarPsicologos = async () => {
+        try {
+          const response = await securedFetch("/api/apoio/psicologos");
+          if (!response.ok) {
+            throw new Error("Erro ao carregar psicólogos");
+          }
+          const psicologos = await response.json();
+
+          psicologoSelect.innerHTML =
+            '<option value="">Selecione um psicólogo</option>';
+          psicologos.forEach((psicologo) => {
+            const option = document.createElement("option");
+            option.value = psicologo.id;
+            option.textContent = `${psicologo.nome}${
+              psicologo.crp ? " - CRP: " + psicologo.crp : ""
+            }`;
+            psicologoSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Erro ao carregar psicólogos:", error);
+          psicologoSelect.innerHTML =
+            '<option value="">Erro ao carregar</option>';
+          formError.textContent =
+            "Erro ao carregar lista de psicólogos. Recarregue a página.";
+          formError.classList.remove("d-none");
+        }
+      };
+
+      const carregarFuncionarios = async () => {
+        try {
+          const response = await securedFetch("/api/apoio/funcionarios");
+          if (!response.ok) {
+            throw new Error("Erro ao carregar funcionários");
+          }
+          const funcionarios = await response.json();
+
+          funcionarioSelect.innerHTML =
+            '<option value="">Selecione um funcionário</option>';
+          funcionarios.forEach((funcionario) => {
+            const option = document.createElement("option");
+            option.value = funcionario.id;
+            option.textContent = funcionario.nome;
+            funcionarioSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Erro ao carregar funcionários:", error);
+          funcionarioSelect.innerHTML =
+            '<option value="">Erro ao carregar</option>';
+        }
+      };
+
+      const carregarMeusAgendamentos = async () => {
+        try {
+          const response = await securedFetch(
+            "/api/apoio/consultas/meus-agendamentos"
+          );
+          if (!response.ok) {
+            throw new Error("Erro ao carregar agendamentos");
+          }
+          const consultas = await response.json();
+          renderizarMeusAgendamentos(consultas);
+        } catch (error) {
+          meusAgendamentosLista.innerHTML = `<div class="text-danger small">Erro ao carregar: ${error.message}</div>`;
+        }
+      };
+
+      const renderizarMeusAgendamentos = (consultas) => {
+        meusAgendamentosLista.innerHTML = "";
+        if (consultas.length === 0) {
+          meusAgendamentosLista.innerHTML =
+            '<div class="text-muted small">Nenhum agendamento encontrado</div>';
+          return;
+        }
+
+        consultas.forEach((consulta) => {
+          const card = document.createElement("div");
+          card.className = "border rounded p-3 mb-2";
+          const dataHora = new Date(consulta.dataHoraInicio);
+          const dataHoraFim = new Date(consulta.dataHoraFim);
+          const horarioFormatado = dataHora.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const horarioFimFormatado = dataHoraFim.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          let statusBadge = "";
+          let statusText = "";
+          if (consulta.status === "PENDENTE_CONFIRMACAO") {
+            statusBadge =
+              '<span class="badge bg-warning">Aguardando confirmação</span>';
+            statusText = "Aguardando confirmação do psicólogo";
+          } else if (consulta.status === "CONFIRMADA") {
+            const agora = new Date();
+            if (dataHoraFim.getTime() > agora.getTime()) {
+              statusBadge = '<span class="badge bg-success">Confirmada</span>';
+              statusText = "Consulta confirmada e agendada";
+            } else {
+              statusBadge = '<span class="badge bg-info">Em andamento</span>';
+              statusText = "Consulta em andamento";
+            }
+          } else if (consulta.status === "CONCLUIDA") {
+            statusBadge = '<span class="badge bg-success">Concluída</span>';
+            statusText = "Consulta finalizada";
+          } else if (consulta.status === "CANCELADA") {
+            statusBadge = '<span class="badge bg-danger">Cancelada</span>';
+            statusText = "Consulta cancelada";
+          }
+
+          card.innerHTML = `
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <strong>${consulta.psicologoNome}</strong>
+                  <div class="text-muted small">${horarioFormatado} - ${horarioFimFormatado}</div>
+                  <div class="text-muted small">${consulta.local}${
+            consulta.sala ? " • " + consulta.sala : ""
+          }</div>
+                </div>
+                ${statusBadge}
+              </div>
+              <div class="text-muted small mb-1">${statusText}</div>
+              ${
+                consulta.local === "ONLINE" && consulta.linkCall
+                  ? `
+                <div class="mt-2">
+                  <a href="${consulta.linkCall}" target="_blank" class="btn btn-primary btn-sm">
+                    🔗 Entrar na videoconferência
+                  </a>
+                </div>
+              `
+                  : ""
+              }
+              ${
+                consulta.justificativaCancelamento
+                  ? `<div class="text-danger small mt-1"><strong>Motivo do cancelamento:</strong> ${consulta.justificativaCancelamento}</div>`
+                  : ""
+              }
+              ${
+                consulta.observacoes
+                  ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
+                  : ""
+              }
+            </div>
+          `;
+          meusAgendamentosLista.appendChild(card);
+        });
+      };
+
+      const carregarDashboardPsicologo = async () => {
+        try {
+          await Promise.all([
+            carregarSolicitacoes(),
+            carregarProximosAtendimentos(),
+            carregarHistorico(),
+          ]);
+        } catch (error) {
+          console.error("Erro ao carregar dashboard:", error);
+        }
+      };
+
+      const carregarSolicitacoes = async () => {
+        try {
+          const response = await securedFetch("/api/apoio/consultas/pendentes");
+          if (!response.ok) {
+            throw new Error("Erro ao carregar solicitações");
+          }
+          const consultas = await response.json();
+          renderizarSolicitacoes(consultas);
+        } catch (error) {
+          solicitacoesLista.innerHTML = `<div class="text-danger small">Erro ao carregar: ${error.message}</div>`;
+        }
+      };
+
+      const carregarProximosAtendimentos = async () => {
+        try {
+          const response = await securedFetch("/api/apoio/consultas/proximas");
+          if (!response.ok) {
+            throw new Error("Erro ao carregar próximos atendimentos");
+          }
+          const consultas = await response.json();
+          renderizarProximosAtendimentos(consultas);
+        } catch (error) {
+          proximosAtendimentosLista.innerHTML = `<div class="text-danger small">Erro ao carregar: ${error.message}</div>`;
+        }
+      };
+
+      const carregarHistorico = async () => {
+        try {
+          const response = await securedFetch("/api/apoio/consultas/historico");
+          if (!response.ok) {
+            throw new Error("Erro ao carregar histórico");
+          }
+          const consultas = await response.json();
+          renderizarHistorico(consultas);
+        } catch (error) {
+          historicoAtendimentosLista.innerHTML = `<div class="text-danger small">Erro ao carregar: ${error.message}</div>`;
+        }
+      };
+
+      const renderizarSolicitacoes = (consultas) => {
+        solicitacoesLista.innerHTML = "";
+        if (consultas.length === 0) {
+          solicitacoesLista.innerHTML =
+            '<div class="text-muted small">Nenhuma solicitação pendente</div>';
+          return;
+        }
+
+        consultas.forEach((consulta) => {
+          if (!consulta.aguardandoMinhaConfirmacao) return;
+
+          const card = document.createElement("div");
+          card.className = "border rounded p-3 mb-2";
+          const dataHora = new Date(consulta.dataHoraInicio);
+          const horarioFormatado = dataHora.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          card.innerHTML = `
+            <div class="mb-2">
+              <strong>${consulta.funcionarioNome}</strong>
+              <div class="text-muted small">${horarioFormatado}</div>
+              <div class="text-muted small">${consulta.local}${
+            consulta.sala ? " • " + consulta.sala : ""
+          }</div>
+              ${
+                consulta.observacoes
+                  ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
+                  : ""
+              }
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-success btn-sm" onclick="confirmarConsulta('${
+                consulta.id
+              }')">
+                ✓ Confirmar
+              </button>
+              <button class="btn btn-outline-danger btn-sm" onclick="cancelarConsulta('${
+                consulta.id
+              }')">
+                ✗ Cancelar
+              </button>
+            </div>
+          `;
+          solicitacoesLista.appendChild(card);
+        });
+      };
+
+      const renderizarProximosAtendimentos = (consultas) => {
+        proximosAtendimentosLista.innerHTML = "";
+        if (consultas.length === 0) {
+          proximosAtendimentosLista.innerHTML =
+            '<div class="text-muted small">Nenhum atendimento agendado</div>';
+          return;
+        }
+
+        consultas.forEach((consulta) => {
+          const card = document.createElement("div");
+          card.className = "border rounded p-3 mb-2";
+          const dataHora = new Date(consulta.dataHoraInicio);
+          const dataHoraFim = new Date(consulta.dataHoraFim);
+          const horarioFormatado = dataHora.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const horarioFimFormatado = dataHoraFim.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const isOnline = consulta.local === "ONLINE";
+          const linkCallId = `linkCall_${consulta.id}`;
+          const podeAcoes = consulta.status === "CONFIRMADA";
+
+          card.innerHTML = `
+            <div class="mb-2">
+              <strong>${consulta.funcionarioNome}</strong>
+              <div class="text-muted small">${horarioFormatado} - ${horarioFimFormatado}</div>
+              <div class="text-muted small">${consulta.local}${
+            consulta.sala ? " • " + consulta.sala : ""
+          }</div>
+              <span class="badge bg-${
+                consulta.status === "CONFIRMADA" ? "success" : "warning"
+              }">${consulta.status}</span>
+              ${
+                consulta.observacoes
+                  ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
+                  : ""
+              }
+              ${
+                isOnline
+                  ? `
+                <div class="mt-2">
+                  <label class="form-label small mb-1">Link da videoconferência:</label>
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" id="${linkCallId}" 
+                      placeholder="Cole o link aqui..." 
+                      value="${consulta.linkCall || ""}">
+                    <button class="btn btn-outline-primary" type="button" 
+                      onclick="atualizarLinkCall('${
+                        consulta.id
+                      }', '${linkCallId}')">
+                      Salvar
+                    </button>
+                  </div>
+                  ${
+                    consulta.linkCall
+                      ? `
+                    <a href="${consulta.linkCall}" target="_blank" class="btn btn-link btn-sm p-0 mt-1">
+                      Abrir link
+                    </a>
+                  `
+                      : ""
+                  }
+                </div>
+              `
+                  : ""
+              }
+            </div>
+            ${
+              podeAcoes
+                ? `
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm flex-fill" onclick="concluirConsulta('${consulta.id}')">
+                  ✓ Concluir
+                </button>
+                <button class="btn btn-outline-danger btn-sm flex-fill" onclick="cancelarConsultaPsicologo('${consulta.id}')">
+                  ✗ Cancelar
+                </button>
+              </div>
+            `
+                : ""
+            }
+          `;
+          proximosAtendimentosLista.appendChild(card);
+        });
+      };
+
+      const renderizarHistorico = (consultas) => {
+        historicoAtendimentosLista.innerHTML = "";
+        if (consultas.length === 0) {
+          historicoAtendimentosLista.innerHTML =
+            '<div class="text-muted small">Nenhum registro no histórico</div>';
+          return;
+        }
+
+        consultas.forEach((consulta) => {
+          const card = document.createElement("div");
+          card.className = "border rounded p-3 mb-2";
+          const dataHora = new Date(consulta.dataHoraInicio);
+          const horarioFormatado = dataHora.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          let statusBadge = "";
+          if (consulta.status === "CONCLUIDA") {
+            statusBadge = '<span class="badge bg-success">Concluída</span>';
+          } else if (consulta.status === "CANCELADA") {
+            statusBadge = '<span class="badge bg-danger">Cancelada</span>';
+          } else {
+            statusBadge =
+              '<span class="badge bg-secondary">' + consulta.status + "</span>";
+          }
+
+          card.innerHTML = `
+            <div>
+              <strong>${consulta.funcionarioNome}</strong>
+              <div class="text-muted small">${horarioFormatado}</div>
+              <div class="text-muted small">${consulta.local}${
+            consulta.sala ? " • " + consulta.sala : ""
+          }</div>
+              ${statusBadge}
+              ${
+                consulta.justificativaCancelamento
+                  ? `<div class="text-danger small mt-1"><strong>Justificativa:</strong> ${consulta.justificativaCancelamento}</div>`
+                  : ""
+              }
+              ${
+                consulta.observacoes
+                  ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
+                  : ""
+              }
+            </div>
+          `;
+          historicoAtendimentosLista.appendChild(card);
+        });
+      };
+
+      window.confirmarConsulta = async (consultaId) => {
+        try {
+          const response = await securedFetch(
+            `/api/apoio/consultas/${consultaId}/confirmar`,
+            {
+              method: "PATCH",
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Erro ao confirmar consulta");
+          }
+
+          alert("Consulta confirmada com sucesso!");
+          await carregarDashboardPsicologo();
+        } catch (error) {
+          alert(error.message || "Erro ao confirmar consulta");
+        }
+      };
+
+      window.cancelarConsulta = async (consultaId) => {
+        const justificativa = prompt(
+          "Informe a justificativa para o cancelamento:"
+        );
+        if (!justificativa || justificativa.trim() === "") {
+          alert("A justificativa é obrigatória para cancelar a consulta.");
+          return;
+        }
+
+        try {
+          const response = await securedFetch(
+            `/api/apoio/consultas/${consultaId}/cancelar`,
+            {
+              method: "PATCH",
+              body: JSON.stringify({ justificativa: justificativa.trim() }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Erro ao cancelar consulta");
+          }
+
+          alert("Consulta cancelada com sucesso!");
+          await carregarDashboardPsicologo();
+        } catch (error) {
+          alert(error.message || "Erro ao cancelar consulta");
+        }
+      };
+
+      window.cancelarConsultaPsicologo = async (consultaId) => {
+        const justificativa = prompt(
+          "Informe a justificativa para o cancelamento:"
+        );
+        if (!justificativa || justificativa.trim() === "") {
+          alert("A justificativa é obrigatória para cancelar a consulta.");
+          return;
+        }
+
+        try {
+          const response = await securedFetch(
+            `/api/apoio/consultas/${consultaId}/cancelar`,
+            {
+              method: "PATCH",
+              body: JSON.stringify({ justificativa: justificativa.trim() }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Erro ao cancelar consulta");
+          }
+
+          alert("Consulta cancelada com sucesso!");
+          await carregarDashboardPsicologo();
+        } catch (error) {
+          alert(error.message || "Erro ao cancelar consulta");
+        }
+      };
+
+      window.concluirConsulta = async (consultaId) => {
+        if (!confirm("Deseja concluir esta consulta?")) {
+          return;
+        }
+
+        try {
+          const response = await securedFetch(
+            `/api/apoio/consultas/${consultaId}/concluir`,
+            {
+              method: "PATCH",
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Erro ao concluir consulta");
+          }
+
+          alert("Consulta concluída com sucesso!");
+          await carregarDashboardPsicologo();
+        } catch (error) {
+          alert(error.message || "Erro ao concluir consulta");
+        }
+      };
+
+      window.atualizarLinkCall = async (consultaId, inputId) => {
+        const input = document.getElementById(inputId);
+        const linkCall = input.value.trim();
+
+        if (!linkCall) {
+          alert("Informe o link da videoconferência");
+          return;
+        }
+
+        try {
+          const response = await securedFetch(
+            `/api/apoio/consultas/${consultaId}/link-call`,
+            {
+              method: "PATCH",
+              body: JSON.stringify({ linkCall: linkCall }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Erro ao atualizar link");
+          }
+
+          alert("Link atualizado com sucesso!");
+          await carregarDashboardPsicologo();
+        } catch (error) {
+          alert(error.message || "Erro ao atualizar link");
+        }
+      };
+
+      const registrarEventos = () => {
+        if (agendamentoForm) {
+          agendamentoForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            formSuccess.classList.add("d-none");
+            formError.classList.add("d-none");
+
+            try {
+              // Validar campos obrigatórios
+              if (!psicologoSelect.value) {
+                throw new Error("Selecione um psicólogo");
+              }
+              if (!dataInput.value) {
+                throw new Error("Informe a data");
+              }
+              if (!horaInput.value) {
+                throw new Error("Informe o horário");
+              }
+
+              const localSelecionado = document.querySelector(
+                'input[name="localRadio"]:checked'
+              )?.value;
+
+              if (!localSelecionado) {
+                throw new Error("Selecione o local (Online ou Presencial)");
+              }
+
+              // Preparar payload
+              const payload = {
+                psicologoId: psicologoSelect.value,
+                funcionarioId:
+                  userRole === "RH" ? funcionarioSelect.value || null : null,
+                data: dataInput.value,
+                horaInicio: horaInput.value,
+                duracaoMinutos: parseInt(duracaoSelect.value),
+                local: localSelecionado,
+                sala:
+                  localSelecionado === "PRESENCIAL"
+                    ? salaSelect.value || null
+                    : null,
+                observacoes: observacoesInput.value || null,
+              };
+
+              // Validar sala se for presencial
+              if (localSelecionado === "PRESENCIAL" && !salaSelect.value) {
+                throw new Error(
+                  "Selecione a sala para atendimentos presenciais"
+                );
+              }
+
+              // Enviar para API
+              const response = await securedFetch("/api/apoio/consultas", {
+                method: "POST",
+                body: JSON.stringify(payload),
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                  errorData.message || "Erro ao agendar consulta"
+                );
+              }
+
+              // Sucesso
+              formSuccess.textContent = "Consulta agendada com sucesso!";
+              formSuccess.classList.remove("d-none");
+
+              // Limpar formulário
+              dataInput.value = "";
+              horaInput.value = "";
+              observacoesInput.value = "";
+              // Duração mantém o valor padrão do HTML (60 min)
+              document.getElementById("localOnline").checked = true;
+              salaWrapper.classList.add("d-none");
+              salaSelect.value = "";
+              psicologoSelect.value = "";
+              if (funcionarioSelect) {
+                funcionarioSelect.value = "";
+              }
+
+              // Recarregar lista de agendamentos
+              await carregarMeusAgendamentos();
+
+              setTimeout(() => {
+                formSuccess.classList.add("d-none");
+              }, 3000);
+            } catch (error) {
+              formError.textContent =
+                error.message || "Erro ao agendar consulta";
+              formError.classList.remove("d-none");
+            }
+          });
+        }
+
+        btnLogout.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userRole");
+          window.location.href = "/login";
+        });
+      };
+
+      init();
+    </script>
+  </body>
+</html>

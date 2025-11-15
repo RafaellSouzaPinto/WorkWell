@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WorkWell | Cadastro de Psicólogo</title>
+    <title>Cadastro de Psicólogo - WorkWell</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -16,98 +16,148 @@
     />
     <link rel="stylesheet" href="/css/app.css" />
   </head>
-  <body>
-    <main class="container py-5" style="max-width: 640px">
-      <section class="text-center mb-4">
-        <a href="/" class="btn btn-link text-decoration-none">&larr; Voltar</a>
-        <h1 class="fw-bold mt-3">Cadastro de psicólogo</h1>
-        <p class="text-muted">
-          Informe o token corporativo e o CRP para habilitar o atendimento
-          clínico.
-        </p>
-      </section>
+  <body class="bg-light">
+    <div class="min-vh-100 d-flex align-items-center">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+              <div class="card-body p-5">
+                <div class="text-center mb-4">
+                  <a href="/" class="btn btn-link text-decoration-none p-0 mb-3"
+                    >&larr; Voltar</a
+                  >
+                  <h1 class="h3 fw-bold mb-2">Cadastro de Psicólogo</h1>
+                  <p class="text-muted">
+                    Preencha os dados abaixo para criar sua conta
+                  </p>
+                </div>
 
-      <section class="card shadow-sm">
-        <div class="card-body">
-          <span class="badge text-bg-success mb-3">Psicólogo</span>
-          <form id="psicologoForm" novalidate>
-            <div class="mb-3">
-              <label class="form-label">Nome *</label>
-              <input type="text" class="form-control" name="nome" required />
+                <form id="cadastroForm" novalidate>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Nome completo *</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      name="nome"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-lg"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Senha *</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-lg"
+                      name="senha"
+                      minlength="8"
+                      required
+                    />
+                    <small class="text-muted">Mínimo de 8 caracteres</small>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">CRP *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      name="crp"
+                      required
+                    />
+                    <small class="text-muted"
+                      >Número do registro no Conselho Regional de
+                      Psicologia</small
+                    >
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold"
+                      >Token da empresa *</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      name="tokenEmpresa"
+                      required
+                    />
+                    <small class="text-muted"
+                      >Solicite o token ao administrador da empresa</small
+                    >
+                  </div>
+                  <div
+                    class="alert alert-danger d-none"
+                    id="alertErro"
+                    role="alert"
+                  ></div>
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-lg w-100 mb-3"
+                  >
+                    Cadastrar
+                  </button>
+                </form>
+
+                <div class="text-center">
+                  <p class="text-muted small mb-0">
+                    Já tem uma conta?
+                    <a href="/login" class="text-primary text-decoration-none"
+                      >Faça login</a
+                    >
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Email *</label>
-              <input type="email" class="form-control" name="email" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Senha *</label>
-              <input
-                type="password"
-                class="form-control"
-                name="senha"
-                minlength="8"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Token da empresa *</label>
-              <input
-                type="text"
-                class="form-control"
-                name="tokenEmpresa"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">CRP *</label>
-              <input type="text" class="form-control" name="crp" required />
-            </div>
-            <div class="alert alert-success d-none" id="successAlert"></div>
-            <div class="alert alert-danger d-none" id="errorAlert"></div>
-            <button type="submit" class="btn btn-success w-100">
-              Cadastrar psicólogo
-            </button>
-          </form>
+          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const psicologoForm = document.getElementById("psicologoForm");
-      const successAlert = document.getElementById("successAlert");
-      const errorAlert = document.getElementById("errorAlert");
+      const form = document.getElementById("cadastroForm");
+      const alertErro = document.getElementById("alertErro");
 
-      psicologoForm.addEventListener("submit", async (event) => {
+      form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        successAlert.classList.add("d-none");
-        errorAlert.classList.add("d-none");
+        alertErro.classList.add("d-none");
 
-        const formData = new FormData(psicologoForm);
-        const payload = Object.fromEntries(formData.entries());
-        payload.tipoUsuario = "PSICOLOGO";
+        const formData = new FormData(form);
+        const payload = {
+          nome: formData.get("nome"),
+          email: formData.get("email"),
+          senha: formData.get("senha"),
+          crp: formData.get("crp"),
+          tokenEmpresa: formData.get("tokenEmpresa"),
+          tipoUsuario: "PSICOLOGO",
+        };
 
         try {
           const response = await fetch("/api/usuarios", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });
 
           if (!response.ok) {
             const errorData = await response.json();
             throw new Error(
-              errorData.message || "Não foi possível concluir o cadastro."
+              errorData.message || "Não foi possível realizar o cadastro"
             );
           }
 
-          psicologoForm.reset();
-          successAlert.textContent = "Cadastro realizado com sucesso!";
-          successAlert.classList.remove("d-none");
+          alert("Cadastro realizado com sucesso! Redirecionando para login...");
+          window.location.href = "/login";
         } catch (error) {
-          errorAlert.textContent = error.message;
-          errorAlert.classList.remove("d-none");
+          alertErro.textContent = error.message;
+          alertErro.classList.remove("d-none");
         }
       });
     </script>

@@ -63,5 +63,17 @@ public class UsuarioService {
 			salvo.getCrp()
 		);
 	}
+
+	public UsuarioResponse dadosAtuais(Usuario usuario) {
+		UUID empresaId = usuario.getEmpresa() != null ? usuario.getEmpresa().getId() : null;
+		return new UsuarioResponse(
+			usuario.getId(),
+			usuario.getNome(),
+			usuario.getEmail(),
+			usuario.getRole(),
+			empresaId,
+			usuario.getCrp()
+		);
+	}
 }
 

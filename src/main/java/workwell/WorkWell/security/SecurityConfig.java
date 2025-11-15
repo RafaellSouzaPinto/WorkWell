@@ -33,10 +33,10 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/empresa", "/funcionario", "/psicologo", "/rh", "/login", "/css/**", "/js/**", "/images/**",
-					"/favicon.ico").permitAll()
+				.requestMatchers("/", "/cadastro/**", "/login", "/dashboard", "/espaco-apoio", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
 				.requestMatchers("/api/empresas", "/api/auth/**", "/api/usuarios").permitAll()
-				.anyRequest().authenticated())
+				.requestMatchers("/api/**").authenticated()
+				.anyRequest().permitAll())
 			.authenticationProvider(authenticationProvider())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();

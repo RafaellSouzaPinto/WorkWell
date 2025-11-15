@@ -11,22 +11,27 @@ public class PageController {
 		return "index";
 	}
 
-	@GetMapping("/empresa")
+	@GetMapping("/cadastro")
+	public String cadastro() {
+		return "index";
+	}
+
+	@GetMapping("/cadastro/empresa")
 	public String cadastroEmpresa() {
 		return "cadastro_empresa";
 	}
 
-	@GetMapping("/funcionario")
+	@GetMapping("/cadastro/funcionario")
 	public String cadastroFuncionario() {
 		return "cadastro_funcionario";
 	}
 
-	@GetMapping("/psicologo")
+	@GetMapping("/cadastro/psicologo")
 	public String cadastroPsicologo() {
 		return "cadastro_psicologo";
 	}
 
-	@GetMapping("/rh")
+	@GetMapping("/cadastro/rh")
 	public String cadastroRh() {
 		return "cadastro_rh";
 	}
@@ -34,6 +39,16 @@ public class PageController {
 	@GetMapping("/login")
 	public String loginPage() {
 		return "login";
+	}
+
+	@GetMapping("/dashboard")
+	public String dashboard() {
+		return "dashboard";
+	}
+
+	@GetMapping("/espaco-apoio")
+	public String apoioPsicologico() {
+		return "apoio_psicologico";
 	}
 }
 
