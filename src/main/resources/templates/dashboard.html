@@ -54,6 +54,21 @@
                 </div>
               </div>
             </div>
+            <div
+              class="col-md-6 col-lg-4"
+              id="cardDashboardRh"
+              style="display: none"
+            >
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Dashboard RH</h5>
+                  <p class="card-text text-muted">
+                    Acesse indicadores, enquetes e atividades de bem-estar.
+                  </p>
+                  <a href="/dashboard-rh" class="btn btn-primary">Acessar</a>
+                </div>
+              </div>
+            </div>
             <div class="col-md-6 col-lg-4">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -61,8 +76,8 @@
                   <p class="card-text text-muted">
                     Registre como você está se sentindo hoje.
                   </p>
-                  <button class="btn btn-outline-primary" disabled>
-                    Em breve
+                  <button class="btn btn-primary" id="btnRegistrarHumor">
+                    Registrar Humor
                   </button>
                 </div>
               </div>
@@ -74,9 +89,9 @@
                   <p class="card-text text-muted">
                     Participe de atividades de bem-estar.
                   </p>
-                  <button class="btn btn-outline-primary" disabled>
-                    Em breve
-                  </button>
+                  <a href="/dashboard-rh" class="btn btn-primary"
+                    >Ver Atividades</a
+                  >
                 </div>
               </div>
             </div>
@@ -94,6 +109,74 @@
       </footer>
     </div>
 
+    <!-- Modal Registrar Humor -->
+    <div class="modal fade" id="modalRegistrarHumor" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Como você está se sentindo?</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formRegistrarHumor">
+              <div class="mb-3">
+                <label class="form-label">Nível de Humor (1-5)</label>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Muito Ruim</span>
+                  <span>Muito Bom</span>
+                </div>
+                <input
+                  type="range"
+                  class="form-range"
+                  id="humorNivel"
+                  min="1"
+                  max="5"
+                  value="3"
+                  required
+                />
+                <div class="text-center mt-2">
+                  <span class="badge bg-primary" id="humorNivelDisplay">3</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Setor (opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="humorSetor"
+                  placeholder="Ex: TI, Vendas, etc."
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Observações (opcional)</label>
+                <textarea
+                  class="form-control"
+                  id="humorObservacoes"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-primary" id="btnSalvarHumor">
+              Registrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const token = localStorage.getItem("token");
@@ -107,11 +190,88 @@
         userRole || "Usuário"
       }`;
 
+      // Mostrar card do Dashboard RH apenas para RH e FUNCIONARIO
+      if (userRole === "RH" || userRole === "FUNCIONARIO") {
+        document.getElementById("cardDashboardRh").style.display = "block";
+      } else {
+        // Ocultar card se não for RH ou FUNCIONARIO
+        document.getElementById("cardDashboardRh").style.display = "none";
+      }
+
       document.getElementById("btnLogout").addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("userRole");
         window.location.href = "/login";
       });
+
+      // Função para fazer requisições autenticadas
+      async function apiRequest(url, options = {}) {
+        const defaultOptions = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await fetch(url, { ...defaultOptions, ...options });
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userRole");
+          window.location.href = "/login";
+        }
+        return response;
+      }
+
+      // Registrar humor
+      document
+        .getElementById("btnRegistrarHumor")
+        .addEventListener("click", () => {
+          const modal = new bootstrap.Modal(
+            document.getElementById("modalRegistrarHumor")
+          );
+          modal.show();
+        });
+
+      document.getElementById("humorNivel").addEventListener("input", (e) => {
+        document.getElementById("humorNivelDisplay").textContent =
+          e.target.value;
+      });
+
+      document
+        .getElementById("btnSalvarHumor")
+        .addEventListener("click", async () => {
+          const nivel = parseInt(document.getElementById("humorNivel").value);
+          const setor = document.getElementById("humorSetor").value;
+          const observacoes = document.getElementById("humorObservacoes").value;
+
+          try {
+            const response = await apiRequest("/api/dashboard-rh/humor", {
+              method: "POST",
+              body: JSON.stringify({
+                nivelHumor: nivel,
+                setor: setor || null,
+                observacoes: observacoes || null,
+              }),
+            });
+
+            if (response.ok) {
+              alert("Humor registrado com sucesso!");
+              bootstrap.Modal.getInstance(
+                document.getElementById("modalRegistrarHumor")
+              ).hide();
+              document.getElementById("formRegistrarHumor").reset();
+              document.getElementById("humorNivelDisplay").textContent = "3";
+            } else {
+              const error = await response.json();
+              alert(
+                "Erro: " +
+                  (error.message || "Não foi possível registrar o humor")
+              );
+            }
+          } catch (error) {
+            console.error("Erro ao registrar humor:", error);
+            alert("Erro ao registrar humor");
+          }
+        });
     </script>
   </body>
 </html>

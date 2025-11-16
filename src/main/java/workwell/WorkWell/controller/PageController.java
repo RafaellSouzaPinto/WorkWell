@@ -50,5 +50,10 @@ public class PageController {
 	public String apoioPsicologico() {
 		return "apoio_psicologico";
 	}
+
+	@GetMapping("/dashboard-rh")
+	public String dashboardRh() {
+		return "dashboard_rh";
+	}
 }
 
