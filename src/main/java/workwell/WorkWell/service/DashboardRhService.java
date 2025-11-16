@@ -1,9 +1,13 @@
 package workwell.WorkWell.service;
 
 import jakarta.transaction.Transactional;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.dashboard.AlertaResponse;
@@ -50,17 +54,21 @@ public class DashboardRhService {
 	private final AtividadeBemEstarRepository atividadeRepository;
 	private final ParticipacaoAtividadeRepository participacaoRepository;
 	private final UsuarioRepository usuarioRepository;
+	private final ObjectMapper objectMapper;
 
 	private static final double TAXA_PARTICIPACAO_MINIMA = 0.6; // 60%
 	private static final int DIAS_ANALISE = 30;
 
-	public DashboardRhService(RegistroHumorRepository registroHumorRepository,
+	public DashboardRhService(
+		RegistroHumorRepository registroHumorRepository,
 		ConsultaPsicologicaRepository consultaRepository,
 		EnqueteRepository enqueteRepository,
 		RespostaEnqueteRepository respostaEnqueteRepository,
 		AtividadeBemEstarRepository atividadeRepository,
 		ParticipacaoAtividadeRepository participacaoRepository,
-		UsuarioRepository usuarioRepository) {
+		UsuarioRepository usuarioRepository,
+		ObjectMapper objectMapper
+	) {
 		this.registroHumorRepository = registroHumorRepository;
 		this.consultaRepository = consultaRepository;
 		this.enqueteRepository = enqueteRepository;
@@ -68,7 +76,9 @@ public class DashboardRhService {
 		this.atividadeRepository = atividadeRepository;
 		this.participacaoRepository = participacaoRepository;
 		this.usuarioRepository = usuarioRepository;
+		this.objectMapper = objectMapper;
 	}
+
 
 	public DashboardRhResponse obterDashboard(Usuario usuario) {
 		Empresa empresa = garantirEmpresa(usuario);
@@ -141,6 +151,17 @@ public class DashboardRhService {
 		enquete.setPergunta(request.pergunta());
 		enquete.setAtiva(true);
 		enquete.setDataFim(request.dataFim());
+
+		// Converter lista de opções para JSON
+		List<String> opcoes = request.opcoesResposta() != null && !request.opcoesResposta().isEmpty()
+			? request.opcoesResposta()
+			: Arrays.asList("SIM", "NÃO", "TALVEZ"); // Opções padrão
+		
+		try {
+			enquete.setOpcoesResposta(objectMapper.writeValueAsString(opcoes));
+		} catch (Exception e) {
+			throw new BusinessException("Erro ao processar opções de resposta: " + e.getMessage());
+		}
 
 		enquete = enqueteRepository.save(enquete);
 		return mapEnquete(enquete, usuario.getId());
@@ -224,20 +245,21 @@ public class DashboardRhService {
 			throw new BusinessException("Atividade não está mais ativa");
 		}
 
-		// Verificar se já participou
-		if (participacaoRepository.findByAtividadeIdAndUsuarioId(atividade.getId(), usuario.getId()).isPresent()) {
-			throw new BusinessException("Você já está participando desta atividade");
-		}
+		// Verificar se já registrou participação (pode atualizar se já existe)
+		ParticipacaoAtividade participacao = participacaoRepository
+			.findByAtividadeIdAndUsuarioId(atividade.getId(), usuario.getId())
+			.orElse(new ParticipacaoAtividade());
 
-		ParticipacaoAtividade participacao = new ParticipacaoAtividade();
 		participacao.setAtividade(atividade);
 		participacao.setUsuario(usuario);
+		participacao.setVaiParticipar(request.vaiParticipar() != null ? request.vaiParticipar() : true);
 
 		participacao = participacaoRepository.save(participacao);
 		return new ParticipacaoAtividadeResponse(
 			participacao.getId(),
 			participacao.getAtividade().getId(),
 			participacao.getUsuario().getId(),
+			participacao.getVaiParticipar(),
 			participacao.getCreatedAt()
 		);
 	}
@@ -321,6 +343,19 @@ public class DashboardRhService {
 
 		Boolean jaRespondeu = respostaEnqueteRepository.findByEnqueteIdAndUsuarioId(enquete.getId(), usuarioId).isPresent();
 
+		// Converter opções de JSON para List
+		List<String> opcoesResposta = new ArrayList<>();
+		if (enquete.getOpcoesResposta() != null && !enquete.getOpcoesResposta().isEmpty()) {
+			try {
+				opcoesResposta = objectMapper.readValue(enquete.getOpcoesResposta(), new TypeReference<List<String>>() {});
+			} catch (Exception e) {
+				// Se falhar, usar opções padrão
+				opcoesResposta = Arrays.asList("SIM", "NÃO", "TALVEZ");
+			}
+		} else {
+			opcoesResposta = Arrays.asList("SIM", "NÃO", "TALVEZ");
+		}
+
 		return new EnqueteResponse(
 			enquete.getId(),
 			enquete.getPergunta(),
@@ -331,20 +366,24 @@ public class DashboardRhService {
 			totalUsuarios,
 			taxaResposta,
 			estatisticas,
-			jaRespondeu
+			jaRespondeu,
+			opcoesResposta
 		);
 	}
 
 	private AtividadeBemEstarResponse mapAtividade(AtividadeBemEstar atividade, UUID usuarioId) {
-		Long totalParticipantes = participacaoRepository.contarParticipacoesPorAtividade(atividade.getId());
+		Long totalParticipantes = participacaoRepository.contarParticipantesConfirmados(atividade.getId());
 		Long totalUsuarios = (long) usuarioRepository.findByEmpresaIdAndRoleOrderByNomeAsc(atividade.getEmpresa().getId(), RoleType.FUNCIONARIO).size();
 		Double taxaParticipacao = totalUsuarios > 0 ? (double) totalParticipantes / totalUsuarios : 0.0;
 
-		Boolean jaParticipou = participacaoRepository.findByAtividadeIdAndUsuarioId(atividade.getId(), usuarioId).isPresent();
+		Optional<ParticipacaoAtividade> participacaoOpt = participacaoRepository.findByAtividadeIdAndUsuarioId(atividade.getId(), usuarioId);
+		Boolean jaParticipou = participacaoOpt.isPresent();
+		Boolean vaiParticipar = participacaoOpt.map(ParticipacaoAtividade::getVaiParticipar).orElse(null);
 
-		// Buscar lista de participantes
+		// Buscar lista de participantes (apenas quem vai participar)
 		List<ParticipacaoAtividade> participacoes = participacaoRepository.findByAtividadeId(atividade.getId());
 		List<ParticipanteAtividadeResponse> participantes = participacoes.stream()
+			.filter(p -> Boolean.TRUE.equals(p.getVaiParticipar()))
 			.map(p -> new ParticipanteAtividadeResponse(
 				p.getId(),
 				p.getUsuario().getId(),
@@ -367,6 +406,7 @@ public class DashboardRhService {
 			totalUsuarios,
 			taxaParticipacao,
 			jaParticipou,
+			vaiParticipar,
 			participantes
 		);
 	}
@@ -392,6 +432,7 @@ public class DashboardRhService {
 		
 		List<ParticipacaoAtividade> participacoes = participacaoRepository.findByAtividadeId(atividade.getId());
 		return participacoes.stream()
+			.filter(p -> Boolean.TRUE.equals(p.getVaiParticipar()))
 			.map(p -> new ParticipanteAtividadeResponse(
 				p.getId(),
 				p.getUsuario().getId(),

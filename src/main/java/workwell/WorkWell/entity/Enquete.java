@@ -36,6 +36,9 @@ public class Enquete {
 	@Column(nullable = false, length = 255)
 	private String pergunta;
 
+	@Column(name = "opcoes_resposta", length = 2000)
+	private String opcoesResposta; // JSON array de opções: ["SIM", "NÃO", "TALVEZ"]
+
 	@Column(nullable = false)
 	private Boolean ativa = true;
 
@@ -113,6 +116,14 @@ public class Enquete {
 
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public String getOpcoesResposta() {
+		return opcoesResposta;
+	}
+
+	public void setOpcoesResposta(String opcoesResposta) {
+		this.opcoesResposta = opcoesResposta;
 	}
 }
 

@@ -22,6 +22,13 @@ public interface ParticipacaoAtividadeRepository extends JpaRepository<Participa
 	Long contarParticipacoesPorAtividade(@Param("atividadeId") UUID atividadeId);
 
 	@Query("""
+		select count(p) from ParticipacaoAtividade p
+		where p.atividade.id = :atividadeId
+		and p.vaiParticipar = true
+	""")
+	Long contarParticipantesConfirmados(@Param("atividadeId") UUID atividadeId);
+
+	@Query("""
 		select count(distinct p.usuario.id) from ParticipacaoAtividade p
 		where p.atividade.empresa.id = :empresaId
 		and p.atividade.dataHoraInicio >= :dataInicio

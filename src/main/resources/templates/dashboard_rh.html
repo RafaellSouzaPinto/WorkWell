@@ -212,8 +212,66 @@
                   class="form-control"
                   id="enquetePergunta"
                   required
-                  placeholder="Ex: Você está bem hoje?"
+                  placeholder="Ex: O que vocês acharam da nova campanha?"
                 />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Opções de Resposta</label>
+                <div id="opcoesContainer">
+                  <div class="input-group mb-2">
+                    <input
+                      type="text"
+                      class="form-control opcao-input"
+                      placeholder="Ex: BOM"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger"
+                      onclick="removerOpcao(this)"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                  <div class="input-group mb-2">
+                    <input
+                      type="text"
+                      class="form-control opcao-input"
+                      placeholder="Ex: RUIM"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger"
+                      onclick="removerOpcao(this)"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                  <div class="input-group mb-2">
+                    <input
+                      type="text"
+                      class="form-control opcao-input"
+                      placeholder="Ex: NÃO VI AINDA"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger"
+                      onclick="removerOpcao(this)"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  onclick="adicionarOpcao()"
+                >
+                  + Adicionar Opção
+                </button>
+                <small class="form-text text-muted d-block mt-2">
+                  Adicione pelo menos 2 opções de resposta. Ex: SIM, NÃO, TALVEZ
+                  ou BOM, RUIM, NÃO VI AINDA
+                </small>
               </div>
               <div class="mb-3">
                 <label class="form-label">Data de Término (opcional)</label>
@@ -235,6 +293,51 @@
             </button>
             <button type="button" class="btn btn-primary" id="btnSalvarEnquete">
               Criar Enquete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Responder Enquete -->
+    <div class="modal fade" id="modalResponderEnquete" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalResponderEnqueteTitulo">
+              Responder Enquete
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formResponderEnquete">
+              <div class="mb-3">
+                <p class="fw-bold" id="modalResponderEnquetePergunta"></p>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Sua Resposta</label>
+                <div id="opcoesRespostaContainer"></div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnSalvarRespostaEnquete"
+            >
+              Responder
             </button>
           </div>
         </div>
@@ -408,171 +511,186 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       (async function () {
-        const token = localStorage.getItem("token");
-        let userRole = localStorage.getItem("userRole");
+        try {
+          console.log("Iniciando dashboard RH...");
+          const token = localStorage.getItem("token");
+          let userRole = localStorage.getItem("userRole");
 
-        if (!token) {
-          window.location.href = "/login";
-          return;
-        }
-
-        // Debug: verificar role
-        console.log("UserRole do localStorage:", userRole);
-
-        // Se não tiver role, tentar buscar do token ou da API
-        if (!userRole) {
-          try {
-            const response = await fetch("/api/usuarios/me", {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            });
-            if (response.ok) {
-              const usuario = await response.json();
-              userRole = usuario.role;
-              localStorage.setItem("userRole", userRole);
-              console.log("UserRole obtido da API:", userRole);
-            }
-          } catch (error) {
-            console.error("Erro ao buscar role:", error);
-          }
-        }
-
-        // Verificar se o usuário tem permissão para acessar esta página
-        if (userRole !== "RH" && userRole !== "FUNCIONARIO") {
-          alert("Você não tem permissão para acessar esta página.");
-          window.location.href = "/dashboard";
-          return;
-        }
-
-        document.getElementById("userInfo").textContent = `Perfil: ${
-          userRole || "Usuário"
-        }`;
-
-        // Função para mostrar elementos do RH
-        function mostrarElementosRH() {
-          const btnCriarEnquete = document.getElementById("btnCriarEnquete");
-          const btnCriarAtividade =
-            document.getElementById("btnCriarAtividade");
-
-          if (btnCriarEnquete) {
-            btnCriarEnquete.style.display = "block";
-            console.log("Botão criar enquete exibido");
-          } else {
-            console.error("Botão btnCriarEnquete não encontrado!");
-          }
-
-          if (btnCriarAtividade) {
-            btnCriarAtividade.style.display = "block";
-            console.log("Botão criar atividade exibido");
-          } else {
-            console.error("Botão btnCriarAtividade não encontrado!");
-          }
-
-          const secaoIndicadores = document.getElementById("secaoIndicadores");
-          const cardsIndicadores = document.getElementById("cardsIndicadores");
-          const secaoSetoresEstresse = document.getElementById(
-            "secaoSetoresEstresse"
-          );
-          const alertasContainer = document.getElementById("alertasContainer");
-          const secaoRegistrosHumor = document.getElementById(
-            "secaoRegistrosHumor"
-          );
-
-          if (secaoIndicadores) secaoIndicadores.style.display = "block";
-          if (cardsIndicadores) cardsIndicadores.style.display = "block";
-          if (secaoSetoresEstresse)
-            secaoSetoresEstresse.style.display = "block";
-          if (alertasContainer) alertasContainer.style.display = "block";
-          if (secaoRegistrosHumor) secaoRegistrosHumor.style.display = "block";
-
-          carregarRegistrosHumor();
-        }
-
-        // Mostrar botões e seções apenas para RH
-        if (userRole === "RH") {
-          console.log("UserRole é RH, mostrando elementos");
-          mostrarElementosRH();
-        } else if (userRole === "FUNCIONARIO") {
-          document.getElementById("tituloDashboard").textContent =
-            "WorkWell - Bem-Estar";
-        } else {
-          console.warn(
-            "UserRole não reconhecido:",
-            userRole,
-            "Tipo:",
-            typeof userRole
-          );
-        }
-
-        document.getElementById("btnLogout").addEventListener("click", () => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("userRole");
-          window.location.href = "/login";
-        });
-
-        // Função para fazer requisições autenticadas
-        async function apiRequest(url, options = {}) {
-          const defaultOptions = {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          };
-          const response = await fetch(url, { ...defaultOptions, ...options });
-          if (response.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userRole");
+          if (!token) {
             window.location.href = "/login";
-          }
-          return response;
-        }
-
-        // Carregar Dashboard
-        async function carregarDashboard() {
-          if (userRole !== "RH") {
-            return; // Apenas RH pode ver o dashboard completo
-          }
-
-          try {
-            const response = await apiRequest("/api/dashboard-rh");
-            const data = await response.json();
-
-            // Atualizar indicadores
-            document.getElementById("nivelHumor").textContent =
-              data.nivelMedioHumor ? data.nivelMedioHumor.toFixed(1) : "N/A";
-            document.getElementById("frequenciaConsultas").textContent =
-              data.frequenciaConsultas || 0;
-            document.getElementById("aderenciaAtividades").textContent =
-              data.aderenciaAtividades
-                ? (data.aderenciaAtividades * 100).toFixed(1) + "%"
-                : "0%";
-            document.getElementById("totalSetoresEstresse").textContent =
-              data.setoresComEstresse ? data.setoresComEstresse.length : 0;
-
-            // Renderizar setores com estresse
-            renderizarSetoresEstresse(data.setoresComEstresse || []);
-
-            // Renderizar alertas
-            renderizarAlertas(data.alertas || []);
-          } catch (error) {
-            console.error("Erro ao carregar dashboard:", error);
-          }
-        }
-
-        // Renderizar setores com estresse
-        function renderizarSetoresEstresse(setores) {
-          const container = document.getElementById("setoresEstresseContainer");
-          if (setores.length === 0) {
-            container.innerHTML =
-              "<p class='text-muted'>Nenhum setor com estresse identificado.</p>";
             return;
           }
 
-          const html = setores
-            .map(
-              (setor) => `
+          // Debug: verificar role
+          console.log("UserRole do localStorage:", userRole);
+
+          // Se não tiver role, tentar buscar do token ou da API
+          if (!userRole) {
+            try {
+              const response = await fetch("/api/usuarios/me", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              });
+              if (response.ok) {
+                const usuario = await response.json();
+                userRole = usuario.role;
+                localStorage.setItem("userRole", userRole);
+                console.log("UserRole obtido da API:", userRole);
+              }
+            } catch (error) {
+              console.error("Erro ao buscar role:", error);
+            }
+          }
+
+          // Verificar se o usuário tem permissão para acessar esta página
+          if (userRole !== "RH" && userRole !== "FUNCIONARIO") {
+            alert("Você não tem permissão para acessar esta página.");
+            window.location.href = "/dashboard";
+            return;
+          }
+
+          const userInfo = document.getElementById("userInfo");
+          if (userInfo) {
+            userInfo.textContent = `Perfil: ${userRole || "Usuário"}`;
+          }
+
+          // Função para mostrar elementos do RH
+          function mostrarElementosRH() {
+            const btnCriarEnquete = document.getElementById("btnCriarEnquete");
+            const btnCriarAtividade =
+              document.getElementById("btnCriarAtividade");
+
+            if (btnCriarEnquete) {
+              btnCriarEnquete.style.display = "block";
+              console.log("Botão criar enquete exibido");
+            } else {
+              console.error("Botão btnCriarEnquete não encontrado!");
+            }
+
+            if (btnCriarAtividade) {
+              btnCriarAtividade.style.display = "block";
+              console.log("Botão criar atividade exibido");
+            } else {
+              console.error("Botão btnCriarAtividade não encontrado!");
+            }
+
+            const secaoIndicadores =
+              document.getElementById("secaoIndicadores");
+            const cardsIndicadores =
+              document.getElementById("cardsIndicadores");
+            const secaoSetoresEstresse = document.getElementById(
+              "secaoSetoresEstresse"
+            );
+            const alertasContainer =
+              document.getElementById("alertasContainer");
+            const secaoRegistrosHumor = document.getElementById(
+              "secaoRegistrosHumor"
+            );
+
+            if (secaoIndicadores) secaoIndicadores.style.display = "block";
+            if (cardsIndicadores) cardsIndicadores.style.display = "block";
+            if (secaoSetoresEstresse)
+              secaoSetoresEstresse.style.display = "block";
+            if (alertasContainer) alertasContainer.style.display = "block";
+            if (secaoRegistrosHumor)
+              secaoRegistrosHumor.style.display = "block";
+
+            carregarRegistrosHumor();
+          }
+
+          // Mostrar botões e seções apenas para RH
+          if (userRole === "RH") {
+            console.log("UserRole é RH, mostrando elementos");
+            mostrarElementosRH();
+          } else if (userRole === "FUNCIONARIO") {
+            document.getElementById("tituloDashboard").textContent =
+              "WorkWell - Bem-Estar";
+          } else {
+            console.warn(
+              "UserRole não reconhecido:",
+              userRole,
+              "Tipo:",
+              typeof userRole
+            );
+          }
+
+          const btnLogout = document.getElementById("btnLogout");
+          if (btnLogout) {
+            btnLogout.addEventListener("click", () => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("userRole");
+              window.location.href = "/login";
+            });
+          }
+
+          // Função para fazer requisições autenticadas
+          async function apiRequest(url, options = {}) {
+            const defaultOptions = {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            };
+            const response = await fetch(url, {
+              ...defaultOptions,
+              ...options,
+            });
+            if (response.status === 401) {
+              localStorage.removeItem("token");
+              localStorage.removeItem("userRole");
+              window.location.href = "/login";
+            }
+            return response;
+          }
+
+          // Carregar Dashboard
+          async function carregarDashboard() {
+            if (userRole !== "RH") {
+              return; // Apenas RH pode ver o dashboard completo
+            }
+
+            try {
+              const response = await apiRequest("/api/dashboard-rh");
+              const data = await response.json();
+
+              // Atualizar indicadores
+              document.getElementById("nivelHumor").textContent =
+                data.nivelMedioHumor ? data.nivelMedioHumor.toFixed(1) : "N/A";
+              document.getElementById("frequenciaConsultas").textContent =
+                data.frequenciaConsultas || 0;
+              document.getElementById("aderenciaAtividades").textContent =
+                data.aderenciaAtividades
+                  ? (data.aderenciaAtividades * 100).toFixed(1) + "%"
+                  : "0%";
+              document.getElementById("totalSetoresEstresse").textContent =
+                data.setoresComEstresse ? data.setoresComEstresse.length : 0;
+
+              // Renderizar setores com estresse
+              renderizarSetoresEstresse(data.setoresComEstresse || []);
+
+              // Renderizar alertas
+              renderizarAlertas(data.alertas || []);
+            } catch (error) {
+              console.error("Erro ao carregar dashboard:", error);
+            }
+          }
+
+          // Renderizar setores com estresse
+          function renderizarSetoresEstresse(setores) {
+            const container = document.getElementById(
+              "setoresEstresseContainer"
+            );
+            if (setores.length === 0) {
+              container.innerHTML =
+                "<p class='text-muted'>Nenhum setor com estresse identificado.</p>";
+              return;
+            }
+
+            const html = setores
+              .map(
+                (setor) => `
           <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
             <div>
               <strong>${setor.setor || "Sem setor"}</strong>
@@ -593,74 +711,76 @@
             </div>
           </div>
         `
-            )
-            .join("");
-          container.innerHTML = html;
-        }
-
-        // Renderizar alertas
-        function renderizarAlertas(alertas) {
-          const container = document.getElementById("alertasContainer");
-          if (alertas.length === 0) {
-            container.innerHTML = "";
-            return;
+              )
+              .join("");
+            container.innerHTML = html;
           }
 
-          const html = alertas
-            .map((alerta) => {
-              const severityClass =
-                {
-                  ALTA: "danger",
-                  MEDIA: "warning",
-                  BAIXA: "info",
-                }[alerta.severidade] || "info";
+          // Renderizar alertas
+          function renderizarAlertas(alertas) {
+            const container = document.getElementById("alertasContainer");
+            if (alertas.length === 0) {
+              container.innerHTML = "";
+              return;
+            }
 
-              return `
+            const html = alertas
+              .map((alerta) => {
+                const severityClass =
+                  {
+                    ALTA: "danger",
+                    MEDIA: "warning",
+                    BAIXA: "info",
+                  }[alerta.severidade] || "info";
+
+                return `
             <div class="alert alert-${severityClass} alert-dismissible fade show" role="alert">
               <strong>${alerta.tipo}:</strong> ${alerta.mensagem}
               <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
           `;
-            })
-            .join("");
-          container.innerHTML = html;
-        }
-
-        // Carregar enquetes
-        async function carregarEnquetes() {
-          try {
-            const response = await apiRequest("/api/dashboard-rh/enquetes");
-            const enquetes = await response.json();
-            renderizarEnquetes(enquetes);
-          } catch (error) {
-            console.error("Erro ao carregar enquetes:", error);
-          }
-        }
-
-        // Renderizar enquetes
-        function renderizarEnquetes(enquetes) {
-          const container = document.getElementById("enquetesContainer");
-          if (enquetes.length === 0) {
-            container.innerHTML =
-              "<div class='col-12'><p class='text-muted'>Nenhuma enquete ativa no momento.</p></div>";
-            return;
+              })
+              .join("");
+            container.innerHTML = html;
           }
 
-          const html = enquetes
-            .map((enquete) => {
-              const jaRespondeu = enquete.jaRespondeu;
-              const taxaResposta = (enquete.taxaResposta * 100).toFixed(1);
+          // Carregar enquetes
+          async function carregarEnquetes() {
+            try {
+              const response = await apiRequest("/api/dashboard-rh/enquetes");
+              const enquetes = await response.json();
+              renderizarEnquetes(enquetes);
+            } catch (error) {
+              console.error("Erro ao carregar enquetes:", error);
+            }
+          }
 
-              return `
+          // Renderizar enquetes
+          function renderizarEnquetes(enquetes) {
+            const container = document.getElementById("enquetesContainer");
+            if (enquetes.length === 0) {
+              container.innerHTML =
+                "<div class='col-12'><p class='text-muted'>Nenhuma enquete ativa no momento.</p></div>";
+              return;
+            }
+
+            const html = enquetes
+              .map((enquete) => {
+                const jaRespondeu = enquete.jaRespondeu;
+                const taxaResposta = (enquete.taxaResposta * 100).toFixed(1);
+
+                return `
             <div class="col-md-6 col-lg-4">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
                   <h6 class="card-title">${enquete.pergunta}</h6>
-                  <p class="text-muted small mb-2">
-                    ${
-                      enquete.totalRespostas
-                    } resposta(s) - ${taxaResposta}% de participação
-                  </p>
+                  ${
+                    userRole === "RH"
+                      ? `<p class="text-muted small mb-2">
+                          ${enquete.totalRespostas} resposta(s) - ${taxaResposta}% de participação
+                        </p>`
+                      : ""
+                  }
                   ${
                     jaRespondeu
                       ? '<span class="badge bg-success mb-2">Você já respondeu</span>'
@@ -669,7 +789,9 @@
                         "')\">Responder</button>"
                   }
                   ${
-                    enquete.estatisticas && enquete.estatisticas.length > 0
+                    userRole === "RH" &&
+                    enquete.estatisticas &&
+                    enquete.estatisticas.length > 0
                       ? `
                     <div class="mt-2">
                       ${enquete.estatisticas
@@ -687,145 +809,247 @@
               </div>
             </div>
           `;
-            })
-            .join("");
-          container.innerHTML = html;
-        }
-
-        // Responder enquete
-        async function responderEnquete(enqueteId) {
-          const resposta = prompt(
-            "Digite sua resposta (ex: SIM, NÃO, TALVEZ, ou um número):"
-          );
-          if (!resposta) return;
-
-          try {
-            const response = await apiRequest(
-              "/api/dashboard-rh/enquetes/responder",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  enqueteId: enqueteId,
-                  resposta: resposta,
-                }),
-              }
-            );
-
-            if (response.ok) {
-              alert("Resposta registrada com sucesso!");
-              carregarEnquetes();
-            } else {
-              const error = await response.json();
-              alert(
-                "Erro: " +
-                  (error.message || "Não foi possível registrar a resposta")
-              );
-            }
-          } catch (error) {
-            console.error("Erro ao responder enquete:", error);
-            alert("Erro ao registrar resposta");
+              })
+              .join("");
+            container.innerHTML = html;
           }
-        }
 
-        // Criar enquete
-        document
-          .getElementById("btnCriarEnquete")
-          .addEventListener("click", () => {
-            const modal = new bootstrap.Modal(
-              document.getElementById("modalCriarEnquete")
-            );
-            modal.show();
-          });
+          // Variável global para armazenar enquete atual
+          let enqueteAtual = null;
 
-        document
-          .getElementById("btnSalvarEnquete")
-          .addEventListener("click", async () => {
-            const pergunta = document.getElementById("enquetePergunta").value;
-            const dataFim = document.getElementById("enqueteDataFim").value;
+          // Responder enquete - abre modal
+          async function responderEnquete(enqueteId) {
+            // Buscar dados da enquete
+            try {
+              const response = await apiRequest("/api/dashboard-rh/enquetes");
+              const enquetes = await response.json();
+              enqueteAtual = enquetes.find((e) => e.id === enqueteId);
 
-            if (!pergunta) {
-              alert("Por favor, preencha a pergunta");
+              if (!enqueteAtual) {
+                alert("Enquete não encontrada");
+                return;
+              }
+
+              // Preencher modal
+              document.getElementById(
+                "modalResponderEnquetePergunta"
+              ).textContent = enqueteAtual.pergunta;
+
+              // Limpar e preencher opções
+              const container = document.getElementById(
+                "opcoesRespostaContainer"
+              );
+              container.innerHTML = "";
+
+              const opcoes = enqueteAtual.opcoesResposta || [
+                "SIM",
+                "NÃO",
+                "TALVEZ",
+              ];
+              opcoes.forEach((opcao) => {
+                const div = document.createElement("div");
+                div.className = "form-check mb-2";
+                div.innerHTML = `
+                <input class="form-check-input" type="radio" name="respostaEnquete" id="opcao_${opcao}" value="${opcao}" required>
+                <label class="form-check-label" for="opcao_${opcao}">
+                  ${opcao}
+                </label>
+              `;
+                container.appendChild(div);
+              });
+
+              // Abrir modal
+              const modal = new bootstrap.Modal(
+                document.getElementById("modalResponderEnquete")
+              );
+              modal.show();
+            } catch (error) {
+              console.error("Erro ao carregar enquete:", error);
+              alert("Erro ao carregar enquete");
+            }
+          }
+
+          // Salvar resposta da enquete
+          const btnSalvarRespostaEnquete = document.getElementById(
+            "btnSalvarRespostaEnquete"
+          );
+          if (btnSalvarRespostaEnquete) {
+            btnSalvarRespostaEnquete.addEventListener("click", async () => {
+              if (!enqueteAtual) return;
+
+              const respostaSelecionada = document.querySelector(
+                'input[name="respostaEnquete"]:checked'
+              );
+              if (!respostaSelecionada) {
+                alert("Por favor, selecione uma opção");
+                return;
+              }
+
+              const resposta = respostaSelecionada.value;
+
+              try {
+                const response = await apiRequest(
+                  "/api/dashboard-rh/enquetes/responder",
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      enqueteId: enqueteAtual.id,
+                      resposta: resposta,
+                    }),
+                  }
+                );
+
+                if (response.ok) {
+                  alert("Resposta registrada com sucesso!");
+                  carregarEnquetes();
+                } else {
+                  const error = await response.json();
+                  alert(
+                    "Erro: " +
+                      (error.message || "Não foi possível registrar a resposta")
+                  );
+                }
+              } catch (error) {
+                console.error("Erro ao responder enquete:", error);
+                alert("Erro ao registrar resposta");
+              }
+            });
+          }
+
+          // Criar enquete
+          document
+            .getElementById("btnCriarEnquete")
+            .addEventListener("click", () => {
+              const modal = new bootstrap.Modal(
+                document.getElementById("modalCriarEnquete")
+              );
+              modal.show();
+            });
+
+          const btnSalvarEnquete = document.getElementById("btnSalvarEnquete");
+          if (btnSalvarEnquete) {
+            btnSalvarEnquete.addEventListener("click", async () => {
+              const pergunta = document.getElementById("enquetePergunta").value;
+              const dataFim = document.getElementById("enqueteDataFim").value;
+
+              if (!pergunta) {
+                alert("Por favor, preencha a pergunta");
+                return;
+              }
+
+              // Coletar opções
+              const opcoesInputs = document.querySelectorAll(
+                "#opcoesContainer .opcao-input"
+              );
+              const opcoes = Array.from(opcoesInputs)
+                .map((input) => input.value.trim())
+                .filter((opcao) => opcao.length > 0);
+
+              if (opcoes.length < 2) {
+                alert("Por favor, adicione pelo menos 2 opções de resposta");
+                return;
+              }
+
+              try {
+                const body = {
+                  pergunta: pergunta,
+                  opcoesResposta: opcoes,
+                  dataFim: dataFim ? new Date(dataFim).toISOString() : null,
+                };
+
+                const response = await apiRequest(
+                  "/api/dashboard-rh/enquetes",
+                  {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                  }
+                );
+
+                if (response.ok) {
+                  alert("Enquete criada com sucesso!");
+                  bootstrap.Modal.getInstance(
+                    document.getElementById("modalCriarEnquete")
+                  ).hide();
+                  document.getElementById("formCriarEnquete").reset();
+                  // Resetar opções para padrão
+                  const opcoesContainer =
+                    document.getElementById("opcoesContainer");
+                  opcoesContainer.innerHTML = `
+                  <div class="input-group mb-2">
+                    <input type="text" class="form-control opcao-input" placeholder="Ex: BOM" />
+                    <button type="button" class="btn btn-outline-danger" onclick="removerOpcao(this)">Remover</button>
+                  </div>
+                  <div class="input-group mb-2">
+                    <input type="text" class="form-control opcao-input" placeholder="Ex: RUIM" />
+                    <button type="button" class="btn btn-outline-danger" onclick="removerOpcao(this)">Remover</button>
+                  </div>
+                  <div class="input-group mb-2">
+                    <input type="text" class="form-control opcao-input" placeholder="Ex: NÃO VI AINDA" />
+                    <button type="button" class="btn btn-outline-danger" onclick="removerOpcao(this)">Remover</button>
+                  </div>
+                `;
+                  carregarEnquetes();
+                  if (userRole === "RH") {
+                    carregarDashboard();
+                  }
+                } else {
+                  const errorData = await response
+                    .json()
+                    .catch(() => ({ message: "Erro desconhecido" }));
+                  const errorMessage =
+                    errorData.message ||
+                    errorData.details?.[0] ||
+                    "Não foi possível criar a enquete";
+                  alert("Erro: " + errorMessage);
+                  console.error("Erro ao criar enquete:", errorData);
+                }
+              } catch (error) {
+                console.error("Erro ao criar enquete:", error);
+                alert("Erro ao criar enquete: " + error.message);
+              }
+            });
+          }
+
+          // Carregar atividades
+          async function carregarAtividades() {
+            try {
+              const response = await apiRequest("/api/dashboard-rh/atividades");
+              const atividades = await response.json();
+              renderizarAtividades(atividades);
+            } catch (error) {
+              console.error("Erro ao carregar atividades:", error);
+            }
+          }
+
+          // Renderizar atividades
+          function renderizarAtividades(atividades) {
+            const container = document.getElementById("atividadesContainer");
+            if (atividades.length === 0) {
+              container.innerHTML =
+                "<div class='col-12'><p class='text-muted'>Nenhuma atividade cadastrada.</p></div>";
               return;
             }
 
-            try {
-              const body = {
-                pergunta: pergunta,
-                dataFim: dataFim ? new Date(dataFim).toISOString() : null,
-              };
+            const tipoLabels = {
+              ATIVIDADE_FISICA: "Atividade Física",
+              HAPPY_HOUR: "Happy Hour",
+              PALESTRA_BEM_ESTAR: "Palestra de Bem-Estar",
+              MEDITACAO_GUIADA: "Meditação Guiada",
+              INTERACAO_SOCIAL: "Interação Social",
+              SESSAO_ANTI_BURNOUT: "Sessão Anti-Burnout",
+            };
 
-              const response = await apiRequest("/api/dashboard-rh/enquetes", {
-                method: "POST",
-                body: JSON.stringify(body),
-              });
+            const html = atividades
+              .map((atividade) => {
+                const jaParticipou = atividade.jaParticipou;
+                const taxaParticipacao = (
+                  atividade.taxaParticipacao * 100
+                ).toFixed(1);
+                const dataInicio = new Date(
+                  atividade.dataHoraInicio
+                ).toLocaleString("pt-BR");
 
-              if (response.ok) {
-                alert("Enquete criada com sucesso!");
-                bootstrap.Modal.getInstance(
-                  document.getElementById("modalCriarEnquete")
-                ).hide();
-                document.getElementById("formCriarEnquete").reset();
-                carregarEnquetes();
-                if (userRole === "RH") {
-                  carregarDashboard();
-                }
-              } else {
-                const errorData = await response
-                  .json()
-                  .catch(() => ({ message: "Erro desconhecido" }));
-                const errorMessage =
-                  errorData.message ||
-                  errorData.details?.[0] ||
-                  "Não foi possível criar a enquete";
-                alert("Erro: " + errorMessage);
-                console.error("Erro ao criar enquete:", errorData);
-              }
-            } catch (error) {
-              console.error("Erro ao criar enquete:", error);
-              alert("Erro ao criar enquete: " + error.message);
-            }
-          });
-
-        // Carregar atividades
-        async function carregarAtividades() {
-          try {
-            const response = await apiRequest("/api/dashboard-rh/atividades");
-            const atividades = await response.json();
-            renderizarAtividades(atividades);
-          } catch (error) {
-            console.error("Erro ao carregar atividades:", error);
-          }
-        }
-
-        // Renderizar atividades
-        function renderizarAtividades(atividades) {
-          const container = document.getElementById("atividadesContainer");
-          if (atividades.length === 0) {
-            container.innerHTML =
-              "<div class='col-12'><p class='text-muted'>Nenhuma atividade cadastrada.</p></div>";
-            return;
-          }
-
-          const tipoLabels = {
-            ATIVIDADE_FISICA: "Atividade Física",
-            HAPPY_HOUR: "Happy Hour",
-            PALESTRA_BEM_ESTAR: "Palestra de Bem-Estar",
-            MEDITACAO_GUIADA: "Meditação Guiada",
-            INTERACAO_SOCIAL: "Interação Social",
-            SESSAO_ANTI_BURNOUT: "Sessão Anti-Burnout",
-          };
-
-          const html = atividades
-            .map((atividade) => {
-              const jaParticipou = atividade.jaParticipou;
-              const taxaParticipacao = (
-                atividade.taxaParticipacao * 100
-              ).toFixed(1);
-              const dataInicio = new Date(
-                atividade.dataHoraInicio
-              ).toLocaleString("pt-BR");
-
-              return `
+                return `
             <div class="col-md-6 col-lg-4">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -846,11 +1070,13 @@
                         : ""
                     }
                   </p>
-                  <p class="text-muted small mb-2">
-                    ${
-                      atividade.totalParticipantes
-                    } participante(s) - ${taxaParticipacao}% de aderência
-                  </p>
+                  ${
+                    userRole === "RH"
+                      ? `<p class="text-muted small mb-2">
+                          ${atividade.totalParticipantes} participante(s) - ${taxaParticipacao}% de aderência
+                        </p>`
+                      : ""
+                  }
                   ${
                     userRole === "RH"
                       ? `<button class="btn btn-info btn-sm mb-2" onclick="verParticipantes('${
@@ -862,222 +1088,256 @@
                   }
                   ${
                     jaParticipou
-                      ? '<span class="badge bg-success">Você já está participando</span>'
-                      : '<button class="btn btn-primary btn-sm" onclick="participarAtividade(\'' +
+                      ? atividade.vaiParticipar === true
+                        ? '<span class="badge bg-success me-2">Vou participar</span><button class="btn btn-outline-danger btn-sm" onclick="participarAtividade(\'' +
+                          atividade.id +
+                          "', false)\">Não vou</button>"
+                        : atividade.vaiParticipar === false
+                        ? '<span class="badge bg-danger me-2">Não vou participar</span><button class="btn btn-outline-success btn-sm" onclick="participarAtividade(\'' +
+                          atividade.id +
+                          "', true)\">Vou</button>"
+                        : '<span class="badge bg-secondary">Registrado</span>'
+                      : '<div class="d-flex gap-2"><button class="btn btn-success btn-sm" onclick="participarAtividade(\'' +
                         atividade.id +
-                        "')\">Participar</button>"
+                        '\', true)">Vou</button><button class="btn btn-danger btn-sm" onclick="participarAtividade(\'' +
+                        atividade.id +
+                        "', false)\">Não vou</button></div>"
                   }
                 </div>
               </div>
             </div>
           `;
-            })
-            .join("");
-          container.innerHTML = html;
-        }
-
-        // Participar atividade
-        async function participarAtividade(atividadeId) {
-          try {
-            const response = await apiRequest(
-              "/api/dashboard-rh/atividades/participar",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  atividadeId: atividadeId,
-                }),
-              }
-            );
-
-            if (response.ok) {
-              alert("Participação registrada com sucesso!");
-              carregarAtividades();
-              if (userRole === "RH") {
-                carregarDashboard();
-              }
-            } else {
-              const error = await response.json();
-              alert(
-                "Erro: " +
-                  (error.message || "Não foi possível registrar a participação")
-              );
-            }
-          } catch (error) {
-            console.error("Erro ao participar atividade:", error);
-            alert("Erro ao registrar participação");
+              })
+              .join("");
+            container.innerHTML = html;
           }
-        }
 
-        // Criar atividade
-        document
-          .getElementById("btnCriarAtividade")
-          .addEventListener("click", () => {
-            const modal = new bootstrap.Modal(
-              document.getElementById("modalCriarAtividade")
-            );
-            modal.show();
-          });
-
-        document
-          .getElementById("btnSalvarAtividade")
-          .addEventListener("click", async () => {
-            const tipo = document.getElementById("atividadeTipo").value;
-            const titulo = document.getElementById("atividadeTitulo").value;
-            const descricao =
-              document.getElementById("atividadeDescricao").value;
-            const dataInicio = document.getElementById(
-              "atividadeDataInicio"
-            ).value;
-            const dataFim = document.getElementById("atividadeDataFim").value;
-            const local = document.getElementById("atividadeLocal").value;
-
-            if (!tipo || !titulo || !dataInicio) {
-              alert("Por favor, preencha os campos obrigatórios");
-              return;
-            }
-
+          // Participar atividade
+          async function participarAtividade(atividadeId, vaiParticipar) {
             try {
-              const body = {
-                tipo: tipo,
-                titulo: titulo,
-                descricao: descricao || null,
-                dataHoraInicio: new Date(dataInicio).toISOString(),
-                dataHoraFim: dataFim ? new Date(dataFim).toISOString() : null,
-                local: local || null,
-              };
-
               const response = await apiRequest(
-                "/api/dashboard-rh/atividades",
+                "/api/dashboard-rh/atividades/participar",
                 {
                   method: "POST",
-                  body: JSON.stringify(body),
+                  body: JSON.stringify({
+                    atividadeId: atividadeId,
+                    vaiParticipar: vaiParticipar,
+                  }),
                 }
               );
 
               if (response.ok) {
-                alert("Atividade criada com sucesso!");
-                bootstrap.Modal.getInstance(
-                  document.getElementById("modalCriarAtividade")
-                ).hide();
-                document.getElementById("formCriarAtividade").reset();
+                const mensagem = vaiParticipar
+                  ? "Você confirmou que vai participar!"
+                  : "Você informou que não vai participar.";
+                alert(mensagem);
                 carregarAtividades();
                 if (userRole === "RH") {
                   carregarDashboard();
                 }
               } else {
-                const errorData = await response
-                  .json()
-                  .catch(() => ({ message: "Erro desconhecido" }));
-                const errorMessage =
-                  errorData.message ||
-                  errorData.details?.[0] ||
-                  "Não foi possível criar a atividade";
-                alert("Erro: " + errorMessage);
-                console.error("Erro ao criar atividade:", errorData);
-              }
-            } catch (error) {
-              console.error("Erro ao criar atividade:", error);
-              alert("Erro ao criar atividade: " + error.message);
-            }
-          });
-
-        // Registrar humor
-        document.getElementById("humorNivel").addEventListener("input", (e) => {
-          document.getElementById("humorNivelDisplay").textContent =
-            e.target.value;
-        });
-
-        document
-          .getElementById("btnSalvarHumor")
-          .addEventListener("click", async () => {
-            const nivel = parseInt(document.getElementById("humorNivel").value);
-            const setor = document.getElementById("humorSetor").value;
-            const observacoes =
-              document.getElementById("humorObservacoes").value;
-
-            try {
-              const response = await apiRequest("/api/dashboard-rh/humor", {
-                method: "POST",
-                body: JSON.stringify({
-                  nivelHumor: nivel,
-                  setor: setor || null,
-                  observacoes: observacoes || null,
-                }),
-              });
-
-              if (response.ok) {
-                alert("Humor registrado com sucesso!");
-                bootstrap.Modal.getInstance(
-                  document.getElementById("modalRegistrarHumor")
-                ).hide();
-                document.getElementById("formRegistrarHumor").reset();
-                document.getElementById("humorNivelDisplay").textContent = "3";
-                if (userRole === "RH") {
-                  carregarDashboard();
-                  carregarRegistrosHumor();
-                }
-              } else {
                 const error = await response.json();
                 alert(
                   "Erro: " +
-                    (error.message || "Não foi possível registrar o humor")
+                    (error.message ||
+                      "Não foi possível registrar a participação")
                 );
               }
             } catch (error) {
-              console.error("Erro ao registrar humor:", error);
-              alert("Erro ao registrar humor");
+              console.error("Erro ao participar atividade:", error);
+              alert("Erro ao registrar participação");
             }
-          });
-
-        // Botão para registrar humor (visível para todos)
-        const btnRegistrarHumor = document.createElement("button");
-        btnRegistrarHumor.className = "btn btn-primary btn-sm";
-        btnRegistrarHumor.textContent = "Registrar Humor";
-        btnRegistrarHumor.onclick = () => {
-          const modal = new bootstrap.Modal(
-            document.getElementById("modalRegistrarHumor")
-          );
-          modal.show();
-        };
-        document.querySelector("header .d-flex").appendChild(btnRegistrarHumor);
-
-        // Carregar registros de humor (apenas RH)
-        async function carregarRegistrosHumor() {
-          if (userRole !== "RH") return;
-
-          try {
-            const response = await apiRequest(
-              "/api/dashboard-rh/humor/registros"
-            );
-            const registros = await response.json();
-            renderizarRegistrosHumor(registros);
-          } catch (error) {
-            console.error("Erro ao carregar registros de humor:", error);
-          }
-        }
-
-        // Renderizar registros de humor
-        function renderizarRegistrosHumor(registros) {
-          const container = document.getElementById("registrosHumorContainer");
-          if (registros.length === 0) {
-            container.innerHTML =
-              "<p class='text-muted'>Nenhum registro de humor encontrado.</p>";
-            return;
           }
 
-          const html = registros
-            .map((registro) => {
-              const dataRegistro = new Date(registro.createdAt).toLocaleString(
-                "pt-BR"
+          // Criar atividade
+          const btnCriarAtividade =
+            document.getElementById("btnCriarAtividade");
+          if (btnCriarAtividade) {
+            btnCriarAtividade.addEventListener("click", () => {
+              const modal = new bootstrap.Modal(
+                document.getElementById("modalCriarAtividade")
               );
-              const nivelClass =
-                registro.nivelHumor < 2.5
-                  ? "danger"
-                  : registro.nivelHumor < 3.5
-                  ? "warning"
-                  : "success";
+              modal.show();
+            });
+          }
 
-              return `
+          const btnSalvarAtividade =
+            document.getElementById("btnSalvarAtividade");
+          if (btnSalvarAtividade) {
+            btnSalvarAtividade.addEventListener("click", async () => {
+              const tipo = document.getElementById("atividadeTipo").value;
+              const titulo = document.getElementById("atividadeTitulo").value;
+              const descricao =
+                document.getElementById("atividadeDescricao").value;
+              const dataInicio = document.getElementById(
+                "atividadeDataInicio"
+              ).value;
+              const dataFim = document.getElementById("atividadeDataFim").value;
+              const local = document.getElementById("atividadeLocal").value;
+
+              if (!tipo || !titulo || !dataInicio) {
+                alert("Por favor, preencha os campos obrigatórios");
+                return;
+              }
+
+              try {
+                const body = {
+                  tipo: tipo,
+                  titulo: titulo,
+                  descricao: descricao || null,
+                  dataHoraInicio: new Date(dataInicio).toISOString(),
+                  dataHoraFim: dataFim ? new Date(dataFim).toISOString() : null,
+                  local: local || null,
+                };
+
+                const response = await apiRequest(
+                  "/api/dashboard-rh/atividades",
+                  {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                  }
+                );
+
+                if (response.ok) {
+                  alert("Atividade criada com sucesso!");
+                  bootstrap.Modal.getInstance(
+                    document.getElementById("modalCriarAtividade")
+                  ).hide();
+                  document.getElementById("formCriarAtividade").reset();
+                  carregarAtividades();
+                  if (userRole === "RH") {
+                    carregarDashboard();
+                  }
+                } else {
+                  const errorData = await response
+                    .json()
+                    .catch(() => ({ message: "Erro desconhecido" }));
+                  const errorMessage =
+                    errorData.message ||
+                    errorData.details?.[0] ||
+                    "Não foi possível criar a atividade";
+                  alert("Erro: " + errorMessage);
+                  console.error("Erro ao criar atividade:", errorData);
+                }
+              } catch (error) {
+                console.error("Erro ao criar atividade:", error);
+                alert("Erro ao criar atividade: " + error.message);
+              }
+            });
+          }
+
+          // Registrar humor
+          const humorNivel = document.getElementById("humorNivel");
+          if (humorNivel) {
+            humorNivel.addEventListener("input", (e) => {
+              const humorNivelDisplay =
+                document.getElementById("humorNivelDisplay");
+              if (humorNivelDisplay) {
+                humorNivelDisplay.textContent = e.target.value;
+              }
+            });
+          }
+
+          const btnSalvarHumor = document.getElementById("btnSalvarHumor");
+          if (btnSalvarHumor) {
+            btnSalvarHumor.addEventListener("click", async () => {
+              const nivel = parseInt(
+                document.getElementById("humorNivel").value
+              );
+              const setor = document.getElementById("humorSetor").value;
+              const observacoes =
+                document.getElementById("humorObservacoes").value;
+
+              try {
+                const response = await apiRequest("/api/dashboard-rh/humor", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    nivelHumor: nivel,
+                    setor: setor || null,
+                    observacoes: observacoes || null,
+                  }),
+                });
+
+                if (response.ok) {
+                  alert("Humor registrado com sucesso!");
+                  bootstrap.Modal.getInstance(
+                    document.getElementById("modalRegistrarHumor")
+                  ).hide();
+                  document.getElementById("formRegistrarHumor").reset();
+                  document.getElementById("humorNivelDisplay").textContent =
+                    "3";
+                  if (userRole === "RH") {
+                    carregarDashboard();
+                    carregarRegistrosHumor();
+                  }
+                } else {
+                  const error = await response.json();
+                  alert(
+                    "Erro: " +
+                      (error.message || "Não foi possível registrar o humor")
+                  );
+                }
+              } catch (error) {
+                console.error("Erro ao registrar humor:", error);
+                alert("Erro ao registrar humor");
+              }
+            });
+          }
+
+          // Botão para registrar humor (visível para todos)
+          const btnRegistrarHumor = document.createElement("button");
+          btnRegistrarHumor.className = "btn btn-primary btn-sm";
+          btnRegistrarHumor.textContent = "Registrar Humor";
+          btnRegistrarHumor.onclick = () => {
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalRegistrarHumor")
+            );
+            modal.show();
+          };
+          const headerContainer = document.querySelector("header .d-flex");
+          if (headerContainer) {
+            headerContainer.appendChild(btnRegistrarHumor);
+          }
+
+          // Carregar registros de humor (apenas RH)
+          async function carregarRegistrosHumor() {
+            if (userRole !== "RH") return;
+
+            try {
+              const response = await apiRequest(
+                "/api/dashboard-rh/humor/registros"
+              );
+              const registros = await response.json();
+              renderizarRegistrosHumor(registros);
+            } catch (error) {
+              console.error("Erro ao carregar registros de humor:", error);
+            }
+          }
+
+          // Renderizar registros de humor
+          function renderizarRegistrosHumor(registros) {
+            const container = document.getElementById(
+              "registrosHumorContainer"
+            );
+            if (registros.length === 0) {
+              container.innerHTML =
+                "<p class='text-muted'>Nenhum registro de humor encontrado.</p>";
+              return;
+            }
+
+            const html = registros
+              .map((registro) => {
+                const dataRegistro = new Date(
+                  registro.createdAt
+                ).toLocaleString("pt-BR");
+                const nivelClass =
+                  registro.nivelHumor < 2.5
+                    ? "danger"
+                    : registro.nivelHumor < 3.5
+                    ? "warning"
+                    : "success";
+
+                return `
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
               <div>
                 <strong>${registro.nomeUsuario}</strong>
@@ -1095,60 +1355,93 @@
               </div>
               <div class="text-end">
                 <span class="badge bg-${nivelClass}">${
-                registro.nivelHumor
-              }/5</span>
+                  registro.nivelHumor
+                }/5</span>
               </div>
             </div>
           `;
-            })
-            .join("");
-          container.innerHTML = html;
-        }
-
-        // Ver participantes de atividade
-        async function verParticipantes(atividadeId) {
-          try {
-            const response = await apiRequest(
-              `/api/dashboard-rh/atividades/${atividadeId}/participantes`
-            );
-            const participantes = await response.json();
-
-            if (participantes.length === 0) {
-              alert("Nenhum participante ainda.");
-              return;
-            }
-
-            const lista = participantes
-              .map((p) => `• ${p.nomeUsuario} (${p.emailUsuario})`)
-              .join("\n");
-            alert(`Participantes:\n\n${lista}`);
-          } catch (error) {
-            console.error("Erro ao carregar participantes:", error);
-            alert("Erro ao carregar participantes");
+              })
+              .join("");
+            container.innerHTML = html;
           }
-        }
 
-        // Expor funções no escopo global para uso em onclick
-        window.responderEnquete = responderEnquete;
-        window.participarAtividade = participarAtividade;
-        window.verParticipantes = verParticipantes;
+          // Ver participantes de atividade
+          async function verParticipantes(atividadeId) {
+            try {
+              const response = await apiRequest(
+                `/api/dashboard-rh/atividades/${atividadeId}/participantes`
+              );
+              const participantes = await response.json();
 
-        // Carregar dados iniciais
-        if (userRole === "RH") {
-          carregarDashboard();
-        }
-        // Sempre carregar enquetes e atividades para RH e FUNCIONARIO
-        carregarEnquetes();
-        carregarAtividades();
+              if (participantes.length === 0) {
+                alert("Nenhum participante ainda.");
+                return;
+              }
 
-        // Atualizar a cada 30 segundos
-        setInterval(() => {
+              const lista = participantes
+                .map((p) => `• ${p.nomeUsuario} (${p.emailUsuario})`)
+                .join("\n");
+              alert(`Participantes:\n\n${lista}`);
+            } catch (error) {
+              console.error("Erro ao carregar participantes:", error);
+              alert("Erro ao carregar participantes");
+            }
+          }
+
+          // Funções para gerenciar opções ao criar enquete
+          function adicionarOpcao() {
+            const container = document.getElementById("opcoesContainer");
+            const div = document.createElement("div");
+            div.className = "input-group mb-2";
+            div.innerHTML = `
+            <input type="text" class="form-control opcao-input" placeholder="Ex: Nova opção" />
+            <button type="button" class="btn btn-outline-danger" onclick="removerOpcao(this)">Remover</button>
+          `;
+            container.appendChild(div);
+          }
+
+          function removerOpcao(btn) {
+            const container = document.getElementById("opcoesContainer");
+            if (container.children.length > 1) {
+              btn.closest(".input-group").remove();
+            } else {
+              alert("Você precisa ter pelo menos uma opção");
+            }
+          }
+
+          // Expor funções no escopo global para uso em onclick
+          window.responderEnquete = responderEnquete;
+          window.participarAtividade = participarAtividade;
+          window.verParticipantes = verParticipantes;
+          window.adicionarOpcao = adicionarOpcao;
+          window.removerOpcao = removerOpcao;
+
+          // Carregar dados iniciais
           if (userRole === "RH") {
             carregarDashboard();
-            carregarRegistrosHumor();
           }
+          // Sempre carregar enquetes e atividades para RH e FUNCIONARIO
           carregarEnquetes();
           carregarAtividades();
+        } catch (error) {
+          console.error("Erro ao inicializar dashboard RH:", error);
+          alert(
+            "Erro ao carregar o dashboard. Verifique o console para mais detalhes."
+          );
+        }
+
+        // Atualizar a cada 30 segundos (fora do try-catch para evitar erros)
+        setInterval(() => {
+          try {
+            if (userRole === "RH") {
+              carregarDashboard();
+              carregarRegistrosHumor();
+            }
+            carregarEnquetes();
+            carregarAtividades();
+          } catch (error) {
+            console.error("Erro ao atualizar dados:", error);
+          }
         }, 30000);
       })(); // Fechar função async auto-executável
     </script>

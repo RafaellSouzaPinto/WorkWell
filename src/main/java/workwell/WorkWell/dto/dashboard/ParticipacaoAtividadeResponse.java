@@ -7,6 +7,7 @@ public record ParticipacaoAtividadeResponse(
 	UUID id,
 	UUID atividadeId,
 	UUID usuarioId,
+	Boolean vaiParticipar,
 	LocalDateTime createdAt
 ) {
 }

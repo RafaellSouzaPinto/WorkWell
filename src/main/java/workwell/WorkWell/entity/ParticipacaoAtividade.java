@@ -35,6 +35,9 @@ public class ParticipacaoAtividade {
 	@JoinColumn(name = "usuario_id", nullable = false)
 	private Usuario usuario;
 
+	@jakarta.persistence.Column(name = "vai_participar", nullable = false)
+	private Boolean vaiParticipar;
+
 	@jakarta.persistence.Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
@@ -82,6 +85,14 @@ public class ParticipacaoAtividade {
 
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public Boolean getVaiParticipar() {
+		return vaiParticipar;
+	}
+
+	public void setVaiParticipar(Boolean vaiParticipar) {
+		this.vaiParticipar = vaiParticipar;
 	}
 }
 

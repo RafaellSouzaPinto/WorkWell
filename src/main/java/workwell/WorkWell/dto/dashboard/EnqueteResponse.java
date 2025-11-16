@@ -14,7 +14,8 @@ public record EnqueteResponse(
 	Long totalUsuarios,
 	Double taxaResposta,
 	List<RespostaEstatisticaResponse> estatisticas,
-	Boolean jaRespondeu
+	Boolean jaRespondeu,
+	List<String> opcoesResposta
 ) {
 }
 

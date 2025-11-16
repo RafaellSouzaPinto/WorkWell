@@ -190,11 +190,11 @@
         userRole || "Usuário"
       }`;
 
-      // Mostrar card do Dashboard RH apenas para RH e FUNCIONARIO
-      if (userRole === "RH" || userRole === "FUNCIONARIO") {
+      // Mostrar card do Dashboard RH APENAS para RH
+      if (userRole === "RH") {
         document.getElementById("cardDashboardRh").style.display = "block";
       } else {
-        // Ocultar card se não for RH ou FUNCIONARIO
+        // Ocultar card se não for RH
         document.getElementById("cardDashboardRh").style.display = "none";
       }
 

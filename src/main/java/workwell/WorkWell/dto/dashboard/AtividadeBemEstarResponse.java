@@ -18,6 +18,7 @@ public record AtividadeBemEstarResponse(
 	Long totalUsuarios,
 	Double taxaParticipacao,
 	Boolean jaParticipou,
+	Boolean vaiParticipar,
 	List<ParticipanteAtividadeResponse> participantes
 ) {
 }
