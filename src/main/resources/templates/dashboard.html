@@ -212,6 +212,79 @@
             </div>
           </div>
 
+          <!-- Avaliações Profundas para Funcionários -->
+          <div
+            class="row mb-4"
+            id="secaoAvaliacoesProfundasFuncionario"
+            style="display: none"
+          >
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">📋 Avaliações Profundas (NR-1)</h5>
+                </div>
+                <div class="card-body">
+                  <p class="text-muted small mb-3">
+                    Avaliações semanais de saúde ocupacional conforme NR-1.
+                    Responda às avaliações disponíveis para contribuir com seu
+                    bem-estar.
+                  </p>
+                  <div
+                    class="row g-4"
+                    id="avaliacoesProfundasFuncionarioContainer"
+                  >
+                    <div class="col-12">
+                      <div class="text-center text-muted py-4">
+                        <p class="mb-0">Carregando avaliações...</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Avaliações Profundas (NR-1) - Apenas para PSICOLOGO -->
+          <div
+            class="row mb-4"
+            id="secaoAvaliacoesProfundas"
+            style="display: none"
+          >
+            <div class="col-12">
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h2 class="h4 fw-bold mb-0">📋 Avaliações Profundas (NR-1)</h2>
+                <button class="btn btn-primary" id="btnCriarAvaliacaoProfunda">
+                  <strong>+ Nova Avaliação</strong>
+                </button>
+              </div>
+              <p class="text-muted small mb-3">
+                Crie avaliações semanais para monitoramento de saúde ocupacional
+                conforme NR-1. Relatórios confidenciais com respostas detalhadas
+                e análises estatísticas.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="row g-4 mb-5"
+            id="avaliacoesProfundasContainer"
+            style="display: none"
+          ></div>
+
+          <!-- Minhas Avaliações Criadas - Apenas para PSICOLOGO -->
+          <div
+            class="row mb-4"
+            id="secaoMinhasAvaliacoes"
+            style="display: none"
+          >
+            <div class="col-12">
+              <h2 class="h4 fw-bold mb-3">📊 Minhas Avaliações Criadas</h2>
+              <div class="row g-4 mb-5" id="minhasAvaliacoesContainer"></div>
+            </div>
+          </div>
+
           <!-- Cards de Acesso Rápido -->
           <div class="row g-4">
             <div class="col-md-6 col-lg-4">
@@ -265,6 +338,179 @@
           </p>
         </div>
       </footer>
+    </div>
+
+    <!-- Modal Criar Avaliação Profunda -->
+    <div class="modal fade" id="modalCriarAvaliacaoProfunda" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Criar Nova Avaliação Profunda (NR-1)</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formCriarAvaliacaoProfunda">
+              <div class="mb-3">
+                <label class="form-label">Título da Avaliação</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="avaliacaoTitulo"
+                  required
+                  placeholder="Ex: Avaliação Semanal de Bem-Estar - Semana 1"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea
+                  class="form-control"
+                  id="avaliacaoDescricao"
+                  rows="3"
+                  placeholder="Descreva o objetivo desta avaliação..."
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Perguntas</label>
+                <div id="perguntasContainer">
+                  <div class="card mb-3 pergunta-item">
+                    <div class="card-body">
+                      <div class="row mb-2">
+                        <div class="col-md-8">
+                          <input
+                            type="text"
+                            class="form-control pergunta-texto"
+                            placeholder="Digite a pergunta..."
+                            required
+                          />
+                        </div>
+                        <div class="col-md-4">
+                          <select class="form-select pergunta-tipo" required>
+                            <option value="TEXTO">Texto Livre</option>
+                            <option value="NUMERICO">Numérico (1-10)</option>
+                            <option value="ESCOLHA">Escolha Única</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="opcoes-escolha" style="display: none">
+                        <label class="form-label small"
+                          >Opções de Resposta</label
+                        >
+                        <div class="opcoes-container">
+                          <div class="input-group mb-2">
+                            <input
+                              type="text"
+                              class="form-control opcao-input"
+                              placeholder="Opção 1"
+                            />
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger btn-sm"
+                              onclick="removerOpcaoEscolha(this)"
+                            >
+                              Remover
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary"
+                          onclick="adicionarOpcaoEscolha(this)"
+                        >
+                          + Adicionar Opção
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger mt-2"
+                        onclick="removerPergunta(this)"
+                      >
+                        Remover Pergunta
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  onclick="adicionarPergunta()"
+                >
+                  + Adicionar Pergunta
+                </button>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Data/Hora de Início</label>
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="avaliacaoDataInicio"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Data/Hora de Término</label>
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="avaliacaoDataFim"
+                    required
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnSalvarAvaliacaoProfunda"
+            >
+              Criar Avaliação
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ver Relatório -->
+    <div class="modal fade" id="modalVerRelatorio" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalRelatorioTitulo">
+              Relatório Confidencial
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="relatorioContainer"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Registrar Humor -->
@@ -335,6 +581,59 @@
       </div>
     </div>
 
+    <!-- Modal Responder Avaliação Profunda -->
+    <div class="modal fade" id="modalResponderAvaliacaoProfunda" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalResponderAvaliacaoTitulo">
+              Responder Avaliação Profunda
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formResponderAvaliacaoProfunda">
+              <div class="mb-3">
+                <p class="text-muted" id="modalResponderAvaliacaoDescricao"></p>
+              </div>
+              <div id="respostasContainer"></div>
+              <div class="mb-3">
+                <label class="form-label"
+                  >Observações Adicionais (opcional)</label
+                >
+                <textarea
+                  class="form-control"
+                  id="avaliacaoObservacoes"
+                  rows="3"
+                  placeholder="Adicione qualquer observação adicional..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnSalvarRespostaAvaliacaoProfunda"
+            >
+              Enviar Respostas
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const token = localStorage.getItem("token");
@@ -348,9 +647,9 @@
         userRole || "Usuário"
       }`;
 
-      // Ocultar todas as seções para PSICOLOGO, exceto Espaço de Apoio
+      // Configurar seções para PSICOLOGO
       if (userRole === "PSICOLOGO") {
-        // Ocultar seções
+        // Ocultar seções de funcionário
         document.getElementById("notificacoesContainer").style.display = "none";
         document.getElementById("secaoTituloSaudacao").style.display = "none";
         document.getElementById("secaoFrequencia").style.display = "none";
@@ -358,6 +657,20 @@
         document.getElementById("secaoHistorico").style.display = "none";
         document.getElementById("cardMoodCheck").style.display = "none";
         document.getElementById("cardDashboardRh").style.display = "none";
+
+        // Mostrar seções de avaliações profundas
+        document.getElementById("secaoAvaliacoesProfundas").style.display =
+          "block";
+        document.getElementById("avaliacoesProfundasContainer").style.display =
+          "block";
+        document.getElementById("secaoMinhasAvaliacoes").style.display =
+          "block";
+      } else if (userRole === "FUNCIONARIO") {
+        // Mostrar seção de avaliações profundas para funcionários
+        document.getElementById(
+          "secaoAvaliacoesProfundasFuncionario"
+        ).style.display = "block";
+        carregarAvaliacoesProfundasFuncionario();
       } else {
         // Mostrar card do Dashboard RH APENAS para RH
         if (userRole === "RH") {
@@ -771,8 +1084,702 @@
           }
         });
 
-      // Carregar dados iniciais apenas se não for psicólogo
-      if (userRole !== "PSICOLOGO") {
+      // ========== AVALIAÇÕES PROFUNDAS ==========
+      let avaliacaoAtual = null;
+
+      // Carregar avaliações profundas para funcionários
+      async function carregarAvaliacoesProfundasFuncionario() {
+        if (userRole !== "FUNCIONARIO") return;
+        try {
+          const response = await apiRequest("/api/avaliacoes-profundas");
+          if (response.ok) {
+            const avaliacoes = await response.json();
+            const container = document.getElementById(
+              "avaliacoesProfundasFuncionarioContainer"
+            );
+            if (!container) return;
+
+            if (avaliacoes.length === 0) {
+              container.innerHTML = `
+                <div class="col-12">
+                  <div class="alert alert-info">
+                    Nenhuma avaliação profunda disponível no momento.
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            const html = avaliacoes
+              .map((avaliacao) => {
+                const dataInicio = new Date(
+                  avaliacao.dataInicio
+                ).toLocaleString("pt-BR");
+                const dataFim = new Date(avaliacao.dataFim).toLocaleString(
+                  "pt-BR"
+                );
+                const agora = new Date();
+                const inicio = new Date(avaliacao.dataInicio);
+                const fim = new Date(avaliacao.dataFim);
+                const podeResponder =
+                  agora >= inicio && agora <= fim && !avaliacao.jaRespondeu;
+
+                return `
+                  <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                      <div class="card-body">
+                        <h5 class="card-title">${avaliacao.titulo}</h5>
+                        <p class="card-text text-muted small">${
+                          avaliacao.descricao || "Sem descrição"
+                        }</p>
+                        <div class="mb-2">
+                          <small class="text-muted">
+                            <strong>Início:</strong> ${dataInicio}<br>
+                            <strong>Término:</strong> ${dataFim}
+                          </small>
+                        </div>
+                        ${
+                          avaliacao.jaRespondeu
+                            ? `<div class="alert alert-success small mb-2">
+                                <i class="bi bi-check-circle"></i> Você já respondeu esta avaliação
+                              </div>
+                              <button class="btn btn-secondary btn-sm w-100" disabled>
+                                Já Respondida
+                              </button>`
+                            : podeResponder
+                            ? `<button class="btn btn-primary btn-sm w-100" onclick="abrirModalResponderAvaliacao('${avaliacao.id}')">
+                                Responder Avaliação
+                              </button>`
+                            : `<div class="alert alert-warning small mb-2">
+                                ${
+                                  agora < inicio
+                                    ? "Avaliação ainda não iniciada"
+                                    : "Avaliação encerrada"
+                                }
+                              </div>
+                              <button class="btn btn-secondary btn-sm w-100" disabled>
+                                Indisponível
+                              </button>`
+                        }
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar avaliações profundas:", error);
+          const container = document.getElementById(
+            "avaliacoesProfundasFuncionarioContainer"
+          );
+          if (container) {
+            container.innerHTML = `
+              <div class="col-12">
+                <div class="alert alert-danger">
+                  Erro ao carregar avaliações. Tente novamente mais tarde.
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // Carregar avaliações profundas (psicólogo)
+      async function carregarAvaliacoesProfundas() {
+        if (userRole !== "PSICOLOGO") return;
+        try {
+          const response = await apiRequest("/api/avaliacoes-profundas");
+          if (response.ok) {
+            const avaliacoes = await response.json();
+            const container = document.getElementById(
+              "avaliacoesProfundasContainer"
+            );
+            if (!container) return;
+
+            if (avaliacoes.length === 0) {
+              container.innerHTML = `
+                <div class="col-12">
+                  <div class="alert alert-info">
+                    Nenhuma avaliação profunda disponível no momento.
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            const html = avaliacoes
+              .map((avaliacao) => {
+                const dataInicio = new Date(
+                  avaliacao.dataInicio
+                ).toLocaleString("pt-BR");
+                const dataFim = new Date(avaliacao.dataFim).toLocaleString(
+                  "pt-BR"
+                );
+
+                return `
+                  <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                      <div class="card-body">
+                        <h5 class="card-title">${avaliacao.titulo}</h5>
+                        <p class="card-text text-muted small">${
+                          avaliacao.descricao || "Sem descrição"
+                        }</p>
+                        <div class="mb-2">
+                          <small class="text-muted">
+                            <strong>Início:</strong> ${dataInicio}<br>
+                            <strong>Término:</strong> ${dataFim}
+                          </small>
+                        </div>
+                        <div class="mb-2">
+                          <small class="text-muted">
+                            ${avaliacao.totalRespostas} de ${
+                  avaliacao.totalUsuarios
+                } respostas
+                            (${(avaliacao.taxaResposta * 100).toFixed(1)}%)
+                          </small>
+                        </div>
+                        <button class="btn btn-info btn-sm w-100" onclick="verRelatorio('${
+                          avaliacao.id
+                        }')">
+                          Ver Relatório
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar avaliações profundas:", error);
+        }
+      }
+
+      // Carregar minhas avaliações (psicólogo)
+      async function carregarMinhasAvaliacoes() {
+        if (userRole !== "PSICOLOGO") return;
+        try {
+          const response = await apiRequest("/api/avaliacoes-profundas/minhas");
+          if (response.ok) {
+            const avaliacoes = await response.json();
+            const container = document.getElementById(
+              "minhasAvaliacoesContainer"
+            );
+            if (!container) return;
+
+            if (avaliacoes.length === 0) {
+              container.innerHTML = `
+                <div class="col-12">
+                  <div class="alert alert-info">
+                    Você ainda não criou nenhuma avaliação profunda.
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            const html = avaliacoes
+              .map((avaliacao) => {
+                const dataInicio = new Date(
+                  avaliacao.dataInicio
+                ).toLocaleString("pt-BR");
+                const dataFim = new Date(avaliacao.dataFim).toLocaleString(
+                  "pt-BR"
+                );
+                const ativa = avaliacao.ativa ? "Ativa" : "Inativa";
+
+                return `
+                  <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                      <div class="card-body">
+                        <h5 class="card-title">${avaliacao.titulo}</h5>
+                        <p class="card-text text-muted small">${
+                          avaliacao.descricao || "Sem descrição"
+                        }</p>
+                        <div class="mb-2">
+                          <span class="badge ${
+                            avaliacao.ativa ? "bg-success" : "bg-secondary"
+                          }">${ativa}</span>
+                        </div>
+                        <div class="mb-2">
+                          <small class="text-muted">
+                            <strong>Início:</strong> ${dataInicio}<br>
+                            <strong>Término:</strong> ${dataFim}
+                          </small>
+                        </div>
+                        <div class="mb-2">
+                          <small class="text-muted">
+                            ${avaliacao.totalRespostas} de ${
+                  avaliacao.totalUsuarios
+                } respostas
+                            (${(avaliacao.taxaResposta * 100).toFixed(1)}%)
+                          </small>
+                        </div>
+                        <button class="btn btn-info btn-sm w-100" onclick="verRelatorio('${
+                          avaliacao.id
+                        }')">
+                          Ver Relatório Confidencial
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar minhas avaliações:", error);
+        }
+      }
+
+      // Criar avaliação profunda
+      const btnCriarAvaliacaoProfunda = document.getElementById(
+        "btnCriarAvaliacaoProfunda"
+      );
+      if (btnCriarAvaliacaoProfunda) {
+        btnCriarAvaliacaoProfunda.addEventListener("click", () => {
+          const modal = new bootstrap.Modal(
+            document.getElementById("modalCriarAvaliacaoProfunda")
+          );
+          modal.show();
+        });
+      }
+
+      // Salvar avaliação profunda
+      const btnSalvarAvaliacaoProfunda = document.getElementById(
+        "btnSalvarAvaliacaoProfunda"
+      );
+      if (btnSalvarAvaliacaoProfunda) {
+        btnSalvarAvaliacaoProfunda.addEventListener("click", async () => {
+          const titulo = document.getElementById("avaliacaoTitulo").value;
+          const descricao = document.getElementById("avaliacaoDescricao").value;
+          const dataInicio = document.getElementById(
+            "avaliacaoDataInicio"
+          ).value;
+          const dataFim = document.getElementById("avaliacaoDataFim").value;
+
+          if (!titulo || !dataInicio || !dataFim) {
+            alert("Por favor, preencha os campos obrigatórios");
+            return;
+          }
+
+          // Coletar perguntas
+          const perguntasItems = document.querySelectorAll(".pergunta-item");
+          const perguntas = [];
+          let perguntaId = 1;
+
+          for (const item of perguntasItems) {
+            const texto = item.querySelector(".pergunta-texto").value;
+            const tipo = item.querySelector(".pergunta-tipo").value;
+
+            if (!texto || !tipo) {
+              alert("Por favor, preencha todas as perguntas");
+              return;
+            }
+
+            const pergunta = {
+              id: perguntaId++,
+              pergunta: texto,
+              tipo: tipo,
+            };
+
+            if (tipo === "ESCOLHA") {
+              const opcoes = Array.from(item.querySelectorAll(".opcao-input"))
+                .map((input) => input.value)
+                .filter((val) => val.trim() !== "");
+
+              if (opcoes.length < 2) {
+                alert("Perguntas de escolha devem ter pelo menos 2 opções");
+                return;
+              }
+              pergunta.opcoes = opcoes;
+            }
+
+            perguntas.push(pergunta);
+          }
+
+          if (perguntas.length === 0) {
+            alert("Adicione pelo menos uma pergunta");
+            return;
+          }
+
+          try {
+            const body = {
+              titulo: titulo,
+              descricao: descricao,
+              perguntas: perguntas,
+              dataInicio: dataInicio,
+              dataFim: dataFim,
+            };
+
+            const response = await apiRequest("/api/avaliacoes-profundas", {
+              method: "POST",
+              body: JSON.stringify(body),
+            });
+
+            if (response.ok) {
+              alert("Avaliação criada com sucesso!");
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("modalCriarAvaliacaoProfunda")
+              );
+              modal.hide();
+              document.getElementById("formCriarAvaliacaoProfunda").reset();
+              document.getElementById("perguntasContainer").innerHTML = `
+                <div class="card mb-3 pergunta-item">
+                  <div class="card-body">
+                    <div class="row mb-2">
+                      <div class="col-md-8">
+                        <input type="text" class="form-control pergunta-texto" placeholder="Digite a pergunta..." required />
+                      </div>
+                      <div class="col-md-4">
+                        <select class="form-select pergunta-tipo" required>
+                          <option value="TEXTO">Texto Livre</option>
+                          <option value="NUMERICO">Numérico (1-10)</option>
+                          <option value="ESCOLHA">Escolha Única</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="opcoes-escolha" style="display: none">
+                      <label class="form-label small">Opções de Resposta</label>
+                      <div class="opcoes-container">
+                        <div class="input-group mb-2">
+                          <input type="text" class="form-control opcao-input" placeholder="Opção 1" />
+                          <button type="button" class="btn btn-outline-danger btn-sm" onclick="removerOpcaoEscolha(this)">Remover</button>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarOpcaoEscolha(this)">+ Adicionar Opção</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removerPergunta(this)">Remover Pergunta</button>
+                  </div>
+                </div>
+              `;
+              carregarAvaliacoesProfundas();
+              carregarMinhasAvaliacoes();
+            } else {
+              const error = await response.json();
+              alert(
+                "Erro: " +
+                  (error.message || "Não foi possível criar a avaliação")
+              );
+            }
+          } catch (error) {
+            console.error("Erro ao criar avaliação:", error);
+            alert("Erro ao criar avaliação");
+          }
+        });
+      }
+
+      // Ver relatório
+      window.verRelatorio = async function (avaliacaoId) {
+        try {
+          const response = await apiRequest(
+            `/api/avaliacoes-profundas/${avaliacaoId}/relatorio`
+          );
+          if (response.ok) {
+            const relatorio = await response.json();
+            document.getElementById(
+              "modalRelatorioTitulo"
+            ).textContent = `Relatório: ${relatorio.titulo}`;
+
+            const container = document.getElementById("relatorioContainer");
+            container.innerHTML = `
+              <div class="mb-4">
+                <h6>Informações Gerais</h6>
+                <p class="text-muted">${
+                  relatorio.descricao || "Sem descrição"
+                }</p>
+                <p><strong>Período:</strong> ${new Date(
+                  relatorio.dataInicio
+                ).toLocaleString("pt-BR")} até ${new Date(
+              relatorio.dataFim
+            ).toLocaleString("pt-BR")}</p>
+                <p><strong>Total de Respostas:</strong> ${
+                  relatorio.totalRespostas
+                } de ${relatorio.totalUsuarios} funcionários (${(
+              relatorio.taxaResposta * 100
+            ).toFixed(1)}%)</p>
+              </div>
+              
+              <div class="mb-4">
+                <h6>Respostas Detalhadas</h6>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Funcionário</th>
+                        <th>Email</th>
+                        <th>Respostas</th>
+                        <th>Observações</th>
+                        <th>Data</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${relatorio.respostasDetalhadas
+                        .map(
+                          (r) => `
+                        <tr>
+                          <td>${r.nomeUsuario}</td>
+                          <td>${r.emailUsuario}</td>
+                          <td><pre class="small">${JSON.stringify(
+                            r.respostas,
+                            null,
+                            2
+                          )}</pre></td>
+                          <td>${r.observacoes || "-"}</td>
+                          <td>${new Date(r.createdAt).toLocaleString(
+                            "pt-BR"
+                          )}</td>
+                        </tr>
+                      `
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              ${
+                relatorio.analiseEstatistica
+                  ? `
+                <div class="mb-4">
+                  <h6>Análise Estatística</h6>
+                  <pre class="bg-light p-3 rounded">${JSON.stringify(
+                    relatorio.analiseEstatistica,
+                    null,
+                    2
+                  )}</pre>
+                </div>
+              `
+                  : ""
+              }
+            `;
+
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalVerRelatorio")
+            );
+            modal.show();
+          } else {
+            const error = await response.json();
+            alert(
+              "Erro: " +
+                (error.message || "Não foi possível carregar o relatório")
+            );
+          }
+        } catch (error) {
+          console.error("Erro ao carregar relatório:", error);
+          alert("Erro ao carregar relatório");
+        }
+      };
+
+      // Funções auxiliares para gerenciar perguntas
+      window.adicionarPergunta = function () {
+        const container = document.getElementById("perguntasContainer");
+        const div = document.createElement("div");
+        div.className = "card mb-3 pergunta-item";
+        div.innerHTML = `
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-md-8">
+                <input type="text" class="form-control pergunta-texto" placeholder="Digite a pergunta..." required />
+              </div>
+              <div class="col-md-4">
+                <select class="form-select pergunta-tipo" required onchange="toggleOpcoesEscolha(this)">
+                  <option value="TEXTO">Texto Livre</option>
+                  <option value="NUMERICO">Numérico (1-10)</option>
+                  <option value="ESCOLHA">Escolha Única</option>
+                </select>
+              </div>
+            </div>
+            <div class="opcoes-escolha" style="display: none">
+              <label class="form-label small">Opções de Resposta</label>
+              <div class="opcoes-container">
+                <div class="input-group mb-2">
+                  <input type="text" class="form-control opcao-input" placeholder="Opção 1" />
+                  <button type="button" class="btn btn-outline-danger btn-sm" onclick="removerOpcaoEscolha(this)">Remover</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarOpcaoEscolha(this)">+ Adicionar Opção</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removerPergunta(this)">Remover Pergunta</button>
+          </div>
+        `;
+        container.appendChild(div);
+      };
+
+      window.removerPergunta = function (btn) {
+        const container = document.getElementById("perguntasContainer");
+        if (container.children.length > 1) {
+          btn.closest(".pergunta-item").remove();
+        } else {
+          alert("Você precisa ter pelo menos uma pergunta");
+        }
+      };
+
+      window.toggleOpcoesEscolha = function (select) {
+        const item = select.closest(".pergunta-item");
+        const opcoesDiv = item.querySelector(".opcoes-escolha");
+        if (select.value === "ESCOLHA") {
+          opcoesDiv.style.display = "block";
+        } else {
+          opcoesDiv.style.display = "none";
+        }
+      };
+
+      window.adicionarOpcaoEscolha = function (btn) {
+        const container = btn.previousElementSibling;
+        const div = document.createElement("div");
+        div.className = "input-group mb-2";
+        div.innerHTML = `
+          <input type="text" class="form-control opcao-input" placeholder="Nova opção" />
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="removerOpcaoEscolha(this)">Remover</button>
+        `;
+        container.appendChild(div);
+      };
+
+      window.removerOpcaoEscolha = function (btn) {
+        const container = btn.closest(".opcoes-container");
+        if (container.children.length > 1) {
+          btn.closest(".input-group").remove();
+        } else {
+          alert("Você precisa ter pelo menos uma opção");
+        }
+      };
+
+      // Abrir modal para responder avaliação
+      window.abrirModalResponderAvaliacao = async function (avaliacaoId) {
+        try {
+          const response = await apiRequest("/api/avaliacoes-profundas");
+          if (response.ok) {
+            const avaliacoes = await response.json();
+            const avaliacao = avaliacoes.find((a) => a.id === avaliacaoId);
+
+            if (!avaliacao) {
+              alert("Avaliação não encontrada");
+              return;
+            }
+
+            avaliacaoAtual = avaliacao;
+            document.getElementById(
+              "modalResponderAvaliacaoTitulo"
+            ).textContent = avaliacao.titulo;
+            document.getElementById(
+              "modalResponderAvaliacaoDescricao"
+            ).textContent = avaliacao.descricao || "";
+
+            // Criar campos de resposta
+            const container = document.getElementById("respostasContainer");
+            container.innerHTML = avaliacao.perguntas
+              .map((pergunta, index) => {
+                let inputHtml = "";
+
+                if (pergunta.tipo === "TEXTO") {
+                  inputHtml = `<textarea class="form-control" id="resposta_${pergunta.id}" rows="3" required></textarea>`;
+                } else if (pergunta.tipo === "NUMERICO") {
+                  inputHtml = `<input type="number" class="form-control" id="resposta_${pergunta.id}" min="1" max="10" required />`;
+                } else if (pergunta.tipo === "ESCOLHA") {
+                  const opcoes = pergunta.opcoes || [];
+                  inputHtml = `<select class="form-select" id="resposta_${
+                    pergunta.id
+                  }" required>
+                  <option value="">Selecione...</option>
+                  ${opcoes
+                    .map((op) => `<option value="${op}">${op}</option>`)
+                    .join("")}
+                </select>`;
+                }
+
+                return `
+                <div class="mb-3">
+                  <label class="form-label"><strong>${pergunta.pergunta}</strong></label>
+                  ${inputHtml}
+                </div>
+              `;
+              })
+              .join("");
+
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalResponderAvaliacaoProfunda")
+            );
+            modal.show();
+          }
+        } catch (error) {
+          console.error("Erro ao abrir modal de resposta:", error);
+          alert("Erro ao carregar avaliação");
+        }
+      };
+
+      // Salvar resposta da avaliação
+      const btnSalvarRespostaAvaliacaoProfunda = document.getElementById(
+        "btnSalvarRespostaAvaliacaoProfunda"
+      );
+      if (btnSalvarRespostaAvaliacaoProfunda) {
+        btnSalvarRespostaAvaliacaoProfunda.addEventListener(
+          "click",
+          async () => {
+            if (!avaliacaoAtual) return;
+
+            const respostas = {};
+            avaliacaoAtual.perguntas.forEach((pergunta) => {
+              const input = document.getElementById(`resposta_${pergunta.id}`);
+              if (input) {
+                respostas[pergunta.id] = input.value;
+              }
+            });
+
+            const observacoes = document.getElementById(
+              "avaliacaoObservacoes"
+            ).value;
+
+            try {
+              const body = {
+                avaliacaoId: avaliacaoAtual.id,
+                respostas: respostas,
+                observacoes: observacoes,
+              };
+
+              const response = await apiRequest(
+                "/api/avaliacoes-profundas/responder",
+                {
+                  method: "POST",
+                  body: JSON.stringify(body),
+                }
+              );
+
+              if (response.ok) {
+                alert("Respostas enviadas com sucesso!");
+                const modal = bootstrap.Modal.getInstance(
+                  document.getElementById("modalResponderAvaliacaoProfunda")
+                );
+                modal.hide();
+                if (userRole === "FUNCIONARIO") {
+                  carregarAvaliacoesProfundasFuncionario();
+                } else {
+                  carregarAvaliacoesProfundas();
+                }
+              } else {
+                const error = await response.json();
+                alert(
+                  "Erro: " +
+                    (error.message || "Não foi possível enviar as respostas")
+                );
+              }
+            } catch (error) {
+              console.error("Erro ao enviar respostas:", error);
+              alert("Erro ao enviar respostas");
+            }
+          }
+        );
+      }
+
+      // Carregar dados iniciais
+      if (userRole === "PSICOLOGO") {
+        carregarAvaliacoesProfundas();
+        carregarMinhasAvaliacoes();
+      } else {
         carregarFrequencia();
         carregarAgenda();
         carregarHistorico();
