@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard - WorkWell</title>
+    <title th:text="#{dashboard.title}">Dashboard - WorkWell</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -66,15 +70,24 @@
     </style>
   </head>
   <body>
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <div class="min-vh-100 d-flex flex-column">
       <!-- Header -->
       <header class="bg-white shadow-sm">
         <div class="container py-3">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 fw-bold text-primary">WorkWell</h1>
+            <h1 class="h4 mb-0 fw-bold text-primary" th:text="#{app.name}">
+              WorkWell
+            </h1>
             <div class="d-flex align-items-center gap-3">
               <span class="text-muted" id="userInfo"></span>
-              <button class="btn btn-outline-danger btn-sm" id="btnLogout">
+              <button
+                class="btn btn-outline-danger btn-sm"
+                id="btnLogout"
+                th:text="#{app.logout}"
+              >
                 Sair
               </button>
             </div>
@@ -91,8 +104,12 @@
           <!-- Título e Saudação -->
           <div class="row mb-4" id="secaoTituloSaudacao">
             <div class="col-12">
-              <h2 class="h3 fw-bold mb-2">Olá! 👋</h2>
-              <p class="text-muted">Aqui está sua agenda e progresso de hoje</p>
+              <h2 class="h3 fw-bold mb-2" th:text="#{dashboard.greeting}">
+                Olá! 👋
+              </h2>
+              <p class="text-muted" th:text="#{dashboard.subtitle}">
+                Aqui está sua agenda e progresso de hoje
+              </p>
             </div>
           </div>
 
@@ -106,12 +123,19 @@
                 <div class="card-body p-4">
                   <div class="row align-items-center">
                     <div class="col-md-8">
-                      <h5 class="card-title text-white mb-3">
+                      <h5
+                        class="card-title text-white mb-3"
+                        th:text="#{dashboard.frequency.title}"
+                      >
                         Sua Frequência de Participação
                       </h5>
                       <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
-                          <span class="text-white-50">Progresso</span>
+                          <span
+                            class="text-white-50"
+                            th:text="#{dashboard.frequency.progress}"
+                            >Progresso</span
+                          >
                           <span
                             class="text-white fw-bold"
                             id="percentualFrequencia"
@@ -141,13 +165,20 @@
                           ></div>
                         </div>
                       </div>
-                      <p class="text-white mb-0" id="mensagemMotivacional">
+                      <p
+                        class="text-white mb-0"
+                        id="mensagemMotivacional"
+                        th:text="#{dashboard.frequency.loading}"
+                      >
                         Carregando...
                       </p>
                       <small class="text-white-50 d-block mt-2">
-                        <span id="atividadesParticipadas">0</span> de
-                        <span id="totalAtividades">0</span> atividades e
-                        avaliações nos últimos 30 dias
+                        <span id="atividadesParticipadas">0</span>
+                        <span th:text="#{app.loading}">de</span>
+                        <span id="totalAtividades">0</span>
+                        <span th:text="#{dashboard.frequency.activities}"
+                          >atividades e avaliações nos últimos 30 dias</span
+                        >
                       </small>
                     </div>
                     <div class="col-md-4 text-center">
@@ -170,8 +201,15 @@
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
                   <h5 class="mb-0 fw-bold">
-                    🤖 Assistente de IA - WorkWell
-                    <span class="badge bg-primary ms-2">Beta</span>
+                    🤖
+                    <span th:text="#{dashboard.ai.title}"
+                      >Assistente de IA - WorkWell</span
+                    >
+                    <span
+                      class="badge bg-primary ms-2"
+                      th:text="#{dashboard.ai.beta}"
+                      >Beta</span
+                    >
                   </h5>
                 </div>
                 <div class="card-body">
@@ -180,14 +218,23 @@
                     <div class="col-md-6 col-lg-4">
                       <div class="card h-100 border-primary">
                         <div class="card-body">
-                          <h6 class="card-title fw-bold">💬 Chat Assistente</h6>
-                          <p class="card-text text-muted small">
+                          <h6
+                            class="card-title fw-bold"
+                            th:text="#{dashboard.ai.chat.title}"
+                          >
+                            💬 Chat Assistente
+                          </h6>
+                          <p
+                            class="card-text text-muted small"
+                            th:text="#{dashboard.ai.chat.description}"
+                          >
                             Converse com nosso assistente virtual sobre
                             bem-estar, saúde mental e questões do trabalho.
                           </p>
                           <button
                             class="btn btn-primary btn-sm w-100"
                             onclick="abrirChatIA()"
+                            th:text="#{dashboard.ai.chat.button}"
                           >
                             Abrir Chat
                           </button>
@@ -203,16 +250,23 @@
                     >
                       <div class="card h-100 border-info">
                         <div class="card-body">
-                          <h6 class="card-title fw-bold">
+                          <h6
+                            class="card-title fw-bold"
+                            th:text="#{dashboard.ai.sentiment.title}"
+                          >
                             📊 Análise de Sentimentos
                           </h6>
-                          <p class="card-text text-muted small">
+                          <p
+                            class="card-text text-muted small"
+                            th:text="#{dashboard.ai.sentiment.description}"
+                          >
                             Analise seus registros de humor e obtenha insights
                             sobre seu bem-estar emocional.
                           </p>
                           <button
                             class="btn btn-info btn-sm w-100"
                             onclick="abrirAnaliseSentimento()"
+                            th:text="#{dashboard.ai.sentiment.button}"
                           >
                             Analisar Sentimentos
                           </button>
@@ -228,16 +282,23 @@
                     >
                       <div class="card h-100 border-success">
                         <div class="card-body">
-                          <h6 class="card-title fw-bold">
+                          <h6
+                            class="card-title fw-bold"
+                            th:text="#{dashboard.ai.suggestions.title}"
+                          >
                             💡 Sugestões de Atividades
                           </h6>
-                          <p class="card-text text-muted small">
+                          <p
+                            class="card-text text-muted small"
+                            th:text="#{dashboard.ai.suggestions.description}"
+                          >
                             Receba sugestões personalizadas de atividades de
                             bem-estar baseadas no seu perfil.
                           </p>
                           <button
                             class="btn btn-success btn-sm w-100"
                             onclick="abrirSugestaoAtividade()"
+                            th:text="#{dashboard.ai.suggestions.button}"
                           >
                             Ver Sugestões
                           </button>
@@ -281,7 +342,10 @@
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
                   <h5 class="mb-0 fw-bold">
-                    📅 Agenda de Hoje
+                    📅
+                    <span th:text="#{dashboard.agenda.title}"
+                      >Agenda de Hoje</span
+                    >
                     <span class="badge bg-primary ms-2" id="totalAgenda"
                       >0</span
                     >
@@ -290,7 +354,7 @@
                 <div class="card-body">
                   <div id="agendaContainer">
                     <div class="text-center text-muted py-4">
-                      <p class="mb-0">
+                      <p class="mb-0" th:text="#{dashboard.agenda.empty}">
                         Nenhuma atividade ou consulta agendada para hoje
                       </p>
                     </div>
@@ -306,7 +370,10 @@
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
                   <h5 class="mb-0 fw-bold">
-                    📊 Histórico de Participação
+                    📊
+                    <span th:text="#{dashboard.agenda.history.title}"
+                      >Histórico de Participação</span
+                    >
                     <span class="badge bg-secondary ms-2" id="totalHistorico"
                       >0</span
                     >
@@ -315,7 +382,12 @@
                 <div class="card-body">
                   <div id="historicoContainer">
                     <div class="text-center text-muted py-4">
-                      <p class="mb-0">Carregando histórico...</p>
+                      <p
+                        class="mb-0"
+                        th:text="#{dashboard.agenda.history.loading}"
+                      >
+                        Carregando histórico...
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -328,7 +400,12 @@
             <div class="col-12">
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
-                  <h5 class="mb-0 fw-bold">📊 Enquetes Rápidas</h5>
+                  <h5
+                    class="mb-0 fw-bold"
+                    th:text="'📊 ' + #{dashboard.surveys.title}"
+                  >
+                    📊 Enquetes Rápidas
+                  </h5>
                 </div>
                 <div class="card-body">
                   <div class="row g-4" id="enquetesRapidasContainer">
@@ -352,7 +429,12 @@
             <div class="col-12">
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
-                  <h5 class="mb-0 fw-bold">💚 Atividades de Bem-Estar</h5>
+                  <h5
+                    class="mb-0 fw-bold"
+                    th:text="'💚 ' + #{dashboard.activities.title}"
+                  >
+                    💚 Atividades de Bem-Estar
+                  </h5>
                 </div>
                 <div class="card-body">
                   <div class="row g-4" id="atividadesBemEstarContainer">
@@ -376,10 +458,18 @@
             <div class="col-12">
               <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
-                  <h5 class="mb-0 fw-bold">📋 Avaliações Profundas (NR-1)</h5>
+                  <h5
+                    class="mb-0 fw-bold"
+                    th:text="'📋 ' + #{dashboard.evaluations.title}"
+                  >
+                    📋 Avaliações Profundas (NR-1)
+                  </h5>
                 </div>
                 <div class="card-body">
-                  <p class="text-muted small mb-3">
+                  <p
+                    class="text-muted small mb-3"
+                    th:text="#{dashboard.evaluations.description}"
+                  >
                     Avaliações semanais de saúde ocupacional conforme NR-1.
                     Responda às avaliações disponíveis para contribuir com seu
                     bem-estar.
@@ -409,7 +499,12 @@
               <div
                 class="d-flex justify-content-between align-items-center mb-3"
               >
-                <h2 class="h4 fw-bold mb-0">📋 Avaliações Profundas (NR-1)</h2>
+                <h2
+                  class="h4 fw-bold mb-0"
+                  th:text="'📋 ' + #{dashboard.evaluations.title}"
+                >
+                  📋 Avaliações Profundas (NR-1)
+                </h2>
                 <button class="btn btn-primary" id="btnCriarAvaliacaoProfunda">
                   <strong>+ Nova Avaliação</strong>
                 </button>
@@ -448,7 +543,10 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <h2 class="h4 fw-bold mb-0">
+                    <h2
+                      class="h4 fw-bold mb-0"
+                      th:text="'🛡️ ' + #{dashboard.complaints.title}"
+                    >
                       🛡️ Canal de Denúncias Éticas
                     </h2>
                     <span
@@ -503,11 +601,24 @@
             <div class="col-md-6 col-lg-4" id="cardEspacoApoio">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                  <h5 class="card-title">💚 Espaço de Apoio</h5>
-                  <p class="card-text text-muted">
+                  <h5
+                    class="card-title"
+                    th:text="'💚 ' + #{dashboard.support.title}"
+                  >
+                    💚 Espaço de Apoio
+                  </h5>
+                  <p
+                    class="card-text text-muted"
+                    th:text="#{dashboard.support.description}"
+                  >
                     Acesse recursos de bem-estar e suporte psicológico.
                   </p>
-                  <a href="/espaco-apoio" class="btn btn-primary">Acessar</a>
+                  <a
+                    href="/espaco-apoio"
+                    class="btn btn-primary"
+                    th:text="#{dashboard.support.access}"
+                    >Acessar</a
+                  >
                 </div>
               </div>
             </div>
@@ -529,11 +640,23 @@
             <div class="col-md-6 col-lg-4" id="cardMoodCheck">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                  <h5 class="card-title">😊 Mood Check</h5>
-                  <p class="card-text text-muted">
+                  <h5
+                    class="card-title"
+                    th:text="'😊 ' + #{dashboard.mood.title}"
+                  >
+                    😊 Mood Check
+                  </h5>
+                  <p
+                    class="card-text text-muted"
+                    th:text="#{dashboard.mood.description}"
+                  >
                     Registre como você está se sentindo hoje.
                   </p>
-                  <button class="btn btn-primary" id="btnRegistrarHumor">
+                  <button
+                    class="btn btn-primary"
+                    id="btnRegistrarHumor"
+                    th:text="#{dashboard.mood.register}"
+                  >
                     Registrar Humor
                   </button>
                 </div>
@@ -546,12 +669,24 @@
             >
               <div class="card shadow-sm border-0 h-100 border-danger">
                 <div class="card-body">
-                  <h5 class="card-title">🛡️ Canal de Denúncias Éticas</h5>
-                  <p class="card-text text-muted">
+                  <h5
+                    class="card-title"
+                    th:text="'🛡️ ' + #{dashboard.complaints.title}"
+                  >
+                    🛡️ Canal de Denúncias Éticas
+                  </h5>
+                  <p
+                    class="card-text text-muted"
+                    th:text="#{dashboard.complaints.description}"
+                  >
                     Registre denúncias de forma 100% sigilosa e independente da
                     empresa.
                   </p>
-                  <button class="btn btn-danger" id="btnRegistrarDenuncia">
+                  <button
+                    class="btn btn-danger"
+                    id="btnRegistrarDenuncia"
+                    th:text="#{dashboard.complaints.register}"
+                  >
                     Registrar Denúncia
                   </button>
                 </div>
@@ -749,7 +884,9 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Como você está se sentindo?</h5>
+            <h5 class="modal-title" th:text="#{dashboard.mood.question}">
+              Como você está se sentindo?
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -759,10 +896,12 @@
           <div class="modal-body">
             <form id="formRegistrarHumor">
               <div class="mb-3">
-                <label class="form-label">Nível de Humor (1-5)</label>
+                <label class="form-label" th:text="#{dashboard.mood.level}"
+                  >Nível de Humor (1-5)</label
+                >
                 <div class="d-flex justify-content-between mb-2">
-                  <span>Muito Ruim</span>
-                  <span>Muito Bom</span>
+                  <span th:text="#{dashboard.mood.very.bad}">Muito Ruim</span>
+                  <span th:text="#{dashboard.mood.very.good}">Muito Bom</span>
                 </div>
                 <input
                   type="range"
@@ -778,7 +917,9 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label class="form-label">Setor (opcional)</label>
+                <label class="form-label" th:text="#{dashboard.mood.sector}"
+                  >Setor (opcional)</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -787,7 +928,11 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">Observações (opcional)</label>
+                <label
+                  class="form-label"
+                  th:text="#{dashboard.mood.observations}"
+                  >Observações (opcional)</label
+                >
                 <textarea
                   class="form-control"
                   id="humorObservacoes"
@@ -801,10 +946,16 @@
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
+              th:text="#{dashboard.mood.cancel}"
             >
               Cancelar
             </button>
-            <button type="button" class="btn btn-primary" id="btnSalvarHumor">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnSalvarHumor"
+              th:text="#{dashboard.mood.submit}"
+            >
               Registrar
             </button>
           </div>
@@ -870,7 +1021,9 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">🛡️ Registrar Denúncia Ética</h5>
+            <h5 class="modal-title" th:text="'🛡️ ' + #{modal.complaint.title}">
+              🛡️ Registrar Denúncia Ética
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -879,17 +1032,26 @@
           </div>
           <div class="modal-body">
             <div class="alert alert-info">
-              <strong>Confidencialidade Garantida:</strong> Esta denúncia é 100%
-              sigilosa e será tratada com total confidencialidade. Seu anonimato
-              será preservado.
+              <strong th:text="#{modal.complaint.confidentiality} + ':'"
+                >Confidencialidade Garantida:</strong
+              >
+              <span th:text="#{modal.complaint.confidentiality.text}"
+                >Esta denúncia é 100% sigilosa e será tratada com total
+                confidencialidade. Seu anonimato será preservado.</span
+              >
             </div>
             <form id="formRegistrarDenuncia">
               <div class="mb-3">
                 <label class="form-label"
-                  >Tipo de Denúncia <span class="text-danger">*</span></label
+                  ><span th:text="#{modal.complaint.type}"
+                    >Tipo de Denúncia</span
+                  >
+                  <span class="text-danger">*</span></label
                 >
                 <select class="form-select" id="denunciaTipo" required>
-                  <option value="">Selecione o tipo...</option>
+                  <option value="" th:text="#{modal.complaint.type.select}">
+                    Selecione o tipo...
+                  </option>
                   <option value="Assédio moral">Assédio moral</option>
                   <option value="Assédio sexual">Assédio sexual</option>
                   <option value="Racismo, injúria racial e discriminação">
@@ -922,7 +1084,9 @@
               </div>
               <div class="mb-3">
                 <label class="form-label"
-                  >Descrição da Denúncia
+                  ><span th:text="#{modal.complaint.description}"
+                    >Descrição da Denúncia</span
+                  >
                   <span class="text-danger">*</span></label
                 >
                 <textarea
@@ -930,33 +1094,44 @@
                   id="denunciaDescricao"
                   rows="6"
                   required
+                  th:attr="placeholder=#{modal.complaint.description.placeholder}"
                   placeholder="Descreva detalhadamente a situação que você deseja denunciar..."
                 ></textarea>
-                <small class="text-muted"
+                <small
+                  class="text-muted"
+                  th:text="#{modal.complaint.description.help}"
                   >Seja o mais detalhado possível para facilitar a
                   análise.</small
                 >
               </div>
               <div class="mb-3">
-                <label class="form-label">Pessoas Envolvidas (opcional)</label>
+                <label class="form-label" th:text="#{modal.complaint.people}"
+                  >Pessoas Envolvidas (opcional)</label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="denunciaEnvolvidos"
+                  th:attr="placeholder=#{modal.complaint.people.placeholder}"
                   placeholder="Nomes ou cargos das pessoas envolvidas"
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">Local da Ocorrência (opcional)</label>
+                <label class="form-label" th:text="#{modal.complaint.location}"
+                  >Local da Ocorrência (opcional)</label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="denunciaLocal"
+                  th:attr="placeholder=#{modal.complaint.location.placeholder}"
                   placeholder="Ex: Escritório, Setor X, Sala Y"
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">Data da Ocorrência (opcional)</label>
+                <label class="form-label" th:text="#{modal.complaint.date}"
+                  >Data da Ocorrência (opcional)</label
+                >
                 <input
                   type="datetime-local"
                   class="form-control"
@@ -964,14 +1139,21 @@
                 />
               </div>
               <div class="mb-3">
-                <label class="form-label">Anexos (opcional)</label>
+                <label
+                  class="form-label"
+                  th:text="#{modal.complaint.attachments}"
+                  >Anexos (opcional)</label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="denunciaAnexos"
+                  th:attr="placeholder=#{modal.complaint.attachments.placeholder}"
                   placeholder="URLs ou referências de arquivos anexados"
                 />
-                <small class="text-muted"
+                <small
+                  class="text-muted"
+                  th:text="#{modal.complaint.attachments.help}"
                   >Por enquanto, cole URLs de arquivos. Em breve, upload direto
                   será disponibilizado.</small
                 >
@@ -983,10 +1165,16 @@
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
+              th:text="#{dashboard.mood.cancel}"
             >
               Cancelar
             </button>
-            <button type="button" class="btn btn-danger" id="btnSalvarDenuncia">
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="btnSalvarDenuncia"
+              th:text="#{modal.complaint.submit}"
+            >
               Enviar Denúncia
             </button>
           </div>
@@ -1043,7 +1231,9 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title">💬 Chat Assistente - WorkWell</h5>
+            <h5 class="modal-title" th:text="#{modal.chat.title}">
+              💬 Chat Assistente - WorkWell
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -1053,9 +1243,12 @@
           <div class="modal-body" style="height: 400px; overflow-y: auto">
             <div id="chatMessages" class="mb-3">
               <div class="alert alert-info">
-                <strong>Assistente:</strong> Olá! Sou o assistente virtual do
-                WorkWell. Como posso ajudá-lo hoje com questões de bem-estar,
-                saúde mental ou trabalho?
+                <strong>Assistente:</strong>
+                <span th:text="#{dashboard.ai.chat.description}"
+                  >Olá! Sou o assistente virtual do WorkWell. Como posso
+                  ajudá-lo hoje com questões de bem-estar, saúde mental ou
+                  trabalho?</span
+                >
               </div>
             </div>
             <div class="input-group">
@@ -1063,9 +1256,14 @@
                 type="text"
                 class="form-control"
                 id="chatInput"
+                th:attr="placeholder=#{modal.chat.placeholder}"
                 placeholder="Digite sua mensagem..."
               />
-              <button class="btn btn-primary" onclick="enviarMensagemChat()">
+              <button
+                class="btn btn-primary"
+                onclick="enviarMensagemChat()"
+                th:text="#{modal.chat.send}"
+              >
                 Enviar
               </button>
             </div>
@@ -1079,7 +1277,9 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header bg-info text-white">
-            <h5 class="modal-title">📊 Análise de Sentimentos</h5>
+            <h5 class="modal-title" th:text="#{modal.analysis.title}">
+              📊 Análise de Sentimentos
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -1221,9 +1421,7 @@
               >
                 <span class="visually-hidden">Carregando...</span>
               </div>
-              <p class="mt-2">
-                Gerando insights estratégicos baseados nos dados do dashboard...
-              </p>
+              <p class="mt-2">${i18n.modal.insights.loading}</p>
             </div>
             <div id="resultadoInsights" style="display: none">
               <div id="insightsConteudo"></div>
@@ -1243,7 +1441,262 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      // Traduções injetadas pelo Thymeleaf
+      const i18n = {
+        frequency: {
+          title:
+            /*[[#{dashboard.frequency.title}]]*/ "Sua Frequência de Participação",
+          progress: /*[[#{dashboard.frequency.progress}]]*/ "Progresso",
+          activities:
+            /*[[#{dashboard.frequency.activities}]]*/ "atividades e avaliações nos últimos 30 dias",
+          loading: /*[[#{dashboard.frequency.loading}]]*/ "Carregando...",
+        },
+        ai: {
+          title: /*[[#{dashboard.ai.title}]]*/ "Assistente de IA - WorkWell",
+          beta: /*[[#{dashboard.ai.beta}]]*/ "Beta",
+          chat: {
+            title: /*[[#{dashboard.ai.chat.title}]]*/ "Chat Assistente",
+            description:
+              /*[[#{dashboard.ai.chat.description}]]*/ "Converse com nosso assistente virtual",
+            button: /*[[#{dashboard.ai.chat.button}]]*/ "Abrir Chat",
+          },
+          sentiment: {
+            title:
+              /*[[#{dashboard.ai.sentiment.title}]]*/ "Análise de Sentimentos",
+            description:
+              /*[[#{dashboard.ai.sentiment.description}]]*/ "Analise seus registros",
+            button:
+              /*[[#{dashboard.ai.sentiment.button}]]*/ "Analisar Sentimentos",
+          },
+          suggestions: {
+            title:
+              /*[[#{dashboard.ai.suggestions.title}]]*/ "Sugestões de Atividades",
+            description:
+              /*[[#{dashboard.ai.suggestions.description}]]*/ "Receba sugestões",
+            button: /*[[#{dashboard.ai.suggestions.button}]]*/ "Ver Sugestões",
+          },
+          insights: {
+            title:
+              /*[[#{dashboard.ai.insights.title}]]*/ "Insights Estratégicos",
+            description:
+              /*[[#{dashboard.ai.insights.description}]]*/ "Obtenha insights",
+            button: /*[[#{dashboard.ai.insights.button}]]*/ "Gerar Insights",
+          },
+        },
+        agenda: {
+          title: /*[[#{dashboard.agenda.title}]]*/ "Agenda de Hoje",
+          empty:
+            /*[[#{dashboard.agenda.empty}]]*/ "Nenhuma atividade ou consulta agendada para hoje",
+          history: {
+            title:
+              /*[[#{dashboard.agenda.history.title}]]*/ "Histórico de Participação",
+            loading:
+              /*[[#{dashboard.agenda.history.loading}]]*/ "Carregando histórico...",
+          },
+        },
+        modal: {
+          chat: {
+            title: /*[[#{modal.chat.title}]]*/ "Chat Assistente - WorkWell",
+            placeholder:
+              /*[[#{modal.chat.placeholder}]]*/ "Digite sua mensagem aqui...",
+            send: /*[[#{modal.chat.send}]]*/ "Enviar",
+          },
+          analysis: {
+            title: /*[[#{modal.analysis.title}]]*/ "Análise de Sentimentos",
+            loading:
+              /*[[#{modal.analysis.loading}]]*/ "Analisando seus dados...",
+            error:
+              /*[[#{modal.analysis.error}]]*/ "Erro ao analisar sentimentos. Tente novamente.",
+          },
+          insights: {
+            title: /*[[#{modal.insights.title}]]*/ "Insights Estratégicos",
+            loading: /*[[#{modal.insights.loading}]]*/ "Gerando insights...",
+            error:
+              /*[[#{modal.insights.error}]]*/ "Erro ao gerar insights. Tente novamente.",
+            executive: /*[[#{modal.insights.executive}]]*/ "Resumo Executivo",
+            positive: /*[[#{modal.insights.positive}]]*/ "Pontos Positivos",
+            critical: /*[[#{modal.insights.critical}]]*/ "Pontos Críticos",
+            recommendations:
+              /*[[#{modal.insights.recommendations}]]*/ "Recomendações",
+            trend: /*[[#{modal.insights.trend}]]*/ "Tendência",
+          },
+        },
+        profile: /*[[#{profile.label}]]*/ "Perfil",
+        notification: {
+          consultationSoon:
+            /*[[#{notification.consultation.soon}]]*/ "Consulta em breve",
+          consultationWith:
+            /*[[#{notification.consultation.with}]]*/ "Você tem uma consulta com {0} em {1} minutos",
+        },
+        frequency: {
+          excellent:
+            /*[[#{dashboard.frequency.excellent}]]*/ "Bom ritmo! Continue cuidando de si mesmo, você está no caminho certo! 🌟",
+          good: /*[[#{dashboard.frequency.good}]]*/ "Ótimo progresso! Você está se dedicando ao seu bem-estar.",
+          average:
+            /*[[#{dashboard.frequency.average}]]*/ "Continue assim! Cada pequeno passo conta.",
+          low: /*[[#{dashboard.frequency.low}]]*/ "Que tal participar de mais atividades? Estamos aqui para apoiar você!",
+          progress: /*[[#{dashboard.frequency.progress}]]*/ "Progresso",
+          activities:
+            /*[[#{dashboard.frequency.activities}]]*/ "atividades e avaliações nos últimos 30 dias",
+          loading: /*[[#{dashboard.frequency.loading}]]*/ "Carregando...",
+        },
+        surveys: {
+          title: /*[[#{dashboard.surveys.title}]]*/ "Enquetes Rápidas",
+          answers: /*[[#{dashboard.surveys.answers}]]*/ "resposta(s)",
+          participation:
+            /*[[#{dashboard.surveys.participation}]]*/ "de participação",
+          responded: /*[[#{dashboard.surveys.responded}]]*/ "Você já respondeu",
+          respond: /*[[#{dashboard.surveys.respond}]]*/ "Responder",
+          loading:
+            /*[[#{dashboard.surveys.loading}]]*/ "Carregando enquetes...",
+          empty:
+            /*[[#{dashboard.surveys.empty}]]*/ "Nenhuma enquete disponível no momento.",
+        },
+        activities: {
+          title:
+            /*[[#{dashboard.activities.title}]]*/ "Atividades de Bem-Estar",
+          typePhysical:
+            /*[[#{dashboard.activities.type.physical}]]*/ "Atividade Física",
+          typeMental:
+            /*[[#{dashboard.activities.type.mental}]]*/ "Saúde Mental",
+          typeSocial: /*[[#{dashboard.activities.type.social}]]*/ "Social",
+          typeNutrition:
+            /*[[#{dashboard.activities.type.nutrition}]]*/ "Nutrição",
+          date: /*[[#{dashboard.activities.date}]]*/ "Data",
+          location: /*[[#{dashboard.activities.location}]]*/ "Local",
+          participants:
+            /*[[#{dashboard.activities.participants}]]*/ "participante(s)",
+          adherence: /*[[#{dashboard.activities.adherence}]]*/ "de aderência",
+          participate:
+            /*[[#{dashboard.activities.participate}]]*/ "Vou participar",
+          notParticipate:
+            /*[[#{dashboard.activities.not.participate}]]*/ "Não vou",
+          loading:
+            /*[[#{dashboard.activities.loading}]]*/ "Carregando atividades...",
+          empty:
+            /*[[#{dashboard.activities.empty}]]*/ "Nenhuma atividade disponível no momento.",
+        },
+        evaluations: {
+          title:
+            /*[[#{dashboard.evaluations.title}]]*/ "Avaliações Profundas (NR-1)",
+          description:
+            /*[[#{dashboard.evaluations.description}]]*/ "Avaliações semanais de saúde ocupacional conforme NR-1. Responda às avaliações disponíveis para contribuir com seu bem-estar.",
+          start: /*[[#{dashboard.evaluations.start}]]*/ "Início",
+          end: /*[[#{dashboard.evaluations.end}]]*/ "Término",
+          responded:
+            /*[[#{dashboard.evaluations.responded}]]*/ "Você já respondeu esta avaliação",
+          alreadyResponded:
+            /*[[#{dashboard.evaluations.already.responded}]]*/ "Já Respondida",
+          respond:
+            /*[[#{dashboard.evaluations.respond}]]*/ "Responder Avaliação",
+          loading:
+            /*[[#{dashboard.evaluations.loading}]]*/ "Carregando avaliações...",
+          empty:
+            /*[[#{dashboard.evaluations.empty}]]*/ "Nenhuma avaliação disponível no momento.",
+          notStarted:
+            /*[[#{dashboard.evaluations.not.started}]]*/ "Avaliação ainda não iniciada",
+          ended: /*[[#{dashboard.evaluations.ended}]]*/ "Avaliação encerrada",
+        },
+        mood: {
+          title: /*[[#{dashboard.mood.title}]]*/ "Mood Check",
+          description:
+            /*[[#{dashboard.mood.description}]]*/ "Registre como você está se sentindo hoje.",
+          register: /*[[#{dashboard.mood.register}]]*/ "Registrar Humor",
+        },
+        support: {
+          title: /*[[#{dashboard.support.title}]]*/ "Espaço de Apoio",
+          description:
+            /*[[#{dashboard.support.description}]]*/ "Acesse recursos de bem-estar e suporte psicológico.",
+          access: /*[[#{dashboard.support.access}]]*/ "Acessar",
+        },
+        complaints: {
+          title:
+            /*[[#{dashboard.complaints.title}]]*/ "Canal de Denúncias Éticas",
+          description:
+            /*[[#{dashboard.complaints.description}]]*/ "Registre denúncias de forma 100% sigilosa e independente da empresa.",
+          register:
+            /*[[#{dashboard.complaints.register}]]*/ "Registrar Denúncia",
+        },
+        complaintModal: {
+          title: /*[[#{modal.complaint.title}]]*/ "Registrar Denúncia Ética",
+          confidentiality:
+            /*[[#{modal.complaint.confidentiality}]]*/ "Confidencialidade Garantida",
+          confidentialityText:
+            /*[[#{modal.complaint.confidentiality.text}]]*/ "Esta denúncia é 100% sigilosa e será tratada com total confidencialidade. Seu anonimato será preservado.",
+          type: /*[[#{modal.complaint.type}]]*/ "Tipo de Denúncia",
+          typeSelect:
+            /*[[#{modal.complaint.type.select}]]*/ "Selecione o tipo...",
+          description:
+            /*[[#{modal.complaint.description}]]*/ "Descrição da Denúncia",
+          descriptionPlaceholder:
+            /*[[#{modal.complaint.description.placeholder}]]*/ "Descreva detalhadamente a situação que você deseja denunciar...",
+          descriptionHelp:
+            /*[[#{modal.complaint.description.help}]]*/ "Seja o mais detalhado possível para facilitar a análise.",
+          people:
+            /*[[#{modal.complaint.people}]]*/ "Pessoas Envolvidas (opcional)",
+          peoplePlaceholder:
+            /*[[#{modal.complaint.people.placeholder}]]*/ "Nomes ou cargos das pessoas envolvidas",
+          location:
+            /*[[#{modal.complaint.location}]]*/ "Local da Ocorrência (opcional)",
+          locationPlaceholder:
+            /*[[#{modal.complaint.location.placeholder}]]*/ "Ex: Escritório, Setor X, Sala Y",
+          date: /*[[#{modal.complaint.date}]]*/ "Data da Ocorrência (opcional)",
+          attachments:
+            /*[[#{modal.complaint.attachments}]]*/ "Anexos (opcional)",
+          attachmentsPlaceholder:
+            /*[[#{modal.complaint.attachments.placeholder}]]*/ "URLs ou referências de arquivos anexados",
+          attachmentsHelp:
+            /*[[#{modal.complaint.attachments.help}]]*/ "Por enquanto, cole URLs de arquivos. Em breve, upload direto será disponibilizado.",
+          submit: /*[[#{modal.complaint.submit}]]*/ "Enviar Denúncia",
+        },
+        suggestions: {
+          title: /*[[#{modal.suggestions.title}]]*/ "Sugestões de Atividades",
+          loading: /*[[#{modal.suggestions.loading}]]*/ "Gerando sugestões...",
+          error:
+            /*[[#{modal.suggestions.error}]]*/ "Erro ao gerar sugestões. Tente novamente.",
+        },
+        assistant: {
+          thinking: /*[[#{assistant.thinking}]]*/ "Pensando...",
+          you: /*[[#{assistant.you}]]*/ "Você",
+          error:
+            /*[[#{assistant.error}]]*/ "Erro ao enviar mensagem. Tente novamente.",
+        },
+        general: {
+          loading: /*[[#{general.loading}]]*/ "Carregando...",
+          close: /*[[#{general.close}]]*/ "Fechar",
+          save: /*[[#{general.save}]]*/ "Salvar",
+          cancel: /*[[#{general.cancel}]]*/ "Cancelar",
+          confirm: /*[[#{general.confirm}]]*/ "Confirmar",
+          conclude: /*[[#{general.conclude}]]*/ "Concluir",
+          start: /*[[#{general.start}]]*/ "Início",
+          end: /*[[#{general.end}]]*/ "Fim",
+          active: /*[[#{general.active}]]*/ "Ativa",
+          inactive: /*[[#{general.inactive}]]*/ "Inativa",
+          from: /*[[#{general.from}]]*/ "de",
+          employee: /*[[#{general.employee}]]*/ "Funcionário",
+          observations: /*[[#{general.observations}]]*/ "Observações",
+          date: /*[[#{general.date}]]*/ "Data",
+          period: /*[[#{general.period}]]*/ "Período",
+          responses: /*[[#{general.responses}]]*/ "Respostas",
+          noPending:
+            /*[[#{general.no.pending}]]*/ "Nenhuma solicitação pendente",
+        },
+        action: {
+          save: /*[[#{action.save}]]*/ "Salvar",
+          cancel: /*[[#{action.cancel}]]*/ "Cancelar",
+          conclude: /*[[#{action.conclude}]]*/ "Concluir",
+          back: /*[[#{action.back}]]*/ "Voltar",
+          summarize: /*[[#{action.summarize}]]*/ "Resumir",
+          viewReport: /*[[#{action.view.report}]]*/ "Ver Relatório",
+          viewConfidentialReport:
+            /*[[#{action.view.confidential.report}]]*/ "Ver Relatório Confidencial",
+          openLink: /*[[#{action.open.link}]]*/ "Abrir link",
+        },
+      };
+      /*]]>*/
+
       const token = localStorage.getItem("token");
       const userRole = localStorage.getItem("userRole");
 
@@ -1251,7 +1704,7 @@
         window.location.href = "/login";
       }
 
-      document.getElementById("userInfo").textContent = `Perfil: ${
+      document.getElementById("userInfo").textContent = `${i18n.profile}: ${
         userRole || "Usuário"
       }`;
 
@@ -1442,7 +1895,7 @@
             if (total === 0) {
               container.innerHTML = `
                 <div class="text-center text-muted py-4">
-                  <p class="mb-0">Nenhuma atividade ou consulta agendada para hoje</p>
+                  <p class="mb-0">${i18n.agenda.empty}</p>
                 </div>
               `;
               return;
@@ -1852,27 +2305,29 @@
                         }</p>
                         <div class="mb-2">
                           <small class="text-muted">
-                            <strong>Início:</strong> ${dataInicio}<br>
-                            <strong>Término:</strong> ${dataFim}
+                            <strong>${
+                              i18n.evaluations.start
+                            }:</strong> ${dataInicio}<br>
+                            <strong>${i18n.evaluations.end}:</strong> ${dataFim}
                           </small>
                         </div>
                         ${
                           avaliacao.jaRespondeu
                             ? `<div class="alert alert-success small mb-2">
-                                <i class="bi bi-check-circle"></i> Você já respondeu esta avaliação
+                                <i class="bi bi-check-circle"></i> ${i18n.evaluations.responded}
                               </div>
                               <button class="btn btn-secondary btn-sm w-100" disabled>
-                                Já Respondida
+                                ${i18n.evaluations.alreadyResponded}
                               </button>`
                             : podeResponder
                             ? `<button class="btn btn-primary btn-sm w-100" onclick="abrirModalResponderAvaliacao('${avaliacao.id}')">
-                                Responder Avaliação
+                                ${i18n.evaluations.respond}
                               </button>`
                             : `<div class="alert alert-warning small mb-2">
                                 ${
                                   agora < inicio
-                                    ? "Avaliação ainda não iniciada"
-                                    : "Avaliação encerrada"
+                                    ? i18n.evaluations.notStarted
+                                    : i18n.evaluations.ended
                                 }
                               </div>
                               <button class="btn btn-secondary btn-sm w-100" disabled>
@@ -1946,8 +2401,10 @@
                         }</p>
                         <div class="mb-2">
                           <small class="text-muted">
-                            <strong>Início:</strong> ${dataInicio}<br>
-                            <strong>Término:</strong> ${dataFim}
+                            <strong>${
+                              i18n.evaluations.start
+                            }:</strong> ${dataInicio}<br>
+                            <strong>${i18n.evaluations.end}:</strong> ${dataFim}
                           </small>
                         </div>
                         <div class="mb-2">
@@ -2007,7 +2464,9 @@
                 const dataFim = new Date(avaliacao.dataFim).toLocaleString(
                   "pt-BR"
                 );
-                const ativa = avaliacao.ativa ? "Ativa" : "Inativa";
+                const ativa = avaliacao.ativa
+                  ? i18n.general.active
+                  : i18n.general.inactive;
 
                 return `
                   <div class="col-md-6 col-lg-4">
@@ -2024,8 +2483,10 @@
                         </div>
                         <div class="mb-2">
                           <small class="text-muted">
-                            <strong>Início:</strong> ${dataInicio}<br>
-                            <strong>Término:</strong> ${dataFim}
+                            <strong>${
+                              i18n.evaluations.start
+                            }:</strong> ${dataInicio}<br>
+                            <strong>${i18n.evaluations.end}:</strong> ${dataFim}
                           </small>
                         </div>
                         <div class="mb-2">
@@ -2039,7 +2500,7 @@
                         <button class="btn btn-info btn-sm w-100" onclick="verRelatorio('${
                           avaliacao.id
                         }')">
-                          Ver Relatório Confidencial
+                          ${i18n.action.viewConfidentialReport}
                         </button>
                       </div>
                     </div>
@@ -2512,7 +2973,7 @@
               container.innerHTML = `
                 <div class="col-12">
                   <div class="text-center text-muted py-4">
-                    <p class="mb-0">Nenhuma enquete disponível no momento.</p>
+                    <p class="mb-0">${i18n.surveys.empty}</p>
                   </div>
                 </div>
               `;
@@ -2529,14 +2990,16 @@
                       <div class="card-body">
                         <h6 class="card-title">${enquete.pergunta}</h6>
                         <p class="text-muted small mb-2">
-                          ${enquete.totalRespostas || 0} resposta(s) - ${(
-                  (enquete.taxaResposta || 0) * 100
-                ).toFixed(1)}% de participação
+                          ${enquete.totalRespostas || 0} ${
+                  i18n.surveys.answers
+                } - ${((enquete.taxaResposta || 0) * 100).toFixed(1)}% ${
+                  i18n.surveys.participation
+                }
                         </p>
                         ${
                           jaRespondeu
-                            ? '<span class="badge bg-success mb-2">Você já respondeu</span>'
-                            : `<button class="btn btn-primary btn-sm mb-2" onclick="abrirModalResponderEnquete('${enquete.id}')">Responder</button>`
+                            ? `<span class="badge bg-success mb-2">${i18n.surveys.responded}</span>`
+                            : `<button class="btn btn-primary btn-sm mb-2" onclick="abrirModalResponderEnquete('${enquete.id}')">${i18n.surveys.respond}</button>`
                         }
                       </div>
                     </div>
@@ -2682,7 +3145,7 @@
               container.innerHTML = `
                 <div class="col-12">
                   <div class="text-center text-muted py-4">
-                    <p class="mb-0">Nenhuma atividade disponível no momento.</p>
+                    <p class="mb-0">${i18n.agenda.empty}</p>
                   </div>
                 </div>
               `;
@@ -2720,34 +3183,28 @@
                             : ""
                         }
                         <p class="small mb-2">
-                          <strong>Data:</strong> ${dataInicio}<br>
+                          <strong>${
+                            i18n.activities.date
+                          }:</strong> ${dataInicio}<br>
                           ${
                             atividade.local
-                              ? `<strong>Local:</strong> ${atividade.local}`
+                              ? `<strong>${i18n.activities.location}:</strong> ${atividade.local}`
                               : ""
                           }
                         </p>
                         <p class="text-muted small mb-2">
-                          ${
-                            atividade.totalParticipantes || 0
-                          } participante(s) - ${taxaParticipacao}% de aderência
+                          ${atividade.totalParticipantes || 0} ${
+                  i18n.activities.participants
+                } - ${taxaParticipacao}% ${i18n.activities.adherence}
                         </p>
                         ${
                           jaParticipou
                             ? atividade.vaiParticipar === true
-                              ? '<span class="badge bg-success me-2">Vou participar</span><button class="btn btn-outline-danger btn-sm" onclick="participarAtividadeBemEstar(\'' +
-                                atividade.id +
-                                "', false)\">Não vou</button>"
+                              ? `<span class="badge bg-success me-2">${i18n.activities.participate}</span><button class="btn btn-outline-danger btn-sm" onclick="participarAtividadeBemEstar('${atividade.id}', false)">${i18n.activities.notParticipate}</button>`
                               : atividade.vaiParticipar === false
-                              ? '<span class="badge bg-danger me-2">Não vou participar</span><button class="btn btn-outline-success btn-sm" onclick="participarAtividadeBemEstar(\'' +
-                                atividade.id +
-                                "', true)\">Vou participar</button>"
+                              ? `<span class="badge bg-danger me-2">${i18n.activities.notParticipate}</span><button class="btn btn-outline-success btn-sm" onclick="participarAtividadeBemEstar('${atividade.id}', true)">${i18n.activities.participate}</button>`
                               : '<span class="badge bg-secondary">Registrado</span>'
-                            : '<div class="d-flex gap-2"><button class="btn btn-success btn-sm" onclick="participarAtividadeBemEstar(\'' +
-                              atividade.id +
-                              '\', true)">Vou participar</button><button class="btn btn-danger btn-sm" onclick="participarAtividadeBemEstar(\'' +
-                              atividade.id +
-                              "', false)\">Não vou</button></div>"
+                            : `<div class="d-flex gap-2"><button class="btn btn-success btn-sm" onclick="participarAtividadeBemEstar('${atividade.id}', true)">${i18n.activities.participate}</button><button class="btn btn-danger btn-sm" onclick="participarAtividadeBemEstar('${atividade.id}', false)">${i18n.activities.notParticipate}</button></div>`
                         }
                       </div>
                     </div>
@@ -3053,7 +3510,7 @@
         // Adicionar mensagem do usuário
         chatMessages.innerHTML += `
           <div class="alert alert-primary mb-2">
-            <strong>Você:</strong> ${mensagem}
+            <strong>${i18n.assistant.you}:</strong> ${mensagem}
           </div>
         `;
         input.value = "";
@@ -3061,7 +3518,7 @@
         // Mostrar loading
         chatMessages.innerHTML += `
           <div class="alert alert-secondary mb-2">
-            <strong>Assistente:</strong> Pensando...
+            <strong>Assistente:</strong> ${i18n.assistant.thinking}
           </div>
         `;
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -3092,7 +3549,7 @@
           chatMessages.removeChild(chatMessages.lastChild);
           chatMessages.innerHTML += `
             <div class="alert alert-danger mb-2">
-              <strong>Erro:</strong> Não foi possível processar sua mensagem. Tente novamente.
+              ${i18n.assistant.error}
             </div>
           `;
         }
@@ -3121,8 +3578,7 @@
 
         const resultadoDiv = document.getElementById("resultadoAnalise");
         const conteudoDiv = document.getElementById("analiseConteudo");
-        conteudoDiv.innerHTML =
-          '<div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>';
+        conteudoDiv.innerHTML = `<div class="spinner-border" role="status"><span class="visually-hidden">${i18n.modal.analysis.loading}</span></div>`;
 
         try {
           const response = await apiRequest("/api/ai/analise-sentimento", {
@@ -3174,7 +3630,7 @@
         } catch (error) {
           conteudoDiv.innerHTML = `
             <div class="alert alert-danger">
-              Erro ao processar análise. Tente novamente.
+              ${i18n.modal.analysis.error}
             </div>
           `;
         }
@@ -3283,33 +3739,37 @@
 
             conteudo.innerHTML = `
               <div class="mb-4">
-                <h6 class="fw-bold">Resumo Executivo</h6>
+                <h6 class="fw-bold">${i18n.modal.insights.executive}</h6>
                 <p>${data.resumoExecutivo}</p>
               </div>
               <div class="row mb-4">
                 <div class="col-md-6">
-                  <h6 class="fw-bold text-success">Pontos Positivos</h6>
+                  <h6 class="fw-bold text-success">${
+                    i18n.modal.insights.positive
+                  }</h6>
                   <ul>
                     ${data.pontosPositivos.map((p) => `<li>${p}</li>`).join("")}
                   </ul>
                 </div>
                 <div class="col-md-6">
-                  <h6 class="fw-bold text-danger">Pontos Críticos</h6>
+                  <h6 class="fw-bold text-danger">${
+                    i18n.modal.insights.critical
+                  }</h6>
                   <ul>
                     ${data.pontosCriticos.map((p) => `<li>${p}</li>`).join("")}
                   </ul>
                 </div>
               </div>
               <div class="mb-4">
-                <h6 class="fw-bold">Recomendações</h6>
+                <h6 class="fw-bold">${i18n.modal.insights.recommendations}</h6>
                 <ul>
                   ${data.recomendacoes.map((r) => `<li>${r}</li>`).join("")}
                 </ul>
               </div>
               <div>
-                <span class="badge bg-${tendenciaBadge}">Tendência: ${
-              data.tendencia
-            }</span>
+                <span class="badge bg-${tendenciaBadge}">${
+              i18n.modal.insights.trend
+            }: ${data.tendencia}</span>
               </div>
             `;
             resultado.style.display = "block";
@@ -3320,7 +3780,7 @@
           spinner.style.display = "none";
           conteudo.innerHTML = `
             <div class="alert alert-danger">
-              Erro ao gerar insights. Tente novamente.
+              ${i18n.modal.insights.error}
             </div>
           `;
           resultado.style.display = "block";

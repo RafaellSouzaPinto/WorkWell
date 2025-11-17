@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard RH - WorkWell</title>
+    <title th:text="#{dashboard.rh.full.title}">Dashboard RH - WorkWell</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -38,20 +42,34 @@
     </style>
   </head>
   <body>
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <div class="min-vh-100 d-flex flex-column">
       <!-- Header -->
       <header class="bg-white shadow-sm">
         <div class="container py-3">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 fw-bold text-primary" id="tituloDashboard">
+            <h1
+              class="h4 mb-0 fw-bold text-primary"
+              id="tituloDashboard"
+              th:text="#{dashboard.rh.full.title}"
+            >
               WorkWell - Dashboard RH
             </h1>
             <div class="d-flex align-items-center gap-3">
               <span class="text-muted" id="userInfo"></span>
-              <a href="/dashboard" class="btn btn-outline-secondary btn-sm"
+              <a
+                href="/dashboard"
+                class="btn btn-outline-secondary btn-sm"
+                th:text="#{nav.dashboard}"
                 >Dashboard</a
               >
-              <button class="btn btn-outline-danger btn-sm" id="btnLogout">
+              <button
+                class="btn btn-outline-danger btn-sm"
+                id="btnLogout"
+                th:text="#{app.logout}"
+              >
                 Sair
               </button>
             </div>

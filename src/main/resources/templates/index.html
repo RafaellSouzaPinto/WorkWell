@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WorkWell - Bem-estar Corporativo</title>
+    <title th:text="#{app.name} + ' - ' + #{app.title}">
+      WorkWell - Bem-estar Corporativo
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,17 +23,30 @@
     <link rel="stylesheet" href="/css/app.css" />
   </head>
   <body>
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <div class="min-vh-100 d-flex flex-column">
       <!-- Header -->
       <header class="bg-white shadow-sm">
         <div class="container py-3">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 fw-bold text-primary">WorkWell</h1>
+            <h1 class="h4 mb-0 fw-bold text-primary" th:text="#{app.name}">
+              WorkWell
+            </h1>
             <nav>
-              <a href="/login" class="btn btn-outline-primary btn-sm me-2"
+              <a
+                href="/login"
+                class="btn btn-outline-primary btn-sm me-2"
+                th:text="#{app.login}"
                 >Entrar</a
               >
-              <a href="/cadastro" class="btn btn-primary btn-sm">Cadastrar</a>
+              <a
+                href="/cadastro"
+                class="btn btn-primary btn-sm"
+                th:text="#{app.register}"
+                >Cadastrar</a
+              >
             </nav>
           </div>
         </div>
@@ -38,18 +57,24 @@
         <div class="container py-5">
           <div class="row align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
-              <h2 class="display-4 fw-bold mb-4">
+              <h2 class="display-4 fw-bold mb-4" th:text="#{home.title}">
                 Bem-estar no trabalho começa aqui
               </h2>
-              <p class="lead text-muted mb-4">
+              <p class="lead text-muted mb-4" th:text="#{home.subtitle}">
                 Plataforma completa para gestão de saúde mental e bem-estar
                 corporativo. Conecte sua equipe com profissionais qualificados.
               </p>
               <div class="d-flex gap-3">
-                <a href="/login" class="btn btn-primary btn-lg px-4"
+                <a
+                  href="/login"
+                  class="btn btn-primary btn-lg px-4"
+                  th:text="#{home.login.button}"
                   >Fazer Login</a
                 >
-                <a href="/cadastro" class="btn btn-outline-primary btn-lg px-4"
+                <a
+                  href="/cadastro"
+                  class="btn btn-outline-primary btn-lg px-4"
+                  th:text="#{home.register.button}"
                   >Criar Conta</a
                 >
               </div>
@@ -57,34 +82,51 @@
             <div class="col-lg-6">
               <div class="card shadow-lg border-0 p-4">
                 <div class="card-body">
-                  <h3 class="h5 mb-4">Primeiro acesso?</h3>
+                  <h3 class="h5 mb-4" th:text="#{home.first.access}">
+                    Primeiro acesso?
+                  </h3>
                   <div class="d-grid gap-2">
                     <a href="/cadastro/empresa" class="btn btn-outline-primary">
-                      <strong>Cadastrar Empresa</strong>
-                      <small class="d-block text-muted mt-1"
+                      <strong th:text="#{home.register.company}"
+                        >Cadastrar Empresa</strong
+                      >
+                      <small
+                        class="d-block text-muted mt-1"
+                        th:text="#{home.register.company.subtitle}"
                         >Para administradores</small
                       >
                     </a>
                     <a
                       href="/cadastro/funcionario"
                       class="btn btn-outline-secondary"
+                      th:text="#{home.register.employee}"
                     >
                       Cadastrar como Funcionário
                     </a>
                     <a
                       href="/cadastro/psicologo"
                       class="btn btn-outline-secondary"
+                      th:text="#{home.register.psychologist}"
                     >
                       Cadastrar como Psicólogo
                     </a>
-                    <a href="/cadastro/rh" class="btn btn-outline-secondary">
+                    <a
+                      href="/cadastro/rh"
+                      class="btn btn-outline-secondary"
+                      th:text="#{home.register.rh}"
+                    >
                       Cadastrar como RH
                     </a>
                   </div>
                   <hr class="my-4" />
                   <p class="text-center text-muted small mb-0">
-                    Já tem uma conta?
-                    <a href="/login" class="text-primary text-decoration-none"
+                    <span th:text="#{home.already.account}"
+                      >Já tem uma conta?</span
+                    >
+                    <a
+                      href="/login"
+                      class="text-primary text-decoration-none"
+                      th:text="#{home.already.account.login}"
                       >Faça login</a
                     >
                   </p>
@@ -98,7 +140,7 @@
       <!-- Footer -->
       <footer class="bg-light py-4 mt-auto">
         <div class="container text-center text-muted small">
-          <p class="mb-0">
+          <p class="mb-0" th:text="#{home.footer.copyright}">
             &copy; 2025 WorkWell. Todos os direitos reservados.
           </p>
         </div>

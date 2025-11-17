@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="language-selector" class="language-selector">
+      <div class="dropdown">
+        <button
+          class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2"
+          type="button"
+          id="languageDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style="min-width: 140px; justify-content: space-between"
+        >
+          <span class="d-flex align-items-center gap-1">
+            <span id="currentLangFlag">🇧🇷</span>
+            <span id="currentLangName" th:text="#{language.portuguese}"
+              >Português</span
+            >
+          </span>
+        </button>
+        <ul
+          class="dropdown-menu dropdown-menu-end shadow"
+          aria-labelledby="languageDropdown"
+          style="min-width: 180px"
+        >
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 language-option"
+              href="#"
+              data-lang="pt_BR"
+              onclick="changeLanguage('pt_BR'); return false;"
+            >
+              <span>🇧🇷</span>
+              <span th:text="#{language.portuguese}">Português (Brasil)</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 language-option"
+              href="#"
+              data-lang="en_US"
+              onclick="changeLanguage('en_US'); return false;"
+            >
+              <span>🇺🇸</span>
+              <span th:text="#{language.english}">English</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center gap-2 language-option"
+              href="#"
+              data-lang="es_ES"
+              onclick="changeLanguage('es_ES'); return false;"
+            >
+              <span>🇪🇸</span>
+              <span th:text="#{language.spanish}">Español</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <script>
+        function changeLanguage(lang) {
+          const langCode = lang.split("_")[0];
+          window.location.href = "/change-locale?lang=" + langCode;
+        }
+
+        // Atualizar o idioma atual baseado no cookie
+        document.addEventListener("DOMContentLoaded", function () {
+          const cookies = document.cookie.split(";");
+          let locale = "pt_BR";
+          for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split("=");
+            if (name === "locale") {
+              locale = decodeURIComponent(value).replace("-", "_");
+              break;
+            }
+          }
+
+          const langMap = {
+            pt_BR: { flag: "🇧🇷", name: "Português" },
+            en_US: { flag: "🇺🇸", name: "English" },
+            es_ES: { flag: "🇪🇸", name: "Español" },
+          };
+
+          const current = langMap[locale] || langMap["pt_BR"];
+          const flagEl = document.getElementById("currentLangFlag");
+          const nameEl = document.getElementById("currentLangName");
+          if (flagEl) flagEl.textContent = current.flag;
+          if (nameEl && !nameEl.getAttribute("th:text"))
+            nameEl.textContent = current.name;
+        });
+      </script>
+
+      <style>
+        .language-selector {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1050;
+        }
+
+        .language-selector .dropdown-toggle {
+          border-radius: 25px;
+          padding: 8px 16px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-selector .dropdown-toggle:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .language-selector .dropdown-menu {
+          border-radius: 12px;
+          border: none;
+          padding: 8px;
+          margin-top: 8px;
+        }
+
+        .language-selector .dropdown-item {
+          border-radius: 8px;
+          padding: 10px 12px;
+          transition: all 0.2s ease;
+          font-weight: 500;
+        }
+
+        .language-selector .dropdown-item:hover {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          transform: translateX(4px);
+        }
+
+        .language-selector .dropdown-item span:first-child {
+          font-size: 1.2em;
+        }
+      </style>
+    </div>
+  </body>
+</html>

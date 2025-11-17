@@ -1,7 +1,9 @@
 package workwell.WorkWell.controller;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.LocaleResolver;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarCreateRequest;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarResponse;
 import workwell.WorkWell.dto.dashboard.DashboardRhResponse;
@@ -42,10 +45,12 @@ public class DashboardRhController {
 
 	private final DashboardRhService dashboardRhService;
 	private final AIService aiService;
+	private final LocaleResolver localeResolver;
 
-	public DashboardRhController(DashboardRhService dashboardRhService, AIService aiService) {
+	public DashboardRhController(DashboardRhService dashboardRhService, AIService aiService, LocaleResolver localeResolver) {
 		this.dashboardRhService = dashboardRhService;
 		this.aiService = aiService;
+		this.localeResolver = localeResolver;
 	}
 
 	@GetMapping
@@ -136,7 +141,9 @@ public class DashboardRhController {
 
 	@PostMapping("/insights-ai")
 	@PreAuthorize("hasRole('RH')")
-	public ResponseEntity<InsightRhResponse> gerarInsightsIA(@AuthenticationPrincipal Usuario usuario) {
+	public ResponseEntity<InsightRhResponse> gerarInsightsIA(
+		@AuthenticationPrincipal Usuario usuario,
+		HttpServletRequest httpRequest) {
 		// Obter dados do dashboard
 		var dashboard = dashboardRhService.obterDashboard(usuario);
 		
@@ -161,7 +168,8 @@ public class DashboardRhController {
 			)
 		);
 		
-		InsightRhResponse insights = aiService.gerarInsightsRh(request);
+		Locale locale = localeResolver.resolveLocale(httpRequest);
+		InsightRhResponse insights = aiService.gerarInsightsRh(request, locale);
 		return ResponseEntity.ok(insights);
 	}
 }

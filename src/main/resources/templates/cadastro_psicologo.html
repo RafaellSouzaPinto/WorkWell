@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cadastro de Psicólogo - WorkWell</title>
+    <title th:text="'Cadastro de Psicólogo - ' + #{app.name}">
+      Cadastro de Psicólogo - WorkWell
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,6 +23,9 @@
     <link rel="stylesheet" href="/css/app.css" />
   </head>
   <body class="bg-light">
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <div class="min-vh-100 d-flex align-items-center">
       <div class="container">
         <div class="row justify-content-center">
@@ -24,10 +33,18 @@
             <div class="card shadow-lg border-0">
               <div class="card-body p-5">
                 <div class="text-center mb-4">
-                  <a href="/" class="btn btn-link text-decoration-none p-0 mb-3"
+                  <a
+                    href="/"
+                    class="btn btn-link text-decoration-none p-0 mb-3"
+                    th:text="#{app.back}"
                     >&larr; Voltar</a
                   >
-                  <h1 class="h3 fw-bold mb-2">Cadastro de Psicólogo</h1>
+                  <h1
+                    class="h3 fw-bold mb-2"
+                    th:text="#{home.register.psychologist}"
+                  >
+                    Cadastro de Psicólogo
+                  </h1>
                   <p class="text-muted">
                     Preencha os dados abaixo para criar sua conta
                   </p>
@@ -35,7 +52,9 @@
 
                 <form id="cadastroForm" novalidate>
                   <div class="mb-3">
-                    <label class="form-label fw-semibold"
+                    <label
+                      class="form-label fw-semibold"
+                      th:text="#{register.psychologist.name}"
                       >Nome completo *</label
                     >
                     <input
@@ -46,7 +65,11 @@
                     />
                   </div>
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Email *</label>
+                    <label
+                      class="form-label fw-semibold"
+                      th:text="#{register.psychologist.email}"
+                      >Email *</label
+                    >
                     <input
                       type="email"
                       class="form-control form-control-lg"
@@ -55,7 +78,11 @@
                     />
                   </div>
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Senha *</label>
+                    <label
+                      class="form-label fw-semibold"
+                      th:text="#{register.psychologist.password}"
+                      >Senha *</label
+                    >
                     <input
                       type="password"
                       class="form-control form-control-lg"
@@ -63,10 +90,18 @@
                       minlength="8"
                       required
                     />
-                    <small class="text-muted">Mínimo de 8 caracteres</small>
+                    <small
+                      class="text-muted"
+                      th:text="#{register.company.password.min}"
+                      >Mínimo de 8 caracteres</small
+                    >
                   </div>
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">CRP *</label>
+                    <label
+                      class="form-label fw-semibold"
+                      th:text="#{register.psychologist.crp}"
+                      >CRP *</label
+                    >
                     <input
                       type="text"
                       class="form-control form-control-lg"
@@ -79,7 +114,9 @@
                     >
                   </div>
                   <div class="mb-4">
-                    <label class="form-label fw-semibold"
+                    <label
+                      class="form-label fw-semibold"
+                      th:text="#{register.psychologist.token}"
                       >Token da empresa *</label
                     >
                     <input

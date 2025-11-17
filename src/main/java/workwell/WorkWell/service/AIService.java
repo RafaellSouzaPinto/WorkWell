@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.ai.AnaliseSentimentoRequest;
 import workwell.WorkWell.dto.ai.AnaliseSentimentoResponse;
@@ -25,20 +27,22 @@ public class AIService {
 
 	private final ChatModel chatModel;
 	private final ObjectMapper objectMapper;
+	private final MessageSource messageSource;
 
-	public AIService(ChatModel chatModel, ObjectMapper objectMapper) {
+	public AIService(ChatModel chatModel, ObjectMapper objectMapper, MessageSource messageSource) {
 		this.chatModel = chatModel;
 		this.objectMapper = objectMapper;
+		this.messageSource = messageSource;
 	}
 
-	public workwell.WorkWell.dto.ai.ChatResponse chat(ChatRequest request) {
-		String promptText = buildChatPrompt(request.mensagem(), request.contexto());
+	public workwell.WorkWell.dto.ai.ChatResponse chat(ChatRequest request, Locale locale) {
+		String promptText = buildChatPrompt(request.mensagem(), request.contexto(), locale);
 		String resposta = callChatModel(promptText);
 		return new workwell.WorkWell.dto.ai.ChatResponse(resposta, request.contexto());
 	}
 
-	public AnaliseSentimentoResponse analisarSentimento(AnaliseSentimentoRequest request) {
-		String prompt = buildAnaliseSentimentoPrompt(request);
+	public AnaliseSentimentoResponse analisarSentimento(AnaliseSentimentoRequest request, Locale locale) {
+		String prompt = buildAnaliseSentimentoPrompt(request, locale);
 		String resposta = callChatModel(prompt);
 
 		try {
@@ -49,9 +53,9 @@ public class AIService {
 		}
 	}
 
-	@Cacheable(value = "insightsAI", key = "#request.nivelMedioHumor + '_' + #request.frequenciaConsultas + '_' + #request.aderenciaAtividades")
-	public InsightRhResponse gerarInsightsRh(InsightRhRequest request) {
-		String prompt = buildInsightRhPrompt(request);
+	@Cacheable(value = "insightsAI", key = "#request.nivelMedioHumor + '_' + #request.frequenciaConsultas + '_' + #request.aderenciaAtividades + '_' + #locale")
+	public InsightRhResponse gerarInsightsRh(InsightRhRequest request, Locale locale) {
+		String prompt = buildInsightRhPrompt(request, locale);
 		String resposta = callChatModel(prompt);
 
 		try {
@@ -62,8 +66,8 @@ public class AIService {
 		}
 	}
 
-	public SugestaoAtividadeResponse sugerirAtividades(SugestaoAtividadeRequest request) {
-		String prompt = buildSugestaoAtividadePrompt(request);
+	public SugestaoAtividadeResponse sugerirAtividades(SugestaoAtividadeRequest request, Locale locale) {
+		String prompt = buildSugestaoAtividadePrompt(request, locale);
 		String resposta = callChatModel(prompt);
 
 		try {
@@ -74,89 +78,88 @@ public class AIService {
 		}
 	}
 
-	private String buildChatPrompt(String mensagem, String contexto) {
+	private String buildChatPrompt(String mensagem, String contexto, Locale locale) {
 		StringBuilder prompt = new StringBuilder();
-		prompt.append("Você é um assistente virtual do WorkWell, uma plataforma de bem-estar corporativo. ");
-		prompt.append("Seu papel é ajudar funcionários, psicólogos e RH com questões relacionadas a saúde mental, ");
-		prompt.append("bem-estar no trabalho e apoio psicológico.\n\n");
+		prompt.append(messageSource.getMessage("ai.assistant.role", null, locale)).append(" ");
+		prompt.append(messageSource.getMessage("ai.assistant.help", null, locale)).append("\n\n");
 
 		if (contexto != null && !contexto.isEmpty()) {
-			prompt.append("Contexto adicional: ").append(contexto).append("\n\n");
+			prompt.append(messageSource.getMessage("ai.assistant.context", null, locale)).append(" ").append(contexto).append("\n\n");
 		}
 
-		prompt.append("Pergunta do usuário: ").append(mensagem).append("\n\n");
-		prompt.append("Por favor, forneça uma resposta útil, empática e profissional.");
+		prompt.append(messageSource.getMessage("ai.assistant.question", null, locale)).append(" ").append(mensagem).append("\n\n");
+		prompt.append(messageSource.getMessage("ai.assistant.response", null, locale));
 
 		return prompt.toString();
 	}
 
-	private String buildAnaliseSentimentoPrompt(AnaliseSentimentoRequest request) {
+	private String buildAnaliseSentimentoPrompt(AnaliseSentimentoRequest request, Locale locale) {
 		StringBuilder prompt = new StringBuilder();
-		prompt.append("Analise o sentimento e o estado emocional baseado nos seguintes dados:\n\n");
-		prompt.append("Texto/Observações: ").append(request.texto() != null ? request.texto() : "Não informado").append("\n");
-		prompt.append("Nível de Humor (1-10): ").append(request.nivelHumor() != null ? request.nivelHumor() : "Não informado").append("\n");
-		prompt.append("Setor: ").append(request.setor() != null ? request.setor() : "Não informado").append("\n\n");
+		prompt.append(messageSource.getMessage("ai.analysis.sentiment", null, locale)).append("\n\n");
+		prompt.append(messageSource.getMessage("ai.analysis.text", null, locale)).append(" ").append(request.texto() != null ? request.texto() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n");
+		prompt.append(messageSource.getMessage("ai.analysis.mood.level", null, locale)).append(" ").append(request.nivelHumor() != null ? request.nivelHumor() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n");
+		prompt.append(messageSource.getMessage("ai.analysis.sector", null, locale)).append(" ").append(request.setor() != null ? request.setor() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n\n");
 
-		prompt.append("Forneça uma análise estruturada em JSON com o seguinte formato:\n");
+		prompt.append(messageSource.getMessage("ai.analysis.format", null, locale)).append("\n");
 		prompt.append("{\n");
-		prompt.append("  \"sentimento\": \"positivo/neutro/negativo\",\n");
-		prompt.append("  \"score\": 0.0 a 1.0,\n");
-		prompt.append("  \"resumo\": \"resumo da análise\",\n");
-		prompt.append("  \"pontosChave\": [\"ponto1\", \"ponto2\"],\n");
-		prompt.append("  \"recomendacoes\": [\"recomendação1\", \"recomendação2\"]\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.analysis.sentiment.type", null, locale)).append("\": \"positivo/neutro/negativo\",\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.analysis.score", null, locale)).append("\": 0.0 a 1.0,\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.analysis.summary", null, locale)).append("\": \"resumo da análise\",\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.analysis.key.points", null, locale)).append("\": [\"ponto1\", \"ponto2\"],\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.analysis.recommendations", null, locale)).append("\": [\"recomendação1\", \"recomendação2\"]\n");
 		prompt.append("}\n\n");
-		prompt.append("Seja específico e ofereça recomendações práticas para melhorar o bem-estar.");
+		prompt.append(messageSource.getMessage("ai.analysis.specific", null, locale));
 
 		return prompt.toString();
 	}
 
-	private String buildInsightRhPrompt(InsightRhRequest request) {
+	private String buildInsightRhPrompt(InsightRhRequest request, Locale locale) {
 		StringBuilder prompt = new StringBuilder();
-		prompt.append("Como especialista em RH e bem-estar corporativo, analise os seguintes dados do dashboard:\n\n");
-		prompt.append("Nível Médio de Humor: ").append(request.nivelMedioHumor() != null ? request.nivelMedioHumor() : "N/A").append("\n");
-		prompt.append("Frequência de Consultas: ").append(request.frequenciaConsultas()).append("\n");
-		prompt.append("Aderência às Atividades: ").append(request.aderenciaAtividades() != null ? request.aderenciaAtividades() + "%" : "N/A").append("\n\n");
+		prompt.append(messageSource.getMessage("ai.insights.role", null, locale)).append("\n\n");
+		prompt.append(messageSource.getMessage("ai.insights.avg.mood", null, locale)).append(" ").append(request.nivelMedioHumor() != null ? request.nivelMedioHumor() : "N/A").append("\n");
+		prompt.append(messageSource.getMessage("ai.insights.consultation.frequency", null, locale)).append(" ").append(request.frequenciaConsultas()).append("\n");
+		prompt.append(messageSource.getMessage("ai.insights.activity.adherence", null, locale)).append(" ").append(request.aderenciaAtividades() != null ? request.aderenciaAtividades() + "%" : "N/A").append("\n\n");
 
 		if (request.setoresComEstresse() != null && !request.setoresComEstresse().isEmpty()) {
-			prompt.append("Setores com Estresse:\n");
+			prompt.append(messageSource.getMessage("ai.insights.stressed.sectors", null, locale)).append(":\n");
 			request.setoresComEstresse().forEach(setor -> {
-				prompt.append("- ").append(setor.setor()).append(": Nível ").append(setor.nivelEstresse()).append("\n");
+				prompt.append("- ").append(messageSource.getMessage("ai.insights.sector", null, locale)).append(": ").append(setor.setor()).append(" - ").append(messageSource.getMessage("ai.insights.level", null, locale)).append(" ").append(setor.nivelEstresse()).append("\n");
 			});
 			prompt.append("\n");
 		}
 
-		prompt.append("Forneça insights estratégicos em JSON com o seguinte formato:\n");
+		prompt.append(messageSource.getMessage("ai.insights.format", null, locale)).append("\n");
 		prompt.append("{\n");
-		prompt.append("  \"resumoExecutivo\": \"resumo geral\",\n");
-		prompt.append("  \"pontosCriticos\": [\"ponto1\", \"ponto2\"],\n");
-		prompt.append("  \"pontosPositivos\": [\"ponto1\", \"ponto2\"],\n");
-		prompt.append("  \"recomendacoes\": [\"recomendação1\", \"recomendação2\"],\n");
-		prompt.append("  \"tendencia\": \"melhorando/estável/preocupante\"\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.insights.executive.summary", null, locale)).append("\": \"resumo geral\",\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.insights.critical.points", null, locale)).append("\": [\"ponto1\", \"ponto2\"],\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.insights.positive.points", null, locale)).append("\": [\"ponto1\", \"ponto2\"],\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.insights.recommendations", null, locale)).append("\": [\"recomendação1\", \"recomendação2\"],\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.insights.trend", null, locale)).append("\": \"melhorando/estável/preocupante\"\n");
 		prompt.append("}\n\n");
-		prompt.append("Seja estratégico e ofereça recomendações acionáveis para o RH.");
+		prompt.append(messageSource.getMessage("ai.insights.strategic", null, locale));
 
 		return prompt.toString();
 	}
 
-	private String buildSugestaoAtividadePrompt(SugestaoAtividadeRequest request) {
+	private String buildSugestaoAtividadePrompt(SugestaoAtividadeRequest request, Locale locale) {
 		StringBuilder prompt = new StringBuilder();
-		prompt.append("Sugira atividades de bem-estar personalizadas com base nos seguintes dados:\n\n");
-		prompt.append("Perfil do Funcionário: ").append(request.perfilFuncionario() != null ? request.perfilFuncionario() : "Não informado").append("\n");
-		prompt.append("Nível de Humor Atual: ").append(request.nivelHumor() != null ? request.nivelHumor() : "Não informado").append("\n");
-		prompt.append("Setor: ").append(request.setor() != null ? request.setor() : "Não informado").append("\n");
+		prompt.append(messageSource.getMessage("ai.suggestions.role", null, locale)).append("\n\n");
+		prompt.append(messageSource.getMessage("ai.suggestions.employee.profile", null, locale)).append(" ").append(request.perfilFuncionario() != null ? request.perfilFuncionario() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n");
+		prompt.append(messageSource.getMessage("ai.suggestions.current.mood", null, locale)).append(" ").append(request.nivelHumor() != null ? request.nivelHumor() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n");
+		prompt.append(messageSource.getMessage("ai.suggestions.sector", null, locale)).append(" ").append(request.setor() != null ? request.setor() : messageSource.getMessage("ai.analysis.not.informed", null, locale)).append("\n");
 
 		if (request.atividadesAnteriores() != null && !request.atividadesAnteriores().isEmpty()) {
-			prompt.append("Atividades Anteriores: ").append(String.join(", ", request.atividadesAnteriores())).append("\n");
+			prompt.append(messageSource.getMessage("ai.suggestions.previous.activities", null, locale)).append(" ").append(String.join(", ", request.atividadesAnteriores())).append("\n");
 		}
 		prompt.append("\n");
 
-		prompt.append("Forneça sugestões em JSON com o seguinte formato:\n");
+		prompt.append(messageSource.getMessage("ai.suggestions.format", null, locale)).append("\n");
 		prompt.append("{\n");
-		prompt.append("  \"atividadesSugeridas\": [\"atividade1\", \"atividade2\", \"atividade3\"],\n");
-		prompt.append("  \"justificativa\": \"por que essas atividades são adequadas\",\n");
-		prompt.append("  \"prioridade\": 1 a 5 (1 = mais importante)\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.suggestions.activities", null, locale)).append("\": [\"atividade1\", \"atividade2\", \"atividade3\"],\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.suggestions.justification", null, locale)).append("\": \"por que essas atividades são adequadas\",\n");
+		prompt.append("  \"").append(messageSource.getMessage("ai.suggestions.priority", null, locale)).append("\": 1 a 5 (1 = mais importante)\n");
 		prompt.append("}\n\n");
-		prompt.append("Sugira atividades práticas, acessíveis e relevantes para o contexto corporativo.");
+		prompt.append(messageSource.getMessage("ai.suggestions.practical", null, locale));
 
 		return prompt.toString();
 	}

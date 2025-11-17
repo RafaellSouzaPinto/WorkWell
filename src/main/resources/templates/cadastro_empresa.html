@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cadastro de Empresa | WorkWell</title>
+    <title th:text="'Cadastro de Empresa | ' + #{app.name}">
+      Cadastro de Empresa | WorkWell
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,13 +23,21 @@
     <link rel="stylesheet" href="/css/app.css" />
   </head>
   <body>
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <main class="container py-5" style="max-width: 720px">
       <section class="mb-4 text-center">
-        <a href="/" class="btn btn-link text-decoration-none p-0 mb-3"
+        <a
+          href="/"
+          class="btn btn-link text-decoration-none p-0 mb-3"
+          th:text="#{app.back}"
           >&larr; Voltar</a
         >
-        <h1 class="fw-bold mt-3">Cadastrar empresa</h1>
-        <p class="text-muted">
+        <h1 class="fw-bold mt-3" th:text="#{register.company.title}">
+          Cadastrar empresa
+        </h1>
+        <p class="text-muted" th:text="#{register.company.subtitle}">
           Preencha os dados abaixo para gerar o token que será compartilhado com
           a sua equipe.
         </p>
@@ -31,10 +45,16 @@
 
       <section id="formSection" class="card shadow-sm mx-auto">
         <div class="card-body p-4">
-          <h2 class="h4 mb-4">Dados da empresa</h2>
+          <h2 class="h4 mb-4" th:text="#{register.company.data}">
+            Dados da empresa
+          </h2>
           <form id="empresaForm" novalidate>
             <div class="mb-3">
-              <label class="form-label">Nome da empresa *</label>
+              <label
+                class="form-label"
+                th:text="#{register.company.name} + ' *'"
+                >Nome da empresa *</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -56,7 +76,9 @@
               <small class="text-muted">Ex.: 12345678000199 (14 dígitos)</small>
             </div>
             <div class="mb-3">
-              <label class="form-label">Descrição</label>
+              <label class="form-label" th:text="#{register.company.sector}"
+                >Descrição</label
+              >
               <textarea
                 class="form-control"
                 name="descricao"
@@ -65,11 +87,15 @@
               ></textarea>
             </div>
             <div class="mb-3">
-              <label class="form-label">Email do administrador *</label>
+              <label class="form-label" th:text="#{register.company.email}"
+                >Email do administrador *</label
+              >
               <input type="email" class="form-control" name="email" required />
             </div>
             <div class="mb-4">
-              <label class="form-label">Senha *</label>
+              <label class="form-label" th:text="#{register.employee.password}"
+                >Senha *</label
+              >
               <input
                 type="password"
                 class="form-control"
@@ -77,9 +103,17 @@
                 minlength="8"
                 required
               />
-              <small class="text-muted">Mínimo de 8 caracteres.</small>
+              <small
+                class="text-muted"
+                th:text="#{register.company.password.min}"
+                >Mínimo de 8 caracteres.</small
+              >
             </div>
-            <button type="submit" class="btn btn-primary w-100">
+            <button
+              type="submit"
+              class="btn btn-primary w-100"
+              th:text="#{register.company.button}"
+            >
               Cadastrar empresa
             </button>
             <div class="alert alert-danger mt-3 d-none" id="alertErro"></div>

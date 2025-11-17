@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html
+  lang="pt-BR"
+  xmlns:th="http://www.thymeleaf.org"
+  th:with="locale=${#locale}"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WorkWell | Espaço de Apoio Psicológico</title>
+    <title th:text="#{app.name} + ' | Espaço de Apoio Psicológico'">
+      WorkWell | Espaço de Apoio Psicológico
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,6 +23,9 @@
     <link rel="stylesheet" href="/css/app.css" />
   </head>
   <body>
+    <!-- Language Selector -->
+    <div th:replace="~{fragments/language-selector :: language-selector}"></div>
+
     <div class="min-vh-100 d-flex flex-column">
       <!-- Header -->
       <header class="bg-white shadow-sm">
@@ -26,13 +35,20 @@
               <a
                 href="/dashboard"
                 class="btn btn-link text-decoration-none p-0 mb-2"
+                th:text="#{app.back}"
                 >&larr; Voltar</a
               >
-              <h1 class="h4 mb-0 fw-bold">Espaço de Apoio Psicológico</h1>
+              <h1 class="h4 mb-0 fw-bold" th:text="#{support.title}">
+                Espaço de Apoio Psicológico
+              </h1>
             </div>
             <div class="d-flex align-items-center gap-3">
               <span class="text-muted small" id="usuarioInfo"></span>
-              <button id="btnLogout" class="btn btn-outline-danger btn-sm">
+              <button
+                id="btnLogout"
+                class="btn btn-outline-danger btn-sm"
+                th:text="#{app.logout}"
+              >
                 Sair
               </button>
             </div>
@@ -51,8 +67,14 @@
                 <div class="card shadow-sm border-0">
                   <div class="card-header bg-white border-bottom">
                     <h5 class="mb-0 fw-bold">
-                      🤖 Assistente de IA - WorkWell
-                      <span class="badge bg-primary ms-2">Beta</span>
+                      <span th:text="'🤖 ' + #{dashboard.ai.title}"
+                        >🤖 Assistente de IA - WorkWell</span
+                      >
+                      <span
+                        class="badge bg-primary ms-2"
+                        th:text="#{dashboard.ai.beta}"
+                        >Beta</span
+                      >
                     </h5>
                   </div>
                   <div class="card-body">
@@ -61,16 +83,23 @@
                       <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-primary">
                           <div class="card-body">
-                            <h6 class="card-title fw-bold">
+                            <h6
+                              class="card-title fw-bold"
+                              th:text="'💬 ' + #{dashboard.ai.chat.title}"
+                            >
                               💬 Chat Assistente
                             </h6>
-                            <p class="card-text text-muted small">
+                            <p
+                              class="card-text text-muted small"
+                              th:text="#{dashboard.ai.chat.description}"
+                            >
                               Converse com nosso assistente virtual sobre
                               bem-estar, saúde mental e questões do trabalho.
                             </p>
                             <button
                               class="btn btn-primary btn-sm w-100"
                               onclick="abrirChatIA()"
+                              th:text="#{dashboard.ai.chat.button}"
                             >
                               Abrir Chat
                             </button>
@@ -82,16 +111,23 @@
                       <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-info">
                           <div class="card-body">
-                            <h6 class="card-title fw-bold">
+                            <h6
+                              class="card-title fw-bold"
+                              th:text="'📊 ' + #{dashboard.ai.sentiment.title}"
+                            >
                               📊 Análise de Sentimentos
                             </h6>
-                            <p class="card-text text-muted small">
+                            <p
+                              class="card-text text-muted small"
+                              th:text="#{dashboard.ai.sentiment.description}"
+                            >
                               Analise seus registros de humor e obtenha insights
                               sobre seu bem-estar emocional.
                             </p>
                             <button
                               class="btn btn-info btn-sm w-100"
                               onclick="abrirAnaliseSentimento()"
+                              th:text="#{dashboard.ai.sentiment.button}"
                             >
                               Analisar Sentimentos
                             </button>
@@ -106,7 +142,7 @@
 
             <div class="row mb-4">
               <div class="col-12">
-                <p class="text-muted">
+                <p class="text-muted" th:text="#{support.schedule.title}">
                   Agende uma consulta com um psicólogo da sua empresa.
                 </p>
               </div>
@@ -114,10 +150,16 @@
 
             <section class="card shadow-sm mb-4">
               <div class="card-body">
-                <h2 class="h5 mb-4">Novo agendamento</h2>
+                <h2 class="h5 mb-4" th:text="#{support.schedule.new}">
+                  Novo agendamento
+                </h2>
                 <form id="agendamentoForm" class="row g-3" novalidate>
                   <div class="col-md-6">
-                    <label class="form-label">Psicólogo *</label>
+                    <label
+                      class="form-label"
+                      th:text="#{support.schedule.psychologist} + ' *'"
+                      >Psicólogo *</label
+                    >
                     <select
                       class="form-select"
                       id="psicologoSelect"
@@ -132,7 +174,11 @@
                     >
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label">Data *</label>
+                    <label
+                      class="form-label"
+                      th:text="#{support.schedule.date} + ' *'"
+                      >Data *</label
+                    >
                     <input
                       type="date"
                       class="form-control"
@@ -141,7 +187,11 @@
                     />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label">Horário *</label>
+                    <label
+                      class="form-label"
+                      th:text="#{support.schedule.time} + ' *'"
+                      >Horário *</label
+                    >
                     <input
                       type="time"
                       class="form-control"
@@ -150,7 +200,11 @@
                     />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label">Duração (min) *</label>
+                    <label
+                      class="form-label"
+                      th:text="#{support.schedule.duration} + ' *'"
+                      >Duração (min) *</label
+                    >
                     <select class="form-select" id="duracaoSelect">
                       <option value="30">30</option>
                       <option value="45">45</option>
@@ -226,8 +280,15 @@
               <div class="col-12 col-lg-4">
                 <div class="card shadow-sm h-100">
                   <div class="card-body">
-                    <h3 class="h5">Meus agendamentos</h3>
-                    <p class="text-muted small">Consultas que você agendou.</p>
+                    <h3 class="h5" th:text="#{appointments.my}">
+                      Meus agendamentos
+                    </h3>
+                    <p
+                      class="text-muted small"
+                      th:text="#{support.my.appointments.subtitle}"
+                    >
+                      Consultas que você agendou.
+                    </p>
                     <div id="meusAgendamentosLista" class="vstack gap-2"></div>
                   </div>
                 </div>
@@ -298,8 +359,10 @@
 
             <div class="row mb-4">
               <div class="col-12">
-                <h2 class="h4 mb-2">Dashboard do Psicólogo</h2>
-                <p class="text-muted">
+                <h2 class="h4 mb-2" th:text="#{psychologist.dashboard}">
+                  Dashboard do Psicólogo
+                </h2>
+                <p class="text-muted" th:text="#{psychologist.manage}">
                   Gerencie suas consultas, visualize solicitações e acompanhe
                   seu histórico de atendimentos.
                 </p>
@@ -310,8 +373,13 @@
               <div class="col-12 col-lg-4">
                 <div class="card shadow-sm h-100">
                   <div class="card-body">
-                    <h3 class="h5">Solicitações dos pacientes</h3>
-                    <p class="text-muted small">
+                    <h3 class="h5" th:text="#{psychologist.patient.requests}">
+                      Solicitações dos pacientes
+                    </h3>
+                    <p
+                      class="text-muted small"
+                      th:text="#{psychologist.patient.requests.subtitle}"
+                    >
                       Confirme ou recuse os agendamentos solicitados pelos
                       funcionários.
                     </p>
@@ -322,8 +390,13 @@
               <div class="col-12 col-lg-4">
                 <div class="card shadow-sm h-100">
                   <div class="card-body">
-                    <h3 class="h5">Próximos atendimentos</h3>
-                    <p class="text-muted small">
+                    <h3 class="h5" th:text="#{psychologist.upcoming}">
+                      Próximos atendimentos
+                    </h3>
+                    <p
+                      class="text-muted small"
+                      th:text="#{psychologist.upcoming.subtitle}"
+                    >
                       Consultas confirmadas e agendadas.
                     </p>
                     <div
@@ -336,8 +409,13 @@
               <div class="col-12 col-lg-4">
                 <div class="card shadow-sm h-100">
                   <div class="card-body">
-                    <h3 class="h5">Histórico de atendimentos</h3>
-                    <p class="text-muted small">
+                    <h3 class="h5" th:text="#{psychologist.history}">
+                      Histórico de atendimentos
+                    </h3>
+                    <p
+                      class="text-muted small"
+                      th:text="#{psychologist.history.subtitle}"
+                    >
                       Visualize todas as consultas concluídas, canceladas e
                       registros passados.
                     </p>
@@ -464,7 +542,28 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      // Traduções injetadas pelo Thymeleaf
+      const i18n = {
+        general: {
+          loading: /*[[#{general.loading}]]*/ "Carregando...",
+          close: /*[[#{general.close}]]*/ "Fechar",
+          save: /*[[#{general.save}]]*/ "Salvar",
+          cancel: /*[[#{general.cancel}]]*/ "Cancelar",
+          conclude: /*[[#{general.conclude}]]*/ "Concluir",
+          noPending:
+            /*[[#{general.no.pending}]]*/ "Nenhuma solicitação pendente",
+        },
+        action: {
+          save: /*[[#{action.save}]]*/ "Salvar",
+          cancel: /*[[#{action.cancel}]]*/ "Cancelar",
+          conclude: /*[[#{action.conclude}]]*/ "Concluir",
+          openLink: /*[[#{action.open.link}]]*/ "Abrir link",
+        },
+      };
+      /*]]>*/
+
       const token = localStorage.getItem("token");
       const userRole = localStorage.getItem("userRole");
 
@@ -791,8 +890,7 @@
         );
 
         if (solicitacoesPendentes.length === 0) {
-          solicitacoesLista.innerHTML =
-            '<div class="text-muted small">Nenhuma solicitação pendente</div>';
+          solicitacoesLista.innerHTML = `<div class="text-muted small">${i18n.general.noPending}</div>`;
           return;
         }
 
@@ -897,14 +995,14 @@
                       onclick="atualizarLinkCall('${
                         consulta.id
                       }', '${linkCallId}')">
-                      Salvar
+                      ${i18n.action.save}
                     </button>
                   </div>
                   ${
                     consulta.linkCall
                       ? `
                     <a href="${consulta.linkCall}" target="_blank" class="btn btn-link btn-sm p-0 mt-1">
-                      Abrir link
+                      ${i18n.action.openLink}
                     </a>
                   `
                       : ""
@@ -918,12 +1016,12 @@
               <button class="btn btn-primary btn-sm flex-fill" onclick="concluirConsulta('${
                 consulta.id
               }')">
-                ✓ Concluir
+                ✓ ${i18n.action.conclude}
               </button>
               <button class="btn btn-outline-danger btn-sm flex-fill" onclick="cancelarConsultaPsicologo('${
                 consulta.id
               }')">
-                ✗ Cancelar
+                ✗ ${i18n.action.cancel}
               </button>
             </div>
           `;
