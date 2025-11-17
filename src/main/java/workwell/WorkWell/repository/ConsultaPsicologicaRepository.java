@@ -79,7 +79,7 @@ public interface ConsultaPsicologicaRepository extends JpaRepository<ConsultaPsi
 	@Query("""
 		select c from ConsultaPsicologica c
 		where c.empresa.id = :empresaId
-			and c.funcionario.id = :usuarioId
+			and (c.funcionario.id = :usuarioId or c.criadoPor.id = :usuarioId)
 			and c.dataHoraInicio >= :inicioDia
 			and c.dataHoraInicio < :fimDia
 			and c.status in ('PENDENTE_CONFIRMACAO', 'CONFIRMADA')

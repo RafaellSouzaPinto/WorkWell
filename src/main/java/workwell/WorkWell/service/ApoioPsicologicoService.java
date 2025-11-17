@@ -106,7 +106,7 @@ public class ApoioPsicologicoService {
 		consulta.setFuncionario(funcionario);
 		consulta.setPsicologo(psicologo);
 		consulta.setCriadoPor(usuarioAutenticado);
-		consulta.setAguardandoConfirmacaoDe(definirResponsavelConfirmacao(usuarioAutenticado, funcionario, psicologo));
+		consulta.setAguardandoConfirmacaoDe(definirResponsavelConfirmacao(usuarioAutenticado.getRole(), funcionario, psicologo));
 		consulta.setDataHoraInicio(inicio);
 		consulta.setDataHoraFim(fim);
 		consulta.setLocalAtendimento(local);
@@ -138,7 +138,9 @@ public class ApoioPsicologicoService {
 
 	public List<ConsultaResponse> listarProximas(Usuario usuarioAutenticado) {
 		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
-		List<ConsultaStatus> status = List.of(ConsultaStatus.PENDENTE_CONFIRMACAO, ConsultaStatus.CONFIRMADA);
+		// Apenas consultas confirmadas devem aparecer em "Próximos atendimentos"
+		// Consultas pendentes aparecem em "Solicitações dos pacientes"
+		List<ConsultaStatus> status = List.of(ConsultaStatus.CONFIRMADA);
 		return consultaRepository.buscarPorParticipanteEStatus(empresaId, usuarioAutenticado.getId(), status)
 			.stream()
 			.filter(c -> c.getDataHoraFim().isAfter(LocalDateTime.now()))
@@ -277,10 +279,13 @@ public class ApoioPsicologicoService {
 			.orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para o perfil informado"));
 	}
 
-	private Usuario definirResponsavelConfirmacao(Usuario solicitante, Usuario funcionario, Usuario psicologo) {
-		if (solicitante.getId().equals(funcionario.getId())) {
+	private Usuario definirResponsavelConfirmacao(RoleType roleSolicitante, Usuario funcionario, Usuario psicologo) {
+		// Quando FUNCIONARIO agenda para si mesmo, psicólogo deve confirmar
+		// Quando RH agenda para um funcionário, psicólogo deve confirmar
+		if (roleSolicitante == RoleType.FUNCIONARIO || roleSolicitante == RoleType.RH) {
 			return psicologo;
 		}
+		// Caso contrário (não deveria acontecer normalmente), funcionário confirma
 		return funcionario;
 	}
 

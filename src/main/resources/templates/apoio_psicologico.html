@@ -45,6 +45,65 @@
         <div class="container py-5">
           <!-- CONTEÚDO PARA FUNCIONÁRIO E RH (Agendamento) -->
           <div id="conteudoAgendamento" style="display: none">
+            <!-- Seção de Inteligência Artificial -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card shadow-sm border-0">
+                  <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-bold">
+                      🤖 Assistente de IA - WorkWell
+                      <span class="badge bg-primary ms-2">Beta</span>
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-4">
+                      <!-- Chat Assistente -->
+                      <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-primary">
+                          <div class="card-body">
+                            <h6 class="card-title fw-bold">
+                              💬 Chat Assistente
+                            </h6>
+                            <p class="card-text text-muted small">
+                              Converse com nosso assistente virtual sobre
+                              bem-estar, saúde mental e questões do trabalho.
+                            </p>
+                            <button
+                              class="btn btn-primary btn-sm w-100"
+                              onclick="abrirChatIA()"
+                            >
+                              Abrir Chat
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Análise de Sentimentos -->
+                      <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-info">
+                          <div class="card-body">
+                            <h6 class="card-title fw-bold">
+                              📊 Análise de Sentimentos
+                            </h6>
+                            <p class="card-text text-muted small">
+                              Analise seus registros de humor e obtenha insights
+                              sobre seu bem-estar emocional.
+                            </p>
+                            <button
+                              class="btn btn-info btn-sm w-100"
+                              onclick="abrirAnaliseSentimento()"
+                            >
+                              Analisar Sentimentos
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="row mb-4">
               <div class="col-12">
                 <p class="text-muted">
@@ -178,6 +237,65 @@
 
           <!-- CONTEÚDO PARA PSICÓLOGO (Dashboard) -->
           <div id="conteudoPsicologo" style="display: none">
+            <!-- Seção de Inteligência Artificial -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card shadow-sm border-0">
+                  <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-bold">
+                      🤖 Assistente de IA - WorkWell
+                      <span class="badge bg-primary ms-2">Beta</span>
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-4">
+                      <!-- Chat Assistente -->
+                      <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-primary">
+                          <div class="card-body">
+                            <h6 class="card-title fw-bold">
+                              💬 Chat Assistente
+                            </h6>
+                            <p class="card-text text-muted small">
+                              Converse com nosso assistente virtual sobre
+                              bem-estar, saúde mental e questões do trabalho.
+                            </p>
+                            <button
+                              class="btn btn-primary btn-sm w-100"
+                              onclick="abrirChatIA()"
+                            >
+                              Abrir Chat
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Análise de Sentimentos -->
+                      <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-info">
+                          <div class="card-body">
+                            <h6 class="card-title fw-bold">
+                              📊 Análise de Sentimentos
+                            </h6>
+                            <p class="card-text text-muted small">
+                              Analise os registros de humor e obtenha insights
+                              sobre o bem-estar emocional dos pacientes.
+                            </p>
+                            <button
+                              class="btn btn-info btn-sm w-100"
+                              onclick="abrirAnaliseSentimento()"
+                            >
+                              Analisar Sentimentos
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="row mb-4">
               <div class="col-12">
                 <h2 class="h4 mb-2">Dashboard do Psicólogo</h2>
@@ -243,6 +361,106 @@
           </p>
         </div>
       </footer>
+    </div>
+
+    <!-- Modais de IA -->
+    <!-- Modal Chat IA -->
+    <div class="modal fade" id="modalChatIA" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">💬 Chat Assistente - WorkWell</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" style="height: 400px; overflow-y: auto">
+            <div id="chatMessages" class="mb-3">
+              <div class="alert alert-info">
+                <strong>Assistente:</strong> Olá! Sou o assistente virtual do
+                WorkWell. Como posso ajudá-lo hoje com questões de bem-estar,
+                saúde mental ou trabalho?
+              </div>
+            </div>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="chatInput"
+                placeholder="Digite sua mensagem..."
+              />
+              <button class="btn btn-primary" onclick="enviarMensagemChat()">
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Análise de Sentimentos -->
+    <div class="modal fade" id="modalAnaliseSentimento" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">📊 Análise de Sentimentos</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formAnaliseSentimento">
+              <div class="mb-3">
+                <label class="form-label">Texto/Observações</label>
+                <textarea
+                  class="form-control"
+                  id="analiseTexto"
+                  rows="4"
+                  placeholder="Descreva como você está se sentindo ou suas observações..."
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Nível de Humor (1-10)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="analiseNivelHumor"
+                    min="1"
+                    max="10"
+                    placeholder="1-10"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Setor</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="analiseSetor"
+                    placeholder="Seu setor"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-info w-100"
+                onclick="processarAnaliseSentimento()"
+              >
+                Analisar Sentimentos
+              </button>
+            </form>
+            <div id="resultadoAnalise" class="mt-4" style="display: none">
+              <hr />
+              <h6 class="fw-bold">Resultado da Análise:</h6>
+              <div id="analiseConteudo"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -567,15 +785,18 @@
 
       const renderizarSolicitacoes = (consultas) => {
         solicitacoesLista.innerHTML = "";
-        if (consultas.length === 0) {
+        // Filtrar apenas consultas que estão aguardando confirmação do psicólogo
+        const solicitacoesPendentes = consultas.filter(
+          (c) => c.aguardandoMinhaConfirmacao
+        );
+
+        if (solicitacoesPendentes.length === 0) {
           solicitacoesLista.innerHTML =
             '<div class="text-muted small">Nenhuma solicitação pendente</div>';
           return;
         }
 
-        consultas.forEach((consulta) => {
-          if (!consulta.aguardandoMinhaConfirmacao) return;
-
+        solicitacoesPendentes.forEach((consulta) => {
           const card = document.createElement("div");
           card.className = "border rounded p-3 mb-2";
           const dataHora = new Date(consulta.dataHoraInicio);
@@ -594,6 +815,7 @@
               <div class="text-muted small">${consulta.local}${
             consulta.sala ? " • " + consulta.sala : ""
           }</div>
+              <span class="badge bg-warning">PENDENTE_CONFIRMACAO</span>
               ${
                 consulta.observacoes
                   ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
@@ -619,13 +841,18 @@
 
       const renderizarProximosAtendimentos = (consultas) => {
         proximosAtendimentosLista.innerHTML = "";
-        if (consultas.length === 0) {
+        // Filtrar apenas consultas confirmadas (pendentes aparecem em "Solicitações dos pacientes")
+        const consultasConfirmadas = consultas.filter(
+          (c) => c.status === "CONFIRMADA"
+        );
+
+        if (consultasConfirmadas.length === 0) {
           proximosAtendimentosLista.innerHTML =
             '<div class="text-muted small">Nenhum atendimento agendado</div>';
           return;
         }
 
-        consultas.forEach((consulta) => {
+        consultasConfirmadas.forEach((consulta) => {
           const card = document.createElement("div");
           card.className = "border rounded p-3 mb-2";
           const dataHora = new Date(consulta.dataHoraInicio);
@@ -643,7 +870,6 @@
           });
           const isOnline = consulta.local === "ONLINE";
           const linkCallId = `linkCall_${consulta.id}`;
-          const podeAcoes = consulta.status === "CONFIRMADA";
 
           card.innerHTML = `
             <div class="mb-2">
@@ -652,9 +878,7 @@
               <div class="text-muted small">${consulta.local}${
             consulta.sala ? " • " + consulta.sala : ""
           }</div>
-              <span class="badge bg-${
-                consulta.status === "CONFIRMADA" ? "success" : "warning"
-              }">${consulta.status}</span>
+              <span class="badge bg-success">CONFIRMADA</span>
               ${
                 consulta.observacoes
                   ? `<div class="text-muted small mt-1">${consulta.observacoes}</div>`
@@ -690,20 +914,18 @@
                   : ""
               }
             </div>
-            ${
-              podeAcoes
-                ? `
-              <div class="d-flex gap-2">
-                <button class="btn btn-primary btn-sm flex-fill" onclick="concluirConsulta('${consulta.id}')">
-                  ✓ Concluir
-                </button>
-                <button class="btn btn-outline-danger btn-sm flex-fill" onclick="cancelarConsultaPsicologo('${consulta.id}')">
-                  ✗ Cancelar
-                </button>
-              </div>
-            `
-                : ""
-            }
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary btn-sm flex-fill" onclick="concluirConsulta('${
+                consulta.id
+              }')">
+                ✓ Concluir
+              </button>
+              <button class="btn btn-outline-danger btn-sm flex-fill" onclick="cancelarConsultaPsicologo('${
+                consulta.id
+              }')">
+                ✗ Cancelar
+              </button>
+            </div>
           `;
           proximosAtendimentosLista.appendChild(card);
         });
@@ -1001,6 +1223,161 @@
       };
 
       init();
+
+      // ========== FUNÇÕES DE INTELIGÊNCIA ARTIFICIAL ==========
+
+      // Abrir Chat IA
+      window.abrirChatIA = function () {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalChatIA")
+        );
+        modal.show();
+        document
+          .getElementById("chatInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              enviarMensagemChat();
+            }
+          });
+      };
+
+      // Enviar mensagem no chat
+      window.enviarMensagemChat = async function () {
+        const input = document.getElementById("chatInput");
+        const mensagem = input.value.trim();
+        if (!mensagem) return;
+
+        const chatMessages = document.getElementById("chatMessages");
+
+        // Adicionar mensagem do usuário
+        chatMessages.innerHTML += `
+          <div class="alert alert-primary mb-2">
+            <strong>Você:</strong> ${mensagem}
+          </div>
+        `;
+        input.value = "";
+
+        // Mostrar loading
+        chatMessages.innerHTML += `
+          <div class="alert alert-secondary mb-2">
+            <strong>Assistente:</strong> Pensando...
+          </div>
+        `;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+          const response = await securedFetch("/api/ai/chat", {
+            method: "POST",
+            body: JSON.stringify({
+              mensagem: mensagem,
+              contexto: `Usuário: ${userRole}`,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Remover loading
+            chatMessages.removeChild(chatMessages.lastChild);
+            // Adicionar resposta
+            chatMessages.innerHTML += `
+              <div class="alert alert-info mb-2">
+                <strong>Assistente:</strong> ${data.resposta}
+              </div>
+            `;
+          } else {
+            throw new Error("Erro na resposta");
+          }
+        } catch (error) {
+          chatMessages.removeChild(chatMessages.lastChild);
+          chatMessages.innerHTML += `
+            <div class="alert alert-danger mb-2">
+              <strong>Erro:</strong> Não foi possível processar sua mensagem. Tente novamente.
+            </div>
+          `;
+        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+      // Abrir Análise de Sentimentos
+      window.abrirAnaliseSentimento = function () {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalAnaliseSentimento")
+        );
+        modal.show();
+        document.getElementById("resultadoAnalise").style.display = "none";
+      };
+
+      // Processar Análise de Sentimentos
+      window.processarAnaliseSentimento = async function () {
+        const texto = document.getElementById("analiseTexto").value;
+        const nivelHumor = document.getElementById("analiseNivelHumor").value;
+        const setor = document.getElementById("analiseSetor").value;
+
+        if (!texto && !nivelHumor) {
+          alert("Preencha pelo menos o texto ou o nível de humor");
+          return;
+        }
+
+        const resultadoDiv = document.getElementById("resultadoAnalise");
+        const conteudoDiv = document.getElementById("analiseConteudo");
+        conteudoDiv.innerHTML =
+          '<div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>';
+
+        try {
+          const response = await securedFetch("/api/ai/analise-sentimento", {
+            method: "POST",
+            body: JSON.stringify({
+              texto: texto || "",
+              nivelHumor: nivelHumor ? parseInt(nivelHumor) : null,
+              setor: setor || "",
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const sentimentoBadge =
+              data.sentimento === "positivo"
+                ? "success"
+                : data.sentimento === "negativo"
+                ? "danger"
+                : "warning";
+
+            conteudoDiv.innerHTML = `
+              <div class="mb-3">
+                <span class="badge bg-${sentimentoBadge}">${data.sentimento.toUpperCase()}</span>
+                <span class="ms-2">Score: ${(data.score * 100).toFixed(
+                  1
+                )}%</span>
+              </div>
+              <div class="mb-3">
+                <strong>Resumo:</strong>
+                <p>${data.resumo}</p>
+              </div>
+              <div class="mb-3">
+                <strong>Pontos Chave:</strong>
+                <ul>
+                  ${data.pontosChave.map((p) => `<li>${p}</li>`).join("")}
+                </ul>
+              </div>
+              <div>
+                <strong>Recomendações:</strong>
+                <ul>
+                  ${data.recomendacoes.map((r) => `<li>${r}</li>`).join("")}
+                </ul>
+              </div>
+            `;
+            resultadoDiv.style.display = "block";
+          } else {
+            throw new Error("Erro na análise");
+          }
+        } catch (error) {
+          conteudoDiv.innerHTML = `
+            <div class="alert alert-danger">
+              Erro ao processar análise. Tente novamente.
+            </div>
+          `;
+        }
+      };
     </script>
   </body>
 </html>

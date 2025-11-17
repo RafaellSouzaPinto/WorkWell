@@ -29,8 +29,11 @@ import workwell.WorkWell.dto.dashboard.RespostaEnqueteResponse;
 import workwell.WorkWell.dto.dashboard.AgendaDiaResponse;
 import workwell.WorkWell.dto.dashboard.FrequenciaFuncionarioResponse;
 import workwell.WorkWell.dto.dashboard.HistoricoParticipacaoResponse;
+import workwell.WorkWell.dto.ai.InsightRhRequest;
+import workwell.WorkWell.dto.ai.InsightRhResponse;
 import workwell.WorkWell.entity.Usuario;
 import workwell.WorkWell.service.DashboardRhService;
+import workwell.WorkWell.service.AIService;
 
 @RestController
 @RequestMapping("/api/dashboard-rh")
@@ -38,9 +41,11 @@ import workwell.WorkWell.service.DashboardRhService;
 public class DashboardRhController {
 
 	private final DashboardRhService dashboardRhService;
+	private final AIService aiService;
 
-	public DashboardRhController(DashboardRhService dashboardRhService) {
+	public DashboardRhController(DashboardRhService dashboardRhService, AIService aiService) {
 		this.dashboardRhService = dashboardRhService;
+		this.aiService = aiService;
 	}
 
 	@GetMapping
@@ -127,6 +132,37 @@ public class DashboardRhController {
 	@GetMapping("/funcionario/historico")
 	public HistoricoParticipacaoResponse obterHistorico(@AuthenticationPrincipal Usuario usuario) {
 		return dashboardRhService.obterHistoricoParticipacao(usuario);
+	}
+
+	@PostMapping("/insights-ai")
+	@PreAuthorize("hasRole('RH')")
+	public ResponseEntity<InsightRhResponse> gerarInsightsIA(@AuthenticationPrincipal Usuario usuario) {
+		// Obter dados do dashboard
+		var dashboard = dashboardRhService.obterDashboard(usuario);
+		
+		// Converter setores com estresse para o formato esperado pela IA
+		// Usar nivelMedioHumor como indicador de estresse (quanto menor, maior o estresse)
+		List<InsightRhRequest.SetorEstresseData> setoresData = dashboard.setoresComEstresse().stream()
+			.map(s -> new InsightRhRequest.SetorEstresseData(
+				s.setor(), 
+				s.nivelMedioHumor() != null ? (5.0 - s.nivelMedioHumor()) : 0.0 // Inverter: menor humor = maior estresse
+			))
+			.toList();
+		
+		// Criar requisição para IA
+		InsightRhRequest request = new InsightRhRequest(
+			dashboard.nivelMedioHumor(),
+			setoresData,
+			dashboard.frequenciaConsultas(),
+			dashboard.aderenciaAtividades(),
+			java.util.Map.of(
+				"totalEnquetes", dashboard.enquetesAtivas().size(),
+				"totalAlertas", dashboard.alertas().size()
+			)
+		);
+		
+		InsightRhResponse insights = aiService.gerarInsightsRh(request);
+		return ResponseEntity.ok(insights);
 	}
 }
 

@@ -125,6 +125,84 @@
             </div>
           </div>
 
+          <!-- Seção de Inteligência Artificial -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">
+                    🤖 Assistente de IA - WorkWell
+                    <span class="badge bg-primary ms-2">Beta</span>
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div class="row g-4">
+                    <!-- Chat Assistente -->
+                    <div class="col-md-6 col-lg-4">
+                      <div class="card h-100 border-primary">
+                        <div class="card-body">
+                          <h6 class="card-title fw-bold">💬 Chat Assistente</h6>
+                          <p class="card-text text-muted small">
+                            Converse com nosso assistente virtual sobre
+                            bem-estar, saúde mental e questões do trabalho.
+                          </p>
+                          <button
+                            class="btn btn-primary btn-sm w-100"
+                            onclick="abrirChatIA()"
+                          >
+                            Abrir Chat
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Análise de Sentimentos -->
+                    <div class="col-md-6 col-lg-4">
+                      <div class="card h-100 border-info">
+                        <div class="card-body">
+                          <h6 class="card-title fw-bold">
+                            📊 Análise de Sentimentos
+                          </h6>
+                          <p class="card-text text-muted small">
+                            Analise os registros de humor e obtenha insights
+                            sobre o bem-estar emocional da equipe.
+                          </p>
+                          <button
+                            class="btn btn-info btn-sm w-100"
+                            onclick="abrirAnaliseSentimento()"
+                          >
+                            Analisar Sentimentos
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Insights RH -->
+                    <div class="col-md-6 col-lg-4">
+                      <div class="card h-100 border-warning">
+                        <div class="card-body">
+                          <h6 class="card-title fw-bold">
+                            📈 Insights Estratégicos
+                          </h6>
+                          <p class="card-text text-muted small">
+                            Obtenha insights estratégicos baseados nos dados do
+                            dashboard para tomada de decisão.
+                          </p>
+                          <button
+                            class="btn btn-warning btn-sm w-100"
+                            onclick="abrirInsightsRH()"
+                          >
+                            Gerar Insights
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Enquetes Rápidas -->
           <div class="row mb-4">
             <div class="col-12">
@@ -765,6 +843,148 @@
             </button>
             <button type="button" class="btn btn-primary" id="btnSalvarHumor">
               Registrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modais de IA -->
+    <!-- Modal Chat IA -->
+    <div class="modal fade" id="modalChatIA" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">💬 Chat Assistente - WorkWell</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" style="height: 400px; overflow-y: auto">
+            <div id="chatMessages" class="mb-3">
+              <div class="alert alert-info">
+                <strong>Assistente:</strong> Olá! Sou o assistente virtual do
+                WorkWell. Como posso ajudá-lo hoje com questões de bem-estar,
+                saúde mental ou trabalho?
+              </div>
+            </div>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="chatInput"
+                placeholder="Digite sua mensagem..."
+              />
+              <button class="btn btn-primary" onclick="enviarMensagemChat()">
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Análise de Sentimentos -->
+    <div class="modal fade" id="modalAnaliseSentimento" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">📊 Análise de Sentimentos</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formAnaliseSentimento">
+              <div class="mb-3">
+                <label class="form-label">Texto/Observações</label>
+                <textarea
+                  class="form-control"
+                  id="analiseTexto"
+                  rows="4"
+                  placeholder="Descreva como você está se sentindo ou suas observações..."
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Nível de Humor (1-10)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="analiseNivelHumor"
+                    min="1"
+                    max="10"
+                    placeholder="1-10"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Setor</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="analiseSetor"
+                    placeholder="Seu setor"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-info w-100"
+                onclick="processarAnaliseSentimento()"
+              >
+                Analisar Sentimentos
+              </button>
+            </form>
+            <div id="resultadoAnalise" class="mt-4" style="display: none">
+              <hr />
+              <h6 class="fw-bold">Resultado da Análise:</h6>
+              <div id="analiseConteudo"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Insights RH -->
+    <div class="modal fade" id="modalInsightsRH" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title">📈 Insights Estratégicos - RH</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center mb-4">
+              <div
+                class="spinner-border text-warning"
+                role="status"
+                id="insightsSpinner"
+              >
+                <span class="visually-hidden">Carregando...</span>
+              </div>
+              <p class="mt-2">
+                Gerando insights estratégicos baseados nos dados do dashboard...
+              </p>
+            </div>
+            <div id="resultadoInsights" style="display: none">
+              <div id="insightsConteudo"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fechar
             </button>
           </div>
         </div>
@@ -2336,6 +2556,236 @@
           }
         }, 30000);
       })(); // Fechar função async auto-executável
+      // ========== FUNÇÕES DE INTELIGÊNCIA ARTIFICIAL ==========
+
+      // Abrir Chat IA
+      window.abrirChatIA = function () {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalChatIA")
+        );
+        modal.show();
+        document
+          .getElementById("chatInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              enviarMensagemChat();
+            }
+          });
+      };
+
+      // Enviar mensagem no chat
+      window.enviarMensagemChat = async function () {
+        const input = document.getElementById("chatInput");
+        const mensagem = input.value.trim();
+        if (!mensagem) return;
+
+        const chatMessages = document.getElementById("chatMessages");
+
+        // Adicionar mensagem do usuário
+        chatMessages.innerHTML += `
+          <div class="alert alert-primary mb-2">
+            <strong>Você:</strong> ${mensagem}
+          </div>
+        `;
+        input.value = "";
+
+        // Mostrar loading
+        chatMessages.innerHTML += `
+          <div class="alert alert-secondary mb-2">
+            <strong>Assistente:</strong> Pensando...
+          </div>
+        `;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+          const response = await apiRequest("/api/ai/chat", {
+            method: "POST",
+            body: JSON.stringify({
+              mensagem: mensagem,
+              contexto: `Usuário: RH`,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Remover loading
+            chatMessages.removeChild(chatMessages.lastChild);
+            // Adicionar resposta
+            chatMessages.innerHTML += `
+              <div class="alert alert-info mb-2">
+                <strong>Assistente:</strong> ${data.resposta}
+              </div>
+            `;
+          } else {
+            throw new Error("Erro na resposta");
+          }
+        } catch (error) {
+          chatMessages.removeChild(chatMessages.lastChild);
+          chatMessages.innerHTML += `
+            <div class="alert alert-danger mb-2">
+              <strong>Erro:</strong> Não foi possível processar sua mensagem. Tente novamente.
+            </div>
+          `;
+        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+      // Abrir Análise de Sentimentos
+      window.abrirAnaliseSentimento = function () {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalAnaliseSentimento")
+        );
+        modal.show();
+        document.getElementById("resultadoAnalise").style.display = "none";
+      };
+
+      // Processar Análise de Sentimentos
+      window.processarAnaliseSentimento = async function () {
+        const texto = document.getElementById("analiseTexto").value;
+        const nivelHumor = document.getElementById("analiseNivelHumor").value;
+        const setor = document.getElementById("analiseSetor").value;
+
+        if (!texto && !nivelHumor) {
+          alert("Preencha pelo menos o texto ou o nível de humor");
+          return;
+        }
+
+        const resultadoDiv = document.getElementById("resultadoAnalise");
+        const conteudoDiv = document.getElementById("analiseConteudo");
+        conteudoDiv.innerHTML =
+          '<div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>';
+
+        try {
+          const response = await apiRequest("/api/ai/analise-sentimento", {
+            method: "POST",
+            body: JSON.stringify({
+              texto: texto || "",
+              nivelHumor: nivelHumor ? parseInt(nivelHumor) : null,
+              setor: setor || "",
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const sentimentoBadge =
+              data.sentimento === "positivo"
+                ? "success"
+                : data.sentimento === "negativo"
+                ? "danger"
+                : "warning";
+
+            conteudoDiv.innerHTML = `
+              <div class="mb-3">
+                <span class="badge bg-${sentimentoBadge}">${data.sentimento.toUpperCase()}</span>
+                <span class="ms-2">Score: ${(data.score * 100).toFixed(
+                  1
+                )}%</span>
+              </div>
+              <div class="mb-3">
+                <strong>Resumo:</strong>
+                <p>${data.resumo}</p>
+              </div>
+              <div class="mb-3">
+                <strong>Pontos Chave:</strong>
+                <ul>
+                  ${data.pontosChave.map((p) => `<li>${p}</li>`).join("")}
+                </ul>
+              </div>
+              <div>
+                <strong>Recomendações:</strong>
+                <ul>
+                  ${data.recomendacoes.map((r) => `<li>${r}</li>`).join("")}
+                </ul>
+              </div>
+            `;
+            resultadoDiv.style.display = "block";
+          } else {
+            throw new Error("Erro na análise");
+          }
+        } catch (error) {
+          conteudoDiv.innerHTML = `
+            <div class="alert alert-danger">
+              Erro ao processar análise. Tente novamente.
+            </div>
+          `;
+        }
+      };
+
+      // Abrir Insights RH
+      window.abrirInsightsRH = async function () {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalInsightsRH")
+        );
+        modal.show();
+
+        const spinner = document.getElementById("insightsSpinner");
+        const resultado = document.getElementById("resultadoInsights");
+        const conteudo = document.getElementById("insightsConteudo");
+
+        spinner.style.display = "block";
+        resultado.style.display = "none";
+
+        try {
+          const response = await apiRequest("/api/dashboard-rh/insights-ai", {
+            method: "POST",
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            spinner.style.display = "none";
+
+            const tendenciaBadge =
+              data.tendencia === "melhorando"
+                ? "success"
+                : data.tendencia === "preocupante"
+                ? "danger"
+                : "warning";
+
+            conteudo.innerHTML = `
+              <div class="mb-4">
+                <h6 class="fw-bold">Resumo Executivo</h6>
+                <p>${data.resumoExecutivo}</p>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <h6 class="fw-bold text-success">Pontos Positivos</h6>
+                  <ul>
+                    ${data.pontosPositivos.map((p) => `<li>${p}</li>`).join("")}
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="fw-bold text-danger">Pontos Críticos</h6>
+                  <ul>
+                    ${data.pontosCriticos.map((p) => `<li>${p}</li>`).join("")}
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-4">
+                <h6 class="fw-bold">Recomendações</h6>
+                <ul>
+                  ${data.recomendacoes.map((r) => `<li>${r}</li>`).join("")}
+                </ul>
+              </div>
+              <div>
+                <span class="badge bg-${tendenciaBadge}">Tendência: ${
+              data.tendencia
+            }</span>
+              </div>
+            `;
+            resultado.style.display = "block";
+          } else {
+            throw new Error("Erro nos insights");
+          }
+        } catch (error) {
+          spinner.style.display = "none";
+          conteudo.innerHTML = `
+            <div class="alert alert-danger">
+              Erro ao gerar insights. Tente novamente.
+            </div>
+          `;
+          resultado.style.display = "block";
+        }
+      };
     </script>
   </body>
 </html>
