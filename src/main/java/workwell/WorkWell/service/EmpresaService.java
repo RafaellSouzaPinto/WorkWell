@@ -20,12 +20,14 @@ public class EmpresaService {
 	private final EmpresaRepository empresaRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailNotificationService emailNotificationService;
 
 	public EmpresaService(EmpresaRepository empresaRepository, UsuarioRepository usuarioRepository,
-		PasswordEncoder passwordEncoder) {
+		PasswordEncoder passwordEncoder, EmailNotificationService emailNotificationService) {
 		this.empresaRepository = empresaRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.emailNotificationService = emailNotificationService;
 	}
 
 	@Transactional
@@ -56,6 +58,14 @@ public class EmpresaService {
 		Usuario adminSalvo = usuarioRepository.save(admin);
 		empresaSalva.setAdmin(adminSalvo);
 		empresaRepository.save(empresaSalva);
+
+		// Enviar e-mail de boas-vindas de forma assíncrona via RabbitMQ
+		try {
+			emailNotificationService.enviarBoasVindasEmpresa(empresaSalva, adminSalvo);
+		} catch (Exception e) {
+			// Log do erro mas não interrompe o cadastro
+			System.err.println("Erro ao enviar e-mail de boas-vindas: " + e.getMessage());
+		}
 
 		return new EmpresaResponse(
 			empresaSalva.getId(),

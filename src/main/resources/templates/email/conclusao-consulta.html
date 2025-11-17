@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta Concluída - WorkWell</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo {
+        font-size: 32px;
+        font-weight: bold;
+        color: #4caf50;
+        margin-bottom: 10px;
+      }
+      .content {
+        margin-bottom: 30px;
+      }
+      .info-box {
+        background-color: #f0f8f0;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #4caf50;
+      }
+      .info-item {
+        margin: 10px 0;
+      }
+      .info-label {
+        font-weight: bold;
+        color: #555;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">WorkWell</div>
+        <h1>Consulta Concluída ✓</h1>
+      </div>
+
+      <div class="content">
+        <p>Olá <strong th:text="${nomeDestinatario}">Usuário</strong>,</p>
+
+        <p>A consulta psicológica foi concluída com sucesso!</p>
+
+        <div class="info-box">
+          <div class="info-item">
+            <span class="info-label">Data e Hora:</span>
+            <span th:text="${dataHoraInicio}">01/01/2025 10:00</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Funcionário:</span>
+            <span th:text="${nomeFuncionario}">João Silva</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Psicólogo:</span>
+            <span th:text="${nomePsicologo}">Dr. Maria Santos</span>
+          </div>
+        </div>
+
+        <p>
+          Esperamos que a consulta tenha sido proveitosa. Se precisar agendar
+          uma nova consulta, você pode fazer isso através da plataforma
+          WorkWell.
+        </p>
+
+        <p>
+          Lembre-se: cuidar da sua saúde mental é fundamental. Estamos aqui para
+          apoiá-lo sempre que precisar.
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>Este é um e-mail automático, por favor não responda.</p>
+        <p>&copy; 2025 WorkWell - Todos os direitos reservados</p>
+      </div>
+    </div>
+  </body>
+</html>

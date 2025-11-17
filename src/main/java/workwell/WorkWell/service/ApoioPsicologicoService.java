@@ -30,11 +30,13 @@ public class ApoioPsicologicoService {
 
 	private final ConsultaPsicologicaRepository consultaRepository;
 	private final UsuarioRepository usuarioRepository;
+	private final EmailNotificationService emailNotificationService;
 
 	public ApoioPsicologicoService(ConsultaPsicologicaRepository consultaRepository,
-		UsuarioRepository usuarioRepository) {
+		UsuarioRepository usuarioRepository, EmailNotificationService emailNotificationService) {
 		this.consultaRepository = consultaRepository;
 		this.usuarioRepository = usuarioRepository;
+		this.emailNotificationService = emailNotificationService;
 	}
 
 	public List<UsuarioResponse> listarPsicologos(Usuario usuarioAutenticado) {
@@ -112,7 +114,18 @@ public class ApoioPsicologicoService {
 		consulta.setObservacoes(request.observacoes());
 		consulta.setStatus(ConsultaStatus.PENDENTE_CONFIRMACAO);
 
-		return mapConsulta(consultaRepository.save(consulta), usuarioAutenticado);
+		ConsultaPsicologica consultaSalva = consultaRepository.save(consulta);
+
+		// Enviar e-mails de notificação de forma assíncrona via RabbitMQ
+		try {
+			emailNotificationService.enviarNotificacaoAgendamentoConsulta(consultaSalva, funcionario);
+			emailNotificationService.enviarNotificacaoAgendamentoConsulta(consultaSalva, psicologo);
+		} catch (Exception e) {
+			// Log do erro mas não interrompe o agendamento
+			System.err.println("Erro ao enviar e-mails de agendamento: " + e.getMessage());
+		}
+
+		return mapConsulta(consultaSalva, usuarioAutenticado);
 	}
 
 	public List<ConsultaResponse> listarPendentes(Usuario usuarioAutenticado) {
@@ -169,7 +182,18 @@ public class ApoioPsicologicoService {
 		}
 		consulta.setStatus(ConsultaStatus.CONFIRMADA);
 		consulta.setAguardandoConfirmacaoDe(null);
-		return mapConsulta(consulta, usuarioAutenticado);
+		ConsultaPsicologica consultaSalva = consultaRepository.save(consulta);
+
+		// Enviar e-mails de confirmação de forma assíncrona via RabbitMQ
+		try {
+			emailNotificationService.enviarNotificacaoConfirmacaoConsulta(consultaSalva, consulta.getFuncionario());
+			emailNotificationService.enviarNotificacaoConfirmacaoConsulta(consultaSalva, consulta.getPsicologo());
+		} catch (Exception e) {
+			// Log do erro mas não interrompe a confirmação
+			System.err.println("Erro ao enviar e-mails de confirmação: " + e.getMessage());
+		}
+
+		return mapConsulta(consultaSalva, usuarioAutenticado);
 	}
 
 	@Transactional
@@ -184,7 +208,18 @@ public class ApoioPsicologicoService {
 		consulta.setStatus(ConsultaStatus.CANCELADA);
 		consulta.setJustificativaCancelamento(request.justificativa());
 		consulta.setAguardandoConfirmacaoDe(null);
-		return mapConsulta(consulta, usuarioAutenticado);
+		ConsultaPsicologica consultaSalva = consultaRepository.save(consulta);
+
+		// Enviar e-mails de cancelamento de forma assíncrona via RabbitMQ
+		try {
+			emailNotificationService.enviarNotificacaoCancelamentoConsulta(consultaSalva, consulta.getFuncionario());
+			emailNotificationService.enviarNotificacaoCancelamentoConsulta(consultaSalva, consulta.getPsicologo());
+		} catch (Exception e) {
+			// Log do erro mas não interrompe o cancelamento
+			System.err.println("Erro ao enviar e-mails de cancelamento: " + e.getMessage());
+		}
+
+		return mapConsulta(consultaSalva, usuarioAutenticado);
 	}
 
 	@Transactional
@@ -200,7 +235,18 @@ public class ApoioPsicologicoService {
 			throw new BusinessException("Somente consultas confirmadas podem ser concluídas");
 		}
 		consulta.setStatus(ConsultaStatus.CONCLUIDA);
-		return mapConsulta(consulta, usuarioAutenticado);
+		ConsultaPsicologica consultaSalva = consultaRepository.save(consulta);
+
+		// Enviar e-mails de conclusão de forma assíncrona via RabbitMQ
+		try {
+			emailNotificationService.enviarNotificacaoConclusaoConsulta(consultaSalva, consulta.getFuncionario());
+			emailNotificationService.enviarNotificacaoConclusaoConsulta(consultaSalva, consulta.getPsicologo());
+		} catch (Exception e) {
+			// Log do erro mas não interrompe a conclusão
+			System.err.println("Erro ao enviar e-mails de conclusão: " + e.getMessage());
+		}
+
+		return mapConsulta(consultaSalva, usuarioAutenticado);
 	}
 
 	@Transactional
