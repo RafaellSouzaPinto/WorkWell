@@ -1,5 +1,6 @@
 package workwell.WorkWell.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,5 +32,13 @@ public interface AvaliacaoProfundaRepository extends JpaRepository<AvaliacaoProf
 	List<AvaliacaoProfunda> buscarAvaliacoesPorPsicologo(@Param("empresaId") UUID empresaId, @Param("psicologoId") UUID psicologoId);
 
 	List<AvaliacaoProfunda> findByEmpresaIdOrderByCreatedAtDesc(UUID empresaId);
+
+	@Query("""
+		select count(a) from AvaliacaoProfunda a
+		where a.empresa.id = :empresaId
+		and a.ativa = true
+		and a.dataInicio >= :dataInicio
+	""")
+	Long contarAvaliacoesNoPeriodo(@Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
 }
 

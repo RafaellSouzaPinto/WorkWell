@@ -53,6 +53,8 @@ import workwell.WorkWell.repository.ParticipacaoAtividadeRepository;
 import workwell.WorkWell.repository.RegistroHumorRepository;
 import workwell.WorkWell.repository.RespostaEnqueteRepository;
 import workwell.WorkWell.repository.UsuarioRepository;
+import workwell.WorkWell.repository.AvaliacaoProfundaRepository;
+import workwell.WorkWell.repository.RespostaAvaliacaoProfundaRepository;
 
 @Service
 public class DashboardRhService {
@@ -64,6 +66,8 @@ public class DashboardRhService {
 	private final AtividadeBemEstarRepository atividadeRepository;
 	private final ParticipacaoAtividadeRepository participacaoRepository;
 	private final UsuarioRepository usuarioRepository;
+	private final AvaliacaoProfundaRepository avaliacaoProfundaRepository;
+	private final RespostaAvaliacaoProfundaRepository respostaAvaliacaoProfundaRepository;
 	private final ObjectMapper objectMapper;
 
 	private static final double TAXA_PARTICIPACAO_MINIMA = 0.6; // 60%
@@ -77,6 +81,8 @@ public class DashboardRhService {
 		AtividadeBemEstarRepository atividadeRepository,
 		ParticipacaoAtividadeRepository participacaoRepository,
 		UsuarioRepository usuarioRepository,
+		AvaliacaoProfundaRepository avaliacaoProfundaRepository,
+		RespostaAvaliacaoProfundaRepository respostaAvaliacaoProfundaRepository,
 		ObjectMapper objectMapper
 	) {
 		this.registroHumorRepository = registroHumorRepository;
@@ -86,6 +92,8 @@ public class DashboardRhService {
 		this.atividadeRepository = atividadeRepository;
 		this.participacaoRepository = participacaoRepository;
 		this.usuarioRepository = usuarioRepository;
+		this.avaliacaoProfundaRepository = avaliacaoProfundaRepository;
+		this.respostaAvaliacaoProfundaRepository = respostaAvaliacaoProfundaRepository;
 		this.objectMapper = objectMapper;
 	}
 
@@ -554,11 +562,20 @@ public class DashboardRhService {
 		UUID usuarioId = usuario.getId();
 		LocalDateTime dataInicio = LocalDateTime.now().minusDays(30);
 
+		// Contar atividades de bem-estar
 		Long totalAtividades = participacaoRepository.contarTotalAtividades(empresaId, dataInicio);
 		Long atividadesParticipadas = participacaoRepository.contarParticipacoesConfirmadas(usuarioId, empresaId, dataInicio);
 
-		Double percentualFrequencia = totalAtividades > 0 
-			? (double) atividadesParticipadas / totalAtividades * 100.0 
+		// Contar avaliações profundas
+		Long totalAvaliacoes = avaliacaoProfundaRepository.contarAvaliacoesNoPeriodo(empresaId, dataInicio);
+		Long avaliacoesRespondidas = respostaAvaliacaoProfundaRepository.contarRespostasPorUsuario(usuarioId, empresaId, dataInicio);
+
+		// Somar atividades e avaliações
+		Long totalGeral = totalAtividades + totalAvaliacoes;
+		Long participacoesGeral = atividadesParticipadas + avaliacoesRespondidas;
+
+		Double percentualFrequencia = totalGeral > 0 
+			? (double) participacoesGeral / totalGeral * 100.0 
 			: 0.0;
 
 		String mensagemMotivacional;
@@ -571,13 +588,13 @@ public class DashboardRhService {
 			mensagemMotivacional = "Bom ritmo! Continue cuidando de si mesmo, você está no caminho certo! 🌟";
 			corBarra = "warning";
 		} else {
-			mensagemMotivacional = "Excelente! Sua dedicação ao bem-estar é inspiradora. Continue assim! 🎉";
+			mensagemMotivacional = "Excelente! Sua dedicação ao bem-estar é inspiradora. Continue assim! 🚀";
 			corBarra = "success";
 		}
 
 		return new FrequenciaFuncionarioResponse(
-			totalAtividades,
-			atividadesParticipadas,
+			totalGeral,
+			participacoesGeral,
 			percentualFrequencia,
 			mensagemMotivacional,
 			corBarra

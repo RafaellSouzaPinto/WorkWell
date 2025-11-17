@@ -1,5 +1,6 @@
 package workwell.WorkWell.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,5 +28,13 @@ public interface RespostaAvaliacaoProfundaRepository extends JpaRepository<Respo
 		order by r.createdAt desc
 	""")
 	List<RespostaAvaliacaoProfunda> buscarRespostasPorAvaliacao(@Param("empresaId") UUID empresaId, @Param("avaliacaoId") UUID avaliacaoId);
+
+	@Query("""
+		select count(r) from RespostaAvaliacaoProfunda r
+		where r.usuario.id = :usuarioId
+		and r.avaliacao.empresa.id = :empresaId
+		and r.createdAt >= :dataInicio
+	""")
+	Long contarRespostasPorUsuario(@Param("usuarioId") UUID usuarioId, @Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
 }
 

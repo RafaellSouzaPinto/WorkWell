@@ -146,8 +146,8 @@
                       </p>
                       <small class="text-white-50 d-block mt-2">
                         <span id="atividadesParticipadas">0</span> de
-                        <span id="totalAtividades">0</span> atividades nos
-                        últimos 30 dias
+                        <span id="totalAtividades">0</span> atividades e
+                        avaliações nos últimos 30 dias
                       </small>
                     </div>
                     <div class="col-md-4 text-center">
@@ -205,6 +205,50 @@
                   <div id="historicoContainer">
                     <div class="text-center text-muted py-4">
                       <p class="mb-0">Carregando histórico...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enquetes Rápidas para Funcionários -->
+          <div class="row mb-4" id="secaoEnquetesRapidas" style="display: none">
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">📊 Enquetes Rápidas</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row g-4" id="enquetesRapidasContainer">
+                    <div class="col-12">
+                      <div class="text-center text-muted py-4">
+                        <p class="mb-0">Carregando enquetes...</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Atividades de Bem-Estar para Funcionários -->
+          <div
+            class="row mb-4"
+            id="secaoAtividadesBemEstar"
+            style="display: none"
+          >
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">💚 Atividades de Bem-Estar</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row g-4" id="atividadesBemEstarContainer">
+                    <div class="col-12">
+                      <div class="text-center text-muted py-4">
+                        <p class="mb-0">Carregando atividades...</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -285,9 +329,67 @@
             </div>
           </div>
 
+          <!-- Canal de Denúncias Éticas - Apenas para ADMIN -->
+          <div class="row mb-4" id="secaoCanalDenuncias" style="display: none">
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <h2 class="h4 fw-bold mb-0">
+                      🛡️ Canal de Denúncias Éticas
+                    </h2>
+                    <span
+                      class="badge bg-danger"
+                      id="badgeDenunciasPendentes"
+                      style="display: none"
+                      >0 pendentes</span
+                    >
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p class="text-muted mb-4">
+                    Espaço 100% sigiloso e independente da empresa para registro
+                    de denúncias éticas. Todas as denúncias são tratadas com
+                    total confidencialidade.
+                  </p>
+
+                  <!-- Filtros -->
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <select class="form-select" id="filtroStatusDenuncias">
+                        <option value="">Todas as denúncias</option>
+                        <option value="PENDENTE">Pendentes</option>
+                        <option value="EM_ANALISE">Em Análise</option>
+                        <option value="RESOLVIDA">Resolvidas</option>
+                        <option value="ARQUIVADA">Arquivadas</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <button
+                        class="btn btn-primary"
+                        id="btnAtualizarDenuncias"
+                      >
+                        Atualizar Lista
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Lista de Denúncias -->
+                  <div id="denunciasContainer">
+                    <div class="text-center text-muted py-4">
+                      <p class="mb-0">Carregando denúncias...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Cards de Acesso Rápido -->
           <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-4" id="cardEspacoApoio">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
                   <h5 class="card-title">💚 Espaço de Apoio</h5>
@@ -322,6 +424,24 @@
                   </p>
                   <button class="btn btn-primary" id="btnRegistrarHumor">
                     Registrar Humor
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6 col-lg-4"
+              id="cardDenunciaEtica"
+              style="display: none"
+            >
+              <div class="card shadow-sm border-0 h-100 border-danger">
+                <div class="card-body">
+                  <h5 class="card-title">🛡️ Canal de Denúncias Éticas</h5>
+                  <p class="card-text text-muted">
+                    Registre denúncias de forma 100% sigilosa e independente da
+                    empresa.
+                  </p>
+                  <button class="btn btn-danger" id="btnRegistrarDenuncia">
+                    Registrar Denúncia
                   </button>
                 </div>
               </div>
@@ -634,6 +754,178 @@
       </div>
     </div>
 
+    <!-- Modal Registrar Denúncia Ética -->
+    <div class="modal fade" id="modalRegistrarDenuncia" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">🛡️ Registrar Denúncia Ética</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info">
+              <strong>Confidencialidade Garantida:</strong> Esta denúncia é 100%
+              sigilosa e será tratada com total confidencialidade. Seu anonimato
+              será preservado.
+            </div>
+            <form id="formRegistrarDenuncia">
+              <div class="mb-3">
+                <label class="form-label"
+                  >Tipo de Denúncia <span class="text-danger">*</span></label
+                >
+                <select class="form-select" id="denunciaTipo" required>
+                  <option value="">Selecione o tipo...</option>
+                  <option value="Assédio moral">Assédio moral</option>
+                  <option value="Assédio sexual">Assédio sexual</option>
+                  <option value="Racismo, injúria racial e discriminação">
+                    Racismo, injúria racial e discriminação
+                  </option>
+                  <option value="Xenofobia, LGBTQIA+fobia">
+                    Xenofobia, LGBTQIA+fobia
+                  </option>
+                  <option value="Pressões abusivas e carga emocional excessiva">
+                    Pressões abusivas e carga emocional excessiva
+                  </option>
+                  <option value="Conflitos com líderes">
+                    Conflitos com líderes
+                  </option>
+                  <option value="Ambiente tóxico">Ambiente tóxico</option>
+                  <option value="Falta de acessibilidade">
+                    Falta de acessibilidade
+                  </option>
+                  <option value="Quebra de conduta ética">
+                    Quebra de conduta ética
+                  </option>
+                  <option value="Violência psicológica">
+                    Violência psicológica
+                  </option>
+                  <option value="Bullying no ambiente corporativo">
+                    Bullying no ambiente corporativo
+                  </option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label"
+                  >Descrição da Denúncia
+                  <span class="text-danger">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="denunciaDescricao"
+                  rows="6"
+                  required
+                  placeholder="Descreva detalhadamente a situação que você deseja denunciar..."
+                ></textarea>
+                <small class="text-muted"
+                  >Seja o mais detalhado possível para facilitar a
+                  análise.</small
+                >
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Pessoas Envolvidas (opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="denunciaEnvolvidos"
+                  placeholder="Nomes ou cargos das pessoas envolvidas"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Local da Ocorrência (opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="denunciaLocal"
+                  placeholder="Ex: Escritório, Setor X, Sala Y"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Data da Ocorrência (opcional)</label>
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  id="denunciaDataOcorrencia"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Anexos (opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="denunciaAnexos"
+                  placeholder="URLs ou referências de arquivos anexados"
+                />
+                <small class="text-muted"
+                  >Por enquanto, cole URLs de arquivos. Em breve, upload direto
+                  será disponibilizado.</small
+                >
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="btnSalvarDenuncia">
+              Enviar Denúncia
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Responder Enquete -->
+    <div class="modal fade" id="modalResponderEnquete" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Responder Enquete</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formResponderEnquete">
+              <div class="mb-3">
+                <label
+                  class="form-label fw-bold"
+                  id="modalResponderEnquetePergunta"
+                ></label>
+                <div id="opcoesRespostaContainer"></div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnSalvarRespostaEnquete"
+            >
+              Enviar Resposta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const token = localStorage.getItem("token");
@@ -647,8 +939,33 @@
         userRole || "Usuário"
       }`;
 
-      // Configurar seções para PSICOLOGO
-      if (userRole === "PSICOLOGO") {
+      // Configurar seções para ADMIN
+      if (userRole === "ADMIN") {
+        // Ocultar todas as seções padrão
+        document.getElementById("notificacoesContainer").style.display = "none";
+        document.getElementById("secaoTituloSaudacao").style.display = "none";
+        document.getElementById("secaoFrequencia").style.display = "none";
+        document.getElementById("secaoAgenda").style.display = "none";
+        document.getElementById("secaoHistorico").style.display = "none";
+        document.getElementById("cardMoodCheck").style.display = "none";
+        document.getElementById("cardDashboardRh").style.display = "none";
+        document.getElementById("cardEspacoApoio").style.display = "none";
+        document.getElementById("secaoEnquetesRapidas").style.display = "none";
+        document.getElementById("secaoAtividadesBemEstar").style.display =
+          "none";
+        document.getElementById("secaoAvaliacoesProfundas").style.display =
+          "none";
+        document.getElementById("avaliacoesProfundasContainer").style.display =
+          "none";
+        document.getElementById("secaoMinhasAvaliacoes").style.display = "none";
+        document.getElementById(
+          "secaoAvaliacoesProfundasFuncionario"
+        ).style.display = "none";
+
+        // Mostrar apenas Canal de Denúncias Éticas
+        document.getElementById("secaoCanalDenuncias").style.display = "block";
+        carregarDenunciasEticas();
+      } else if (userRole === "PSICOLOGO") {
         // Ocultar seções de funcionário
         document.getElementById("notificacoesContainer").style.display = "none";
         document.getElementById("secaoTituloSaudacao").style.display = "none";
@@ -657,6 +974,9 @@
         document.getElementById("secaoHistorico").style.display = "none";
         document.getElementById("cardMoodCheck").style.display = "none";
         document.getElementById("cardDashboardRh").style.display = "none";
+        document.getElementById("secaoEnquetesRapidas").style.display = "none";
+        document.getElementById("secaoAtividadesBemEstar").style.display =
+          "none";
 
         // Mostrar seções de avaliações profundas
         document.getElementById("secaoAvaliacoesProfundas").style.display =
@@ -666,10 +986,16 @@
         document.getElementById("secaoMinhasAvaliacoes").style.display =
           "block";
       } else if (userRole === "FUNCIONARIO") {
-        // Mostrar seção de avaliações profundas para funcionários
+        // Mostrar seções para funcionários
+        document.getElementById("secaoEnquetesRapidas").style.display = "block";
+        document.getElementById("secaoAtividadesBemEstar").style.display =
+          "block";
         document.getElementById(
           "secaoAvaliacoesProfundasFuncionario"
         ).style.display = "block";
+        document.getElementById("cardDenunciaEtica").style.display = "block";
+        carregarEnquetesRapidas();
+        carregarAtividadesBemEstar();
         carregarAvaliacoesProfundasFuncionario();
       } else {
         // Mostrar card do Dashboard RH APENAS para RH
@@ -1040,6 +1366,73 @@
             document.getElementById("modalRegistrarHumor")
           );
           modal.show();
+        });
+
+      // Registrar denúncia ética
+      document
+        .getElementById("btnRegistrarDenuncia")
+        ?.addEventListener("click", () => {
+          const modal = new bootstrap.Modal(
+            document.getElementById("modalRegistrarDenuncia")
+          );
+          modal.show();
+        });
+
+      document
+        .getElementById("btnSalvarDenuncia")
+        ?.addEventListener("click", async () => {
+          const tipo = document.getElementById("denunciaTipo").value;
+          const descricao = document.getElementById("denunciaDescricao").value;
+          const envolvidos =
+            document.getElementById("denunciaEnvolvidos").value;
+          const local = document.getElementById("denunciaLocal").value;
+          const dataOcorrencia = document.getElementById(
+            "denunciaDataOcorrencia"
+          ).value;
+          const anexos = document.getElementById("denunciaAnexos").value;
+
+          if (!tipo || !descricao) {
+            alert(
+              "Por favor, preencha pelo menos o tipo e a descrição da denúncia"
+            );
+            return;
+          }
+
+          try {
+            const body = {
+              tipoDenuncia: tipo,
+              descricao: descricao,
+              envolvidos: envolvidos || null,
+              localOcorrencia: local || null,
+              dataOcorrencia: dataOcorrencia || null,
+              anexos: anexos || null,
+            };
+
+            const response = await apiRequest("/api/denuncias-eticas", {
+              method: "POST",
+              body: JSON.stringify(body),
+            });
+
+            if (response.ok) {
+              alert(
+                "Denúncia registrada com sucesso! Ela será analisada com total confidencialidade."
+              );
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("modalRegistrarDenuncia")
+              );
+              modal.hide();
+              document.getElementById("formRegistrarDenuncia").reset();
+            } else {
+              const error = await response.json();
+              alert(
+                "Erro: " +
+                  (error.message || "Não foi possível registrar a denúncia")
+              );
+            }
+          } catch (error) {
+            console.error("Erro ao registrar denúncia:", error);
+            alert("Erro ao registrar denúncia");
+          }
         });
 
       document.getElementById("humorNivel").addEventListener("input", (e) => {
@@ -1775,8 +2168,524 @@
         );
       }
 
+      // ========== ENQUETES RÁPIDAS ==========
+      let enqueteAtual = null;
+
+      // Carregar enquetes rápidas
+      async function carregarEnquetesRapidas() {
+        if (userRole !== "FUNCIONARIO") return;
+        try {
+          const response = await apiRequest("/api/dashboard-rh/enquetes");
+          if (response.ok) {
+            const enquetes = await response.json();
+            const container = document.getElementById(
+              "enquetesRapidasContainer"
+            );
+            if (!container) return;
+
+            if (enquetes.length === 0) {
+              container.innerHTML = `
+                <div class="col-12">
+                  <div class="text-center text-muted py-4">
+                    <p class="mb-0">Nenhuma enquete disponível no momento.</p>
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            const html = enquetes
+              .map((enquete) => {
+                const jaRespondeu = enquete.jaRespondeu;
+
+                return `
+                  <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                      <div class="card-body">
+                        <h6 class="card-title">${enquete.pergunta}</h6>
+                        <p class="text-muted small mb-2">
+                          ${enquete.totalRespostas || 0} resposta(s) - ${(
+                  (enquete.taxaResposta || 0) * 100
+                ).toFixed(1)}% de participação
+                        </p>
+                        ${
+                          jaRespondeu
+                            ? '<span class="badge bg-success mb-2">Você já respondeu</span>'
+                            : `<button class="btn btn-primary btn-sm mb-2" onclick="abrirModalResponderEnquete('${enquete.id}')">Responder</button>`
+                        }
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar enquetes:", error);
+          const container = document.getElementById("enquetesRapidasContainer");
+          if (container) {
+            container.innerHTML = `
+              <div class="col-12">
+                <div class="alert alert-danger">
+                  Erro ao carregar enquetes. Tente novamente mais tarde.
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // Abrir modal para responder enquete
+      window.abrirModalResponderEnquete = async function (enqueteId) {
+        try {
+          const response = await apiRequest("/api/dashboard-rh/enquetes");
+          if (response.ok) {
+            const enquetes = await response.json();
+            enqueteAtual = enquetes.find((e) => e.id === enqueteId);
+
+            if (!enqueteAtual) {
+              alert("Enquete não encontrada");
+              return;
+            }
+
+            // Preencher modal
+            document.getElementById(
+              "modalResponderEnquetePergunta"
+            ).textContent = enqueteAtual.pergunta;
+
+            // Limpar e preencher opções
+            const container = document.getElementById(
+              "opcoesRespostaContainer"
+            );
+            container.innerHTML = "";
+
+            const opcoes = enqueteAtual.opcoesResposta || [
+              "SIM",
+              "NÃO",
+              "TALVEZ",
+            ];
+            opcoes.forEach((opcao) => {
+              const div = document.createElement("div");
+              div.className = "form-check mb-2";
+              div.innerHTML = `
+                <input class="form-check-input" type="radio" name="respostaEnquete" id="opcao_${opcao}" value="${opcao}" required>
+                <label class="form-check-label" for="opcao_${opcao}">
+                  ${opcao}
+                </label>
+              `;
+              container.appendChild(div);
+            });
+
+            // Abrir modal
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalResponderEnquete")
+            );
+            modal.show();
+          }
+        } catch (error) {
+          console.error("Erro ao carregar enquete:", error);
+          alert("Erro ao carregar enquete");
+        }
+      };
+
+      // Salvar resposta da enquete
+      const btnSalvarRespostaEnquete = document.getElementById(
+        "btnSalvarRespostaEnquete"
+      );
+      if (btnSalvarRespostaEnquete) {
+        btnSalvarRespostaEnquete.addEventListener("click", async () => {
+          if (!enqueteAtual) return;
+
+          const respostaSelecionada = document.querySelector(
+            'input[name="respostaEnquete"]:checked'
+          );
+          if (!respostaSelecionada) {
+            alert("Por favor, selecione uma opção");
+            return;
+          }
+
+          const resposta = respostaSelecionada.value;
+
+          try {
+            const response = await apiRequest(
+              "/api/dashboard-rh/enquetes/responder",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  enqueteId: enqueteAtual.id,
+                  resposta: resposta,
+                }),
+              }
+            );
+
+            if (response.ok) {
+              alert("Resposta registrada com sucesso!");
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("modalResponderEnquete")
+              );
+              modal.hide();
+              carregarEnquetesRapidas();
+            } else {
+              const error = await response.json();
+              alert(
+                "Erro: " +
+                  (error.message || "Não foi possível registrar a resposta")
+              );
+            }
+          } catch (error) {
+            console.error("Erro ao responder enquete:", error);
+            alert("Erro ao registrar resposta");
+          }
+        });
+      }
+
+      // ========== ATIVIDADES DE BEM-ESTAR ==========
+      // Carregar atividades de bem-estar
+      async function carregarAtividadesBemEstar() {
+        if (userRole !== "FUNCIONARIO") return;
+        try {
+          const response = await apiRequest("/api/dashboard-rh/atividades");
+          if (response.ok) {
+            const atividades = await response.json();
+            const container = document.getElementById(
+              "atividadesBemEstarContainer"
+            );
+            if (!container) return;
+
+            if (atividades.length === 0) {
+              container.innerHTML = `
+                <div class="col-12">
+                  <div class="text-center text-muted py-4">
+                    <p class="mb-0">Nenhuma atividade disponível no momento.</p>
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            const tipoLabels = {
+              ATIVIDADE_FISICA: "Atividade Física",
+              HAPPY_HOUR: "Happy Hour",
+              PALESTRA_BEM_ESTAR: "Palestra de Bem-Estar",
+              MEDITACAO_GUIADA: "Meditação Guiada",
+              INTERACAO_SOCIAL: "Interação Social",
+              SESSAO_ANTI_BURNOUT: "Sessão Anti-Burnout",
+            };
+
+            const html = atividades
+              .map((atividade) => {
+                const jaParticipou = atividade.jaParticipou;
+                const taxaParticipacao = (
+                  (atividade.taxaParticipacao || 0) * 100
+                ).toFixed(1);
+                const dataInicio = formatarDataHora(atividade.dataHoraInicio);
+
+                return `
+                  <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                      <div class="card-body">
+                        <span class="badge bg-secondary mb-2">${
+                          tipoLabels[atividade.tipo] || atividade.tipo
+                        }</span>
+                        <h6 class="card-title">${atividade.titulo}</h6>
+                        ${
+                          atividade.descricao
+                            ? `<p class="text-muted small">${atividade.descricao}</p>`
+                            : ""
+                        }
+                        <p class="small mb-2">
+                          <strong>Data:</strong> ${dataInicio}<br>
+                          ${
+                            atividade.local
+                              ? `<strong>Local:</strong> ${atividade.local}`
+                              : ""
+                          }
+                        </p>
+                        <p class="text-muted small mb-2">
+                          ${
+                            atividade.totalParticipantes || 0
+                          } participante(s) - ${taxaParticipacao}% de aderência
+                        </p>
+                        ${
+                          jaParticipou
+                            ? atividade.vaiParticipar === true
+                              ? '<span class="badge bg-success me-2">Vou participar</span><button class="btn btn-outline-danger btn-sm" onclick="participarAtividadeBemEstar(\'' +
+                                atividade.id +
+                                "', false)\">Não vou</button>"
+                              : atividade.vaiParticipar === false
+                              ? '<span class="badge bg-danger me-2">Não vou participar</span><button class="btn btn-outline-success btn-sm" onclick="participarAtividadeBemEstar(\'' +
+                                atividade.id +
+                                "', true)\">Vou participar</button>"
+                              : '<span class="badge bg-secondary">Registrado</span>'
+                            : '<div class="d-flex gap-2"><button class="btn btn-success btn-sm" onclick="participarAtividadeBemEstar(\'' +
+                              atividade.id +
+                              '\', true)">Vou participar</button><button class="btn btn-danger btn-sm" onclick="participarAtividadeBemEstar(\'' +
+                              atividade.id +
+                              "', false)\">Não vou</button></div>"
+                        }
+                      </div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar atividades:", error);
+          const container = document.getElementById(
+            "atividadesBemEstarContainer"
+          );
+          if (container) {
+            container.innerHTML = `
+              <div class="col-12">
+                <div class="alert alert-danger">
+                  Erro ao carregar atividades. Tente novamente mais tarde.
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // Participar de atividade de bem-estar
+      window.participarAtividadeBemEstar = async function (
+        atividadeId,
+        vaiParticipar
+      ) {
+        try {
+          const response = await apiRequest(
+            "/api/dashboard-rh/atividades/participar",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                atividadeId: atividadeId,
+                vaiParticipar: vaiParticipar,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const mensagem = vaiParticipar
+              ? "Você confirmou que vai participar!"
+              : "Você informou que não vai participar.";
+            alert(mensagem);
+            carregarAtividadesBemEstar();
+            carregarFrequencia();
+            carregarAgenda();
+          } else {
+            const error = await response.json();
+            alert(
+              "Erro: " +
+                (error.message || "Não foi possível registrar a participação")
+            );
+          }
+        } catch (error) {
+          console.error("Erro ao participar atividade:", error);
+          alert("Erro ao registrar participação");
+        }
+      };
+
+      // ========== CANAL DE DENÚNCIAS ÉTICAS ==========
+      // Carregar denúncias éticas (ADMIN)
+      async function carregarDenunciasEticas() {
+        if (userRole !== "ADMIN") return;
+        try {
+          // Carregar contagem de pendentes
+          const responseContagem = await apiRequest(
+            "/api/denuncias-eticas/pendentes/contagem"
+          );
+          if (responseContagem.ok) {
+            const contagem = await responseContagem.json();
+            const badge = document.getElementById("badgeDenunciasPendentes");
+            if (contagem > 0) {
+              badge.textContent = `${contagem} pendente${
+                contagem > 1 ? "s" : ""
+              }`;
+              badge.style.display = "inline-block";
+            } else {
+              badge.style.display = "none";
+            }
+          }
+
+          // Carregar lista de denúncias
+          const filtro = document.getElementById("filtroStatusDenuncias").value;
+          const url = filtro
+            ? `/api/denuncias-eticas/status/${filtro}`
+            : "/api/denuncias-eticas";
+
+          const response = await apiRequest(url);
+          if (response.ok) {
+            const denuncias = await response.json();
+            const container = document.getElementById("denunciasContainer");
+
+            if (denuncias.length === 0) {
+              container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                  <p class="mb-0">Nenhuma denúncia encontrada.</p>
+                </div>
+              `;
+              return;
+            }
+
+            const html = denuncias
+              .map((denuncia) => {
+                const statusBadge =
+                  {
+                    PENDENTE: "bg-warning",
+                    EM_ANALISE: "bg-info",
+                    RESOLVIDA: "bg-success",
+                    ARQUIVADA: "bg-secondary",
+                  }[denuncia.status] || "bg-secondary";
+
+                const dataFormatada = new Date(
+                  denuncia.createdAt
+                ).toLocaleString("pt-BR");
+                const dataOcorrenciaFormatada = denuncia.dataOcorrencia
+                  ? new Date(denuncia.dataOcorrencia).toLocaleString("pt-BR")
+                  : "Não informada";
+
+                return `
+                <div class="card mb-3 border-start border-4 border-danger">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <h6 class="mb-0 fw-bold">${denuncia.tipoDenuncia}</h6>
+                          <span class="badge ${statusBadge}">${
+                  denuncia.status
+                }</span>
+                        </div>
+                        <p class="text-muted small mb-2">
+                          <strong>Denunciante:</strong> ${
+                            denuncia.denuncianteNome
+                          } (${denuncia.denuncianteEmail})<br>
+                          <strong>Data da Ocorrência:</strong> ${dataOcorrenciaFormatada}<br>
+                          <strong>Local:</strong> ${
+                            denuncia.localOcorrencia || "Não informado"
+                          }<br>
+                          <strong>Envolvidos:</strong> ${
+                            denuncia.envolvidos || "Não informado"
+                          }<br>
+                          <strong>Registrada em:</strong> ${dataFormatada}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <strong>Descrição:</strong>
+                      <p class="mt-2">${denuncia.descricao}</p>
+                    </div>
+                    ${
+                      denuncia.observacoesAdmin
+                        ? `
+                      <div class="alert alert-info mb-2">
+                        <strong>Observações do Admin:</strong><br>
+                        ${denuncia.observacoesAdmin}
+                      </div>
+                    `
+                        : ""
+                    }
+                    <div class="d-flex gap-2">
+                      <select class="form-select form-select-sm" style="width: auto;" id="statusSelect_${
+                        denuncia.id
+                      }">
+                        <option value="PENDENTE" ${
+                          denuncia.status === "PENDENTE" ? "selected" : ""
+                        }>Pendente</option>
+                        <option value="EM_ANALISE" ${
+                          denuncia.status === "EM_ANALISE" ? "selected" : ""
+                        }>Em Análise</option>
+                        <option value="RESOLVIDA" ${
+                          denuncia.status === "RESOLVIDA" ? "selected" : ""
+                        }>Resolvida</option>
+                        <option value="ARQUIVADA" ${
+                          denuncia.status === "ARQUIVADA" ? "selected" : ""
+                        }>Arquivada</option>
+                      </select>
+                      <button class="btn btn-sm btn-primary" onclick="atualizarStatusDenuncia('${
+                        denuncia.id
+                      }')">
+                        Atualizar Status
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+              })
+              .join("");
+
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar denúncias:", error);
+          const container = document.getElementById("denunciasContainer");
+          if (container) {
+            container.innerHTML = `
+              <div class="alert alert-danger">
+                Erro ao carregar denúncias. Tente novamente mais tarde.
+              </div>
+            `;
+          }
+        }
+      }
+
+      // Atualizar status da denúncia
+      window.atualizarStatusDenuncia = async function (denunciaId) {
+        const select = document.getElementById(`statusSelect_${denunciaId}`);
+        const novoStatus = select.value;
+
+        const observacoes = prompt("Observações do Admin (opcional):");
+
+        try {
+          const response = await apiRequest(
+            `/api/denuncias-eticas/${denunciaId}/status`,
+            {
+              method: "PUT",
+              body: JSON.stringify({
+                status: novoStatus,
+                observacoesAdmin: observacoes || null,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            alert("Status atualizado com sucesso!");
+            carregarDenunciasEticas();
+          } else {
+            const error = await response.json();
+            alert(
+              "Erro: " +
+                (error.message || "Não foi possível atualizar o status")
+            );
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar status:", error);
+          alert("Erro ao atualizar status");
+        }
+      };
+
+      // Event listeners para filtros
+      document
+        .getElementById("filtroStatusDenuncias")
+        ?.addEventListener("change", () => {
+          carregarDenunciasEticas();
+        });
+
+      document
+        .getElementById("btnAtualizarDenuncias")
+        ?.addEventListener("click", () => {
+          carregarDenunciasEticas();
+        });
+
       // Carregar dados iniciais
-      if (userRole === "PSICOLOGO") {
+      if (userRole === "ADMIN") {
+        carregarDenunciasEticas();
+        // Atualizar a cada 2 minutos
+        setInterval(() => {
+          carregarDenunciasEticas();
+        }, 120000);
+      } else if (userRole === "PSICOLOGO") {
         carregarAvaliacoesProfundas();
         carregarMinhasAvaliacoes();
       } else {
