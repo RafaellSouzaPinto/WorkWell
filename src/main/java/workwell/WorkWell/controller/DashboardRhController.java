@@ -26,6 +26,9 @@ import workwell.WorkWell.dto.dashboard.RegistroHumorRequest;
 import workwell.WorkWell.dto.dashboard.RegistroHumorResponse;
 import workwell.WorkWell.dto.dashboard.RespostaEnqueteRequest;
 import workwell.WorkWell.dto.dashboard.RespostaEnqueteResponse;
+import workwell.WorkWell.dto.dashboard.AgendaDiaResponse;
+import workwell.WorkWell.dto.dashboard.FrequenciaFuncionarioResponse;
+import workwell.WorkWell.dto.dashboard.HistoricoParticipacaoResponse;
 import workwell.WorkWell.entity.Usuario;
 import workwell.WorkWell.service.DashboardRhService;
 
@@ -109,6 +112,21 @@ public class DashboardRhController {
 		@PathVariable UUID atividadeId) {
 		UUID empresaId = usuario.getEmpresa().getId();
 		return dashboardRhService.listarParticipantesAtividade(atividadeId, empresaId);
+	}
+
+	@GetMapping("/funcionario/agenda")
+	public AgendaDiaResponse obterAgendaDia(@AuthenticationPrincipal Usuario usuario) {
+		return dashboardRhService.obterAgendaDia(usuario);
+	}
+
+	@GetMapping("/funcionario/frequencia")
+	public FrequenciaFuncionarioResponse obterFrequencia(@AuthenticationPrincipal Usuario usuario) {
+		return dashboardRhService.obterFrequencia(usuario);
+	}
+
+	@GetMapping("/funcionario/historico")
+	public HistoricoParticipacaoResponse obterHistorico(@AuthenticationPrincipal Usuario usuario) {
+		return dashboardRhService.obterHistoricoParticipacao(usuario);
 	}
 }
 

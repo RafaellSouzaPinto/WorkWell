@@ -15,6 +15,55 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/app.css" />
+    <style>
+      .notification-badge {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 350px;
+      }
+      .notification-item {
+        animation: slideIn 0.3s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      .progress-ring {
+        transform: rotate(-90deg);
+      }
+      .agenda-item {
+        transition: all 0.2s ease;
+      }
+      .agenda-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .frequencia-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .frequencia-card.success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+      .frequencia-card.warning {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      .frequencia-card.danger {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      }
+      .tipo-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+    </style>
   </head>
   <body>
     <div class="min-vh-100 d-flex flex-column">
@@ -33,20 +82,142 @@
         </div>
       </header>
 
+      <!-- Notificações Inteligentes -->
+      <div class="notification-badge" id="notificacoesContainer"></div>
+
       <!-- Main Content -->
       <main class="flex-grow-1 bg-light">
         <div class="container py-5">
-          <div class="row">
+          <!-- Título e Saudação -->
+          <div class="row mb-4" id="secaoTituloSaudacao">
             <div class="col-12">
-              <h2 class="h3 fw-bold mb-4">Bem-vindo ao WorkWell</h2>
+              <h2 class="h3 fw-bold mb-2">Olá! 👋</h2>
+              <p class="text-muted">Aqui está sua agenda e progresso de hoje</p>
             </div>
           </div>
 
+          <!-- Frequência de Participação -->
+          <div class="row mb-4" id="secaoFrequencia">
+            <div class="col-12">
+              <div
+                class="card shadow-sm border-0 frequencia-card"
+                id="frequenciaCard"
+              >
+                <div class="card-body p-4">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <h5 class="card-title text-white mb-3">
+                        Sua Frequência de Participação
+                      </h5>
+                      <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                          <span class="text-white-50">Progresso</span>
+                          <span
+                            class="text-white fw-bold"
+                            id="percentualFrequencia"
+                            >0%</span
+                          >
+                        </div>
+                        <div
+                          class="progress"
+                          style="
+                            height: 24px;
+                            border-radius: 12px;
+                            background-color: rgba(255, 255, 255, 0.3);
+                          "
+                        >
+                          <div
+                            class="progress-bar"
+                            id="barraFrequencia"
+                            role="progressbar"
+                            style="
+                              width: 0%;
+                              border-radius: 12px;
+                              background-color: white;
+                            "
+                            aria-valuenow="0"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
+                      </div>
+                      <p class="text-white mb-0" id="mensagemMotivacional">
+                        Carregando...
+                      </p>
+                      <small class="text-white-50 d-block mt-2">
+                        <span id="atividadesParticipadas">0</span> de
+                        <span id="totalAtividades">0</span> atividades nos
+                        últimos 30 dias
+                      </small>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      <div
+                        class="display-1 text-white fw-bold"
+                        id="percentualGrande"
+                      >
+                        0%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agenda do Dia -->
+          <div class="row mb-4" id="secaoAgenda">
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">
+                    📅 Agenda de Hoje
+                    <span class="badge bg-primary ms-2" id="totalAgenda"
+                      >0</span
+                    >
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div id="agendaContainer">
+                    <div class="text-center text-muted py-4">
+                      <p class="mb-0">
+                        Nenhuma atividade ou consulta agendada para hoje
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Histórico de Participação -->
+          <div class="row mb-4" id="secaoHistorico">
+            <div class="col-12">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                  <h5 class="mb-0 fw-bold">
+                    📊 Histórico de Participação
+                    <span class="badge bg-secondary ms-2" id="totalHistorico"
+                      >0</span
+                    >
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div id="historicoContainer">
+                    <div class="text-center text-muted py-4">
+                      <p class="mb-0">Carregando histórico...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Acesso Rápido -->
           <div class="row g-4">
             <div class="col-md-6 col-lg-4">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                  <h5 class="card-title">Espaço de Apoio</h5>
+                  <h5 class="card-title">💚 Espaço de Apoio</h5>
                   <p class="card-text text-muted">
                     Acesse recursos de bem-estar e suporte psicológico.
                   </p>
@@ -61,7 +232,7 @@
             >
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                  <h5 class="card-title">Dashboard RH</h5>
+                  <h5 class="card-title">📈 Dashboard RH</h5>
                   <p class="card-text text-muted">
                     Acesse indicadores, enquetes e atividades de bem-estar.
                   </p>
@@ -69,29 +240,16 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-4" id="cardMoodCheck">
               <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                  <h5 class="card-title">Mood Check</h5>
+                  <h5 class="card-title">😊 Mood Check</h5>
                   <p class="card-text text-muted">
                     Registre como você está se sentindo hoje.
                   </p>
                   <button class="btn btn-primary" id="btnRegistrarHumor">
                     Registrar Humor
                   </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Atividades</h5>
-                  <p class="card-text text-muted">
-                    Participe de atividades de bem-estar.
-                  </p>
-                  <a href="/dashboard-rh" class="btn btn-primary"
-                    >Ver Atividades</a
-                  >
                 </div>
               </div>
             </div>
@@ -190,12 +348,23 @@
         userRole || "Usuário"
       }`;
 
-      // Mostrar card do Dashboard RH APENAS para RH
-      if (userRole === "RH") {
-        document.getElementById("cardDashboardRh").style.display = "block";
-      } else {
-        // Ocultar card se não for RH
+      // Ocultar todas as seções para PSICOLOGO, exceto Espaço de Apoio
+      if (userRole === "PSICOLOGO") {
+        // Ocultar seções
+        document.getElementById("notificacoesContainer").style.display = "none";
+        document.getElementById("secaoTituloSaudacao").style.display = "none";
+        document.getElementById("secaoFrequencia").style.display = "none";
+        document.getElementById("secaoAgenda").style.display = "none";
+        document.getElementById("secaoHistorico").style.display = "none";
+        document.getElementById("cardMoodCheck").style.display = "none";
         document.getElementById("cardDashboardRh").style.display = "none";
+      } else {
+        // Mostrar card do Dashboard RH APENAS para RH
+        if (userRole === "RH") {
+          document.getElementById("cardDashboardRh").style.display = "block";
+        } else {
+          document.getElementById("cardDashboardRh").style.display = "none";
+        }
       }
 
       document.getElementById("btnLogout").addEventListener("click", () => {
@@ -219,6 +388,335 @@
           window.location.href = "/login";
         }
         return response;
+      }
+
+      // Formatar data/hora no fuso horário de São Paulo
+      function formatarDataHora(dataHora) {
+        const date = new Date(dataHora);
+        // Converter para timezone de São Paulo (America/Sao_Paulo)
+        const options = {
+          timeZone: "America/Sao_Paulo",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        return date.toLocaleString("pt-BR", options);
+      }
+
+      function formatarTempoRestante(minutos) {
+        if (minutos < 0) return "Já passou";
+        if (minutos < 60) return `${minutos} min`;
+        const horas = Math.floor(minutos / 60);
+        const mins = minutos % 60;
+        return mins > 0 ? `${horas}h ${mins}min` : `${horas}h`;
+      }
+
+      function obterNomeTipo(tipo) {
+        const tipos = {
+          ATIVIDADE_FISICA: "Atividade Física",
+          HAPPY_HOUR: "Happy Hour",
+          PALESTRA_BEM_ESTAR: "Palestra",
+          MEDITACAO_GUIADA: "Meditação",
+          INTERACAO_SOCIAL: "Interação Social",
+          SESSAO_ANTI_BURNOUT: "Anti-Burnout",
+        };
+        return tipos[tipo] || tipo;
+      }
+
+      // Carregar Frequência
+      async function carregarFrequencia() {
+        try {
+          const response = await apiRequest(
+            "/api/dashboard-rh/funcionario/frequencia"
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const percentual = Math.round(data.percentualFrequencia);
+
+            document.getElementById(
+              "percentualFrequencia"
+            ).textContent = `${percentual}%`;
+            document.getElementById(
+              "percentualGrande"
+            ).textContent = `${percentual}%`;
+            document.getElementById(
+              "barraFrequencia"
+            ).style.width = `${percentual}%`;
+            document
+              .getElementById("barraFrequencia")
+              .setAttribute("aria-valuenow", percentual);
+            document.getElementById("mensagemMotivacional").textContent =
+              data.mensagemMotivacional;
+            document.getElementById("atividadesParticipadas").textContent =
+              data.atividadesParticipadas;
+            document.getElementById("totalAtividades").textContent =
+              data.totalAtividades;
+
+            // Atualizar cor do card
+            const card = document.getElementById("frequenciaCard");
+            card.className = `card shadow-sm border-0 frequencia-card ${data.corBarra}`;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar frequência:", error);
+        }
+      }
+
+      // Carregar Agenda do Dia
+      async function carregarAgenda() {
+        try {
+          const response = await apiRequest(
+            "/api/dashboard-rh/funcionario/agenda"
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const container = document.getElementById("agendaContainer");
+            const total = data.atividades.length + data.consultas.length;
+            document.getElementById("totalAgenda").textContent = total;
+
+            if (total === 0) {
+              container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                  <p class="mb-0">Nenhuma atividade ou consulta agendada para hoje</p>
+                </div>
+              `;
+              return;
+            }
+
+            let html = "";
+
+            // Atividades
+            data.atividades.forEach((atividade) => {
+              const tempoRestante = formatarTempoRestante(
+                atividade.minutosRestantes
+              );
+              const statusBadge = atividade.vaiParticipar
+                ? '<span class="badge bg-success">Confirmado</span>'
+                : atividade.vaiParticipar === false
+                ? '<span class="badge bg-secondary">Não participará</span>'
+                : '<span class="badge bg-warning">Não confirmado</span>';
+
+              html += `
+                <div class="agenda-item card mb-3 border-start border-4 border-primary">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <h6 class="mb-0 fw-bold">${atividade.titulo}</h6>
+                          ${statusBadge}
+                        </div>
+                        <p class="text-muted small mb-2">${obterNomeTipo(
+                          atividade.tipo
+                        )}</p>
+                        ${
+                          atividade.descricao
+                            ? `<p class="small mb-2">${atividade.descricao}</p>`
+                            : ""
+                        }
+                        <div class="d-flex gap-3 text-muted small">
+                          <span>🕐 ${formatarDataHora(
+                            atividade.dataHoraInicio
+                          )}</span>
+                          ${
+                            atividade.local
+                              ? `<span>📍 ${atividade.local}</span>`
+                              : ""
+                          }
+                          ${
+                            atividade.minutosRestantes > 0
+                              ? `<span>⏱️ ${tempoRestante}</span>`
+                              : ""
+                          }
+                        </div>
+                      </div>
+                      ${
+                        atividade.vaiParticipar === null
+                          ? `
+                        <div>
+                          <button class="btn btn-sm btn-primary" onclick="participarAtividade('${atividade.id}', true)">
+                            Participar
+                          </button>
+                        </div>
+                      `
+                          : ""
+                      }
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+
+            // Consultas
+            data.consultas.forEach((consulta) => {
+              // Calcular tempo restante (as datas já vêm do backend no timezone de São Paulo)
+              const dataConsulta = new Date(consulta.dataHoraInicio);
+              const agora = new Date();
+              const tempoRestante = formatarTempoRestante(
+                Math.floor((dataConsulta - agora) / 60000)
+              );
+              const statusBadge =
+                consulta.status === "CONFIRMADA"
+                  ? '<span class="badge bg-success">Confirmada</span>'
+                  : '<span class="badge bg-warning">Pendente</span>';
+
+              html += `
+                <div class="agenda-item card mb-3 border-start border-4 border-info">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <h6 class="mb-0 fw-bold">Consulta Psicológica</h6>
+                          ${statusBadge}
+                        </div>
+                        <p class="text-muted small mb-2">Com ${
+                          consulta.psicologoNome
+                        }</p>
+                        <div class="d-flex gap-3 text-muted small">
+                          <span>🕐 ${formatarDataHora(
+                            consulta.dataHoraInicio
+                          )}</span>
+                          <span>📍 ${consulta.local}</span>
+                          ${
+                            tempoRestante !== "Já passou"
+                              ? `<span>⏱️ ${tempoRestante}</span>`
+                              : ""
+                          }
+                        </div>
+                        ${
+                          consulta.linkCall
+                            ? `
+                          <div class="mt-2">
+                            <a href="${consulta.linkCall}" target="_blank" class="btn btn-sm btn-outline-primary">
+                              Acessar Chamada
+                            </a>
+                          </div>
+                        `
+                            : ""
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+
+            container.innerHTML = html;
+
+            // Mostrar notificações
+            mostrarNotificacoes(data.notificacoes);
+          }
+        } catch (error) {
+          console.error("Erro ao carregar agenda:", error);
+        }
+      }
+
+      // Mostrar Notificações
+      function mostrarNotificacoes(notificacoes) {
+        const container = document.getElementById("notificacoesContainer");
+        if (!notificacoes || notificacoes.length === 0) {
+          container.innerHTML = "";
+          return;
+        }
+
+        let html = "";
+        notificacoes.forEach((notif) => {
+          const alertClass =
+            notif.cor === "danger" ? "alert-danger" : "alert-warning";
+          html += `
+            <div class="alert ${alertClass} alert-dismissible fade show notification-item mb-2 shadow" role="alert">
+              <strong>${notif.titulo}</strong><br>
+              <small>${notif.mensagem}</small>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+
+        // Auto-dismiss após 10 segundos
+        setTimeout(() => {
+          const alerts = container.querySelectorAll(".alert");
+          alerts.forEach((alert) => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          });
+        }, 10000);
+      }
+
+      // Carregar Histórico
+      async function carregarHistorico() {
+        try {
+          const response = await apiRequest(
+            "/api/dashboard-rh/funcionario/historico"
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const container = document.getElementById("historicoContainer");
+            document.getElementById("totalHistorico").textContent =
+              data.totalParticipacoes;
+
+            if (data.participacoes.length === 0) {
+              container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                  <p class="mb-0">Você ainda não participou de nenhuma atividade</p>
+                </div>
+              `;
+              return;
+            }
+
+            let html =
+              '<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Data</th><th>Tipo</th><th>Atividade</th><th>Status</th></tr></thead><tbody>';
+            data.participacoes.forEach((part) => {
+              const statusBadge = part.participou
+                ? '<span class="badge bg-success">Participou</span>'
+                : '<span class="badge bg-secondary">Não participou</span>';
+              html += `
+                <tr>
+                  <td>${formatarDataHora(part.dataHoraInicio)}</td>
+                  <td><span class="badge bg-info tipo-badge">${obterNomeTipo(
+                    part.tipo
+                  )}</span></td>
+                  <td>${part.titulo}</td>
+                  <td>${statusBadge}</td>
+                </tr>
+              `;
+            });
+            html += "</tbody></table></div>";
+            container.innerHTML = html;
+          }
+        } catch (error) {
+          console.error("Erro ao carregar histórico:", error);
+        }
+      }
+
+      // Participar de Atividade
+      async function participarAtividade(atividadeId, vaiParticipar) {
+        try {
+          const response = await apiRequest(
+            "/api/dashboard-rh/atividades/participar",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                atividadeId: atividadeId,
+                vaiParticipar: vaiParticipar,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            await carregarAgenda();
+            await carregarFrequencia();
+          } else {
+            const error = await response.json();
+            alert(
+              "Erro: " +
+                (error.message || "Não foi possível confirmar participação")
+            );
+          }
+        } catch (error) {
+          console.error("Erro ao participar:", error);
+          alert("Erro ao confirmar participação");
+        }
       }
 
       // Registrar humor
@@ -254,7 +752,7 @@
             });
 
             if (response.ok) {
-              alert("Humor registrado com sucesso!");
+              alert("Humor registrado com sucesso! 😊");
               bootstrap.Modal.getInstance(
                 document.getElementById("modalRegistrarHumor")
               ).hide();
@@ -272,6 +770,19 @@
             alert("Erro ao registrar humor");
           }
         });
+
+      // Carregar dados iniciais apenas se não for psicólogo
+      if (userRole !== "PSICOLOGO") {
+        carregarFrequencia();
+        carregarAgenda();
+        carregarHistorico();
+
+        // Atualizar a cada 5 minutos
+        setInterval(() => {
+          carregarAgenda();
+          carregarFrequencia();
+        }, 300000);
+      }
     </script>
   </body>
 </html>

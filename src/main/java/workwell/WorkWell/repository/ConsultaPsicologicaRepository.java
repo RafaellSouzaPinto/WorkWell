@@ -75,5 +75,19 @@ public interface ConsultaPsicologicaRepository extends JpaRepository<ConsultaPsi
 	""")
 	List<ConsultaPsicologica> buscarPorFuncionarioOuCriadoPor(@Param("empresaId") UUID empresaId,
 		@Param("usuarioId") UUID usuarioId);
+
+	@Query("""
+		select c from ConsultaPsicologica c
+		where c.empresa.id = :empresaId
+			and c.funcionario.id = :usuarioId
+			and c.dataHoraInicio >= :inicioDia
+			and c.dataHoraInicio < :fimDia
+			and c.status in ('PENDENTE_CONFIRMACAO', 'CONFIRMADA')
+		order by c.dataHoraInicio asc
+	""")
+	List<ConsultaPsicologica> buscarConsultasDoDia(@Param("empresaId") UUID empresaId,
+		@Param("usuarioId") UUID usuarioId,
+		@Param("inicioDia") LocalDateTime inicioDia,
+		@Param("fimDia") LocalDateTime fimDia);
 }
 

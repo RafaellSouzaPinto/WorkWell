@@ -4,11 +4,13 @@ import jakarta.transaction.Transactional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.dashboard.AlertaResponse;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarCreateRequest;
@@ -26,6 +28,13 @@ import workwell.WorkWell.dto.dashboard.RespostaEnqueteRequest;
 import workwell.WorkWell.dto.dashboard.RespostaEnqueteResponse;
 import workwell.WorkWell.dto.dashboard.RespostaEstatisticaResponse;
 import workwell.WorkWell.dto.dashboard.SetorEstresseResponse;
+import workwell.WorkWell.dto.dashboard.AgendaDiaResponse;
+import workwell.WorkWell.dto.dashboard.AtividadeDiaResponse;
+import workwell.WorkWell.dto.dashboard.NotificacaoResponse;
+import workwell.WorkWell.dto.dashboard.FrequenciaFuncionarioResponse;
+import workwell.WorkWell.dto.dashboard.HistoricoParticipacaoResponse;
+import workwell.WorkWell.dto.dashboard.ParticipacaoHistoricoResponse;
+import workwell.WorkWell.dto.apoio.ConsultaResponse;
 import workwell.WorkWell.entity.AtividadeBemEstar;
 import workwell.WorkWell.entity.Empresa;
 import workwell.WorkWell.entity.Enquete;
@@ -33,6 +42,7 @@ import workwell.WorkWell.entity.ParticipacaoAtividade;
 import workwell.WorkWell.entity.RegistroHumor;
 import workwell.WorkWell.entity.RespostaEnquete;
 import workwell.WorkWell.entity.Usuario;
+import workwell.WorkWell.entity.ConsultaPsicologica;
 import workwell.WorkWell.entity.enums.RoleType;
 import workwell.WorkWell.exception.BusinessException;
 import workwell.WorkWell.exception.ResourceNotFoundException;
@@ -441,6 +451,158 @@ public class DashboardRhService {
 				p.getCreatedAt()
 			))
 			.toList();
+	}
+
+	public AgendaDiaResponse obterAgendaDia(Usuario usuario) {
+		Empresa empresa = garantirEmpresa(usuario);
+		UUID empresaId = empresa.getId();
+		UUID usuarioId = usuario.getId();
+		LocalDateTime agora = LocalDateTime.now();
+		LocalDateTime inicioDia = agora.toLocalDate().atStartOfDay();
+		LocalDateTime fimDia = inicioDia.plusDays(1);
+
+		// Buscar atividades do dia
+		List<AtividadeBemEstar> atividadesDoDia = atividadeRepository.buscarAtividadesDoDia(empresaId, inicioDia, fimDia);
+		List<AtividadeDiaResponse> atividades = atividadesDoDia.stream()
+			.map(a -> {
+				Optional<ParticipacaoAtividade> participacaoOpt = participacaoRepository
+					.findByAtividadeIdAndUsuarioId(a.getId(), usuarioId);
+				Boolean vaiParticipar = participacaoOpt.map(ParticipacaoAtividade::getVaiParticipar).orElse(null);
+				long minutosRestantes = ChronoUnit.MINUTES.between(agora, a.getDataHoraInicio());
+				return new AtividadeDiaResponse(
+					a.getId(),
+					a.getTipo(),
+					a.getTitulo(),
+					a.getDescricao(),
+					a.getDataHoraInicio(),
+					a.getDataHoraFim(),
+					a.getLocal(),
+					vaiParticipar,
+					minutosRestantes
+				);
+			})
+			.collect(Collectors.toList());
+
+		// Buscar consultas do dia
+		List<ConsultaPsicologica> consultasDoDia = consultaRepository.buscarConsultasDoDia(empresaId, usuarioId, inicioDia, fimDia);
+		List<ConsultaResponse> consultas = consultasDoDia.stream()
+			.map(c -> new ConsultaResponse(
+				c.getId(),
+				c.getStatus(),
+				c.getDataHoraInicio(),
+				c.getDataHoraFim(),
+				c.getLocalAtendimento(),
+				c.getSala(),
+				c.getObservacoes(),
+				c.getJustificativaCancelamento(),
+				c.getFuncionario().getId(),
+				c.getFuncionario().getNome(),
+				c.getPsicologo().getId(),
+				c.getPsicologo().getNome(),
+				c.getAguardandoConfirmacaoDe() != null && c.getAguardandoConfirmacaoDe().getId().equals(usuarioId),
+				c.getLinkCall()
+			))
+			.collect(Collectors.toList());
+
+		// Gerar notificações inteligentes
+		List<NotificacaoResponse> notificacoes = new ArrayList<>();
+		
+		// Notificações de atividades próximas (próximas 30 minutos)
+		for (AtividadeDiaResponse atividade : atividades) {
+			if (atividade.minutosRestantes() > 0 && atividade.minutosRestantes() <= 30) {
+				String tipo = atividade.minutosRestantes() <= 5 ? "URGENTE" : "PROXIMA";
+				String cor = atividade.minutosRestantes() <= 5 ? "danger" : "warning";
+				notificacoes.add(new NotificacaoResponse(
+					atividade.id(),
+					tipo,
+					"Atividade em breve",
+					String.format("Você tem '%s' em %d minutos", atividade.titulo(), atividade.minutosRestantes()),
+					atividade.dataHoraInicio(),
+					atividade.minutosRestantes(),
+					cor
+				));
+			}
+		}
+
+		// Notificações de consultas próximas
+		for (ConsultaResponse consulta : consultas) {
+			long minutosRestantes = ChronoUnit.MINUTES.between(agora, consulta.dataHoraInicio());
+			if (minutosRestantes > 0 && minutosRestantes <= 30) {
+				String tipo = minutosRestantes <= 5 ? "URGENTE" : "PROXIMA";
+				String cor = minutosRestantes <= 5 ? "danger" : "warning";
+				notificacoes.add(new NotificacaoResponse(
+					consulta.id(),
+					tipo,
+					"Consulta em breve",
+					String.format("Você tem uma consulta com %s em %d minutos", consulta.psicologoNome(), minutosRestantes),
+					consulta.dataHoraInicio(),
+					minutosRestantes,
+					cor
+				));
+			}
+		}
+
+		// Ordenar notificações por tempo restante
+		notificacoes.sort((a, b) -> Long.compare(a.minutosRestantes(), b.minutosRestantes()));
+
+		return new AgendaDiaResponse(atividades, consultas, notificacoes);
+	}
+
+	public FrequenciaFuncionarioResponse obterFrequencia(Usuario usuario) {
+		Empresa empresa = garantirEmpresa(usuario);
+		UUID empresaId = empresa.getId();
+		UUID usuarioId = usuario.getId();
+		LocalDateTime dataInicio = LocalDateTime.now().minusDays(30);
+
+		Long totalAtividades = participacaoRepository.contarTotalAtividades(empresaId, dataInicio);
+		Long atividadesParticipadas = participacaoRepository.contarParticipacoesConfirmadas(usuarioId, empresaId, dataInicio);
+
+		Double percentualFrequencia = totalAtividades > 0 
+			? (double) atividadesParticipadas / totalAtividades * 100.0 
+			: 0.0;
+
+		String mensagemMotivacional;
+		String corBarra;
+
+		if (percentualFrequencia < 50) {
+			mensagemMotivacional = "Que tal participar um pouco mais esta semana? Cada atividade é um passo para seu bem-estar! 💙";
+			corBarra = "danger";
+		} else if (percentualFrequencia < 80) {
+			mensagemMotivacional = "Bom ritmo! Continue cuidando de si mesmo, você está no caminho certo! 🌟";
+			corBarra = "warning";
+		} else {
+			mensagemMotivacional = "Excelente! Sua dedicação ao bem-estar é inspiradora. Continue assim! 🎉";
+			corBarra = "success";
+		}
+
+		return new FrequenciaFuncionarioResponse(
+			totalAtividades,
+			atividadesParticipadas,
+			percentualFrequencia,
+			mensagemMotivacional,
+			corBarra
+		);
+	}
+
+	public HistoricoParticipacaoResponse obterHistoricoParticipacao(Usuario usuario) {
+		Empresa empresa = garantirEmpresa(usuario);
+		UUID empresaId = empresa.getId();
+		UUID usuarioId = usuario.getId();
+
+		List<ParticipacaoAtividade> participacoes = participacaoRepository.buscarHistoricoParticipacoes(usuarioId, empresaId);
+		
+		List<ParticipacaoHistoricoResponse> historico = participacoes.stream()
+			.map(p -> new ParticipacaoHistoricoResponse(
+				p.getId(),
+				p.getAtividade().getId(),
+				p.getAtividade().getTipo(),
+				p.getAtividade().getTitulo(),
+				p.getAtividade().getDataHoraInicio(),
+				Boolean.TRUE.equals(p.getVaiParticipar())
+			))
+			.collect(Collectors.toList());
+
+		return new HistoricoParticipacaoResponse(historico, (long) historico.size());
 	}
 
 	private Empresa garantirEmpresa(Usuario usuario) {

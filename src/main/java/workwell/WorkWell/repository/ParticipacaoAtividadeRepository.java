@@ -34,5 +34,30 @@ public interface ParticipacaoAtividadeRepository extends JpaRepository<Participa
 		and p.atividade.dataHoraInicio >= :dataInicio
 	""")
 	Long contarUsuariosUnicosParticipantes(@Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
+
+	@Query("""
+		select p from ParticipacaoAtividade p
+		where p.usuario.id = :usuarioId
+		and p.atividade.empresa.id = :empresaId
+		order by p.atividade.dataHoraInicio desc
+	""")
+	List<ParticipacaoAtividade> buscarHistoricoParticipacoes(@Param("usuarioId") UUID usuarioId, @Param("empresaId") UUID empresaId);
+
+	@Query("""
+		select count(p) from ParticipacaoAtividade p
+		where p.usuario.id = :usuarioId
+		and p.atividade.empresa.id = :empresaId
+		and p.vaiParticipar = true
+		and p.atividade.dataHoraInicio >= :dataInicio
+	""")
+	Long contarParticipacoesConfirmadas(@Param("usuarioId") UUID usuarioId, @Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
+
+	@Query("""
+		select count(a) from AtividadeBemEstar a
+		where a.empresa.id = :empresaId
+		and a.ativa = true
+		and a.dataHoraInicio >= :dataInicio
+	""")
+	Long contarTotalAtividades(@Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
 }
 

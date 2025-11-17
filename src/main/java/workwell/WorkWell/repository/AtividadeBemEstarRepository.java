@@ -23,5 +23,17 @@ public interface AtividadeBemEstarRepository extends JpaRepository<AtividadeBemE
 		order by a.dataHoraInicio desc
 	""")
 	List<AtividadeBemEstar> buscarAtividadesRecentes(@Param("empresaId") UUID empresaId, @Param("dataInicio") LocalDateTime dataInicio);
+
+	@Query("""
+		select a from AtividadeBemEstar a
+		where a.empresa.id = :empresaId
+		and a.ativa = true
+		and a.dataHoraInicio >= :inicioDia
+		and a.dataHoraInicio < :fimDia
+		order by a.dataHoraInicio asc
+	""")
+	List<AtividadeBemEstar> buscarAtividadesDoDia(@Param("empresaId") UUID empresaId, 
+		@Param("inicioDia") LocalDateTime inicioDia, 
+		@Param("fimDia") LocalDateTime fimDia);
 }
 
