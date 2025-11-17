@@ -5,8 +5,10 @@ import java.time.ZoneId;
 import java.util.TimeZone;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
+@EnableCaching
 public class WorkWellApplication {
 
 	private static final ZoneId SAO_PAULO_TIMEZONE = ZoneId.of("America/Sao_Paulo");

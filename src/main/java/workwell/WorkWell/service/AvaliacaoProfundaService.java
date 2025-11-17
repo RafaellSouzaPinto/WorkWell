@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaCreateRequest;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaResponse;
@@ -48,6 +50,7 @@ public class AvaliacaoProfundaService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"avaliacoesAtivas", "dashboard"}, allEntries = true)
 	public AvaliacaoProfundaResponse criarAvaliacao(Usuario usuario, AvaliacaoProfundaCreateRequest request) {
 		if (usuario.getRole() != RoleType.PSICOLOGO) {
 			throw new BusinessException("Somente psicólogos podem criar avaliações profundas");
@@ -85,6 +88,7 @@ public class AvaliacaoProfundaService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"avaliacoesAtivas", "estatisticas"}, allEntries = true)
 	public RespostaAvaliacaoProfundaResponse responderAvaliacao(Usuario usuario, RespostaAvaliacaoProfundaRequest request) {
 		if (usuario.getRole() != RoleType.FUNCIONARIO) {
 			throw new BusinessException("Somente funcionários podem responder avaliações profundas");
@@ -131,6 +135,7 @@ public class AvaliacaoProfundaService {
 		);
 	}
 
+	@Cacheable(value = "avaliacoesAtivas", key = "#empresaId + '_' + #usuarioId")
 	public List<AvaliacaoProfundaResponse> listarAvaliacoesAtivas(UUID empresaId, UUID usuarioId) {
 		List<AvaliacaoProfunda> avaliacoes = avaliacaoRepository.buscarAvaliacoesAtivas(empresaId);
 		return avaliacoes.stream()
@@ -138,6 +143,7 @@ public class AvaliacaoProfundaService {
 			.toList();
 	}
 
+	@Cacheable(value = "avaliacoesAtivas", key = "'psicologo_' + #usuario.empresa.id + '_' + #usuario.id")
 	public List<AvaliacaoProfundaResponse> listarAvaliacoesPorPsicologo(Usuario usuario) {
 		if (usuario.getRole() != RoleType.PSICOLOGO) {
 			throw new BusinessException("Somente psicólogos podem visualizar suas avaliações criadas");

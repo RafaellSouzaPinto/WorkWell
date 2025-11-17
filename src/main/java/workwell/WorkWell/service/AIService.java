@@ -10,6 +10,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.ai.AnaliseSentimentoRequest;
 import workwell.WorkWell.dto.ai.AnaliseSentimentoResponse;
@@ -48,6 +49,7 @@ public class AIService {
 		}
 	}
 
+	@Cacheable(value = "insightsAI", key = "#request.nivelMedioHumor + '_' + #request.frequenciaConsultas + '_' + #request.aderenciaAtividades")
 	public InsightRhResponse gerarInsightsRh(InsightRhRequest request) {
 		String prompt = buildInsightRhPrompt(request);
 		String resposta = callChatModel(prompt);

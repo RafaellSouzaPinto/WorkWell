@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.dashboard.AlertaResponse;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarCreateRequest;
@@ -98,6 +100,7 @@ public class DashboardRhService {
 	}
 
 
+	@Cacheable(value = "dashboard", key = "#usuario.id + '_' + #usuario.empresa.id")
 	public DashboardRhResponse obterDashboard(Usuario usuario) {
 		Empresa empresa = garantirEmpresa(usuario);
 		UUID empresaId = empresa.getId();
@@ -133,6 +136,7 @@ public class DashboardRhService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"dashboard", "estatisticas", "agendaDia"}, allEntries = true)
 	public RegistroHumorResponse registrarHumor(Usuario usuario, RegistroHumorRequest request) {
 		Empresa empresa = garantirEmpresa(usuario);
 
@@ -156,6 +160,7 @@ public class DashboardRhService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"enquetesAtivas", "dashboard"}, allEntries = true)
 	public EnqueteResponse criarEnquete(Usuario usuario, EnqueteCreateRequest request) {
 		if (usuario.getRole() != RoleType.RH) {
 			throw new BusinessException("Somente RH pode criar enquetes");
@@ -186,6 +191,7 @@ public class DashboardRhService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"enquetesAtivas", "estatisticas"}, allEntries = true)
 	public RespostaEnqueteResponse responderEnquete(Usuario usuario, RespostaEnqueteRequest request) {
 		Empresa empresa = garantirEmpresa(usuario);
 		Enquete enquete = enqueteRepository.findByIdAndEmpresaId(request.enqueteId(), empresa.getId())
@@ -215,6 +221,7 @@ public class DashboardRhService {
 		);
 	}
 
+	@Cacheable(value = "enquetesAtivas", key = "#empresaId + '_' + #usuarioId")
 	public List<EnqueteResponse> listarEnquetesAtivas(UUID empresaId, UUID usuarioId) {
 		List<Enquete> enquetes = enqueteRepository.buscarEnquetesAtivas(empresaId);
 		return enquetes.stream()
@@ -223,6 +230,7 @@ public class DashboardRhService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"atividadesAtivas", "dashboard", "agendaDia"}, allEntries = true)
 	public AtividadeBemEstarResponse criarAtividade(Usuario usuario, AtividadeBemEstarCreateRequest request) {
 		if (usuario.getRole() != RoleType.RH) {
 			throw new BusinessException("Somente RH pode criar atividades");
@@ -245,6 +253,7 @@ public class DashboardRhService {
 		return mapAtividade(atividade, usuario.getId());
 	}
 
+	@Cacheable(value = "atividadesAtivas", key = "#empresaId + '_' + #usuarioId")
 	public List<AtividadeBemEstarResponse> listarAtividades(UUID empresaId, UUID usuarioId) {
 		LocalDateTime dataInicio = LocalDateTime.now().minusDays(DIAS_ANALISE);
 		List<AtividadeBemEstar> atividades = atividadeRepository.buscarAtividadesRecentes(empresaId, dataInicio);
@@ -254,6 +263,7 @@ public class DashboardRhService {
 	}
 
 	@Transactional
+	@CacheEvict(value = {"atividadesAtivas", "agendaDia", "estatisticas"}, allEntries = true)
 	public ParticipacaoAtividadeResponse participarAtividade(Usuario usuario, ParticipacaoAtividadeRequest request) {
 		Empresa empresa = garantirEmpresa(usuario);
 		AtividadeBemEstar atividade = atividadeRepository.findByIdAndEmpresaId(request.atividadeId(), empresa.getId())
@@ -461,6 +471,7 @@ public class DashboardRhService {
 			.toList();
 	}
 
+	@Cacheable(value = "agendaDia", key = "#usuario.id + '_' + #usuario.empresa.id")
 	public AgendaDiaResponse obterAgendaDia(Usuario usuario) {
 		Empresa empresa = garantirEmpresa(usuario);
 		UUID empresaId = empresa.getId();
@@ -556,6 +567,7 @@ public class DashboardRhService {
 		return new AgendaDiaResponse(atividades, consultas, notificacoes);
 	}
 
+	@Cacheable(value = "estatisticas", key = "'frequencia_' + #usuario.id")
 	public FrequenciaFuncionarioResponse obterFrequencia(Usuario usuario) {
 		Empresa empresa = garantirEmpresa(usuario);
 		UUID empresaId = empresa.getId();
@@ -601,6 +613,7 @@ public class DashboardRhService {
 		);
 	}
 
+	@Cacheable(value = "estatisticas", key = "'historico_' + #usuario.id")
 	public HistoricoParticipacaoResponse obterHistoricoParticipacao(Usuario usuario) {
 		Empresa empresa = garantirEmpresa(usuario);
 		UUID empresaId = empresa.getId();

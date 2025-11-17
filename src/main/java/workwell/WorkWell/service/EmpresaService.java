@@ -2,6 +2,7 @@ package workwell.WorkWell.service;
 
 import jakarta.transaction.Transactional;
 import java.util.UUID;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import workwell.WorkWell.dto.empresa.EmpresaCadastroRequest;
@@ -77,6 +78,7 @@ public class EmpresaService {
 		);
 	}
 
+	@Cacheable(value = "empresaToken", key = "#token")
 	public Empresa buscarPorToken(String token) {
 		return empresaRepository.findByToken(token)
 			.orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada para o token informado"));
