@@ -13,153 +13,349 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <link rel="stylesheet" href="/css/app.css" />
+    <style>
+      body {
+        background: var(--bg-light);
+      }
+
+      .registration-container {
+        min-height: 100vh;
+        padding: 3rem 0;
+      }
+
+      .logo-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .logo-img {
+        height: 60px;
+        width: auto;
+      }
+
+      .logo-text-img {
+        height: 36px;
+        width: auto;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .step-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        transition: all 0.3s ease;
+      }
+
+      .step-dot.active {
+        background: var(--primary);
+        width: 32px;
+        border-radius: 6px;
+      }
+    </style>
   </head>
   <body>
     <!-- Language Selector -->
     <div th:replace="~{fragments/language-selector :: language-selector}"></div>
 
-    <main class="container py-5" style="max-width: 720px">
-      <section class="mb-4 text-center">
-        <a
-          href="/"
-          class="btn btn-link text-decoration-none p-0 mb-3"
-          th:text="#{app.back}"
-          >&larr; Voltar</a
-        >
-        <h1 class="fw-bold mt-3" th:text="#{register.company.title}">
-          Cadastrar empresa
-        </h1>
-        <p class="text-muted" th:text="#{register.company.subtitle}">
-          Preencha os dados abaixo para gerar o token que será compartilhado com
-          a sua equipe.
-        </p>
-      </section>
-
-      <section id="formSection" class="card shadow-sm mx-auto">
-        <div class="card-body p-4">
-          <h2 class="h4 mb-4" th:text="#{register.company.data}">
-            Dados da empresa
-          </h2>
-          <form id="empresaForm" novalidate>
-            <div class="mb-3">
-              <label
-                class="form-label"
-                th:text="#{register.company.name} + ' *'"
-                >Nome da empresa *</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                name="nome"
-                maxlength="120"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">CNPJ *</label>
-              <input
-                type="text"
-                class="form-control"
-                name="cnpj"
-                placeholder="Somente números"
-                pattern="\\d{14}"
-                required
-              />
-              <small class="text-muted">Ex.: 12345678000199 (14 dígitos)</small>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" th:text="#{register.company.sector}"
-                >Descrição</label
-              >
-              <textarea
-                class="form-control"
-                name="descricao"
-                rows="2"
-                maxlength="255"
-              ></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" th:text="#{register.company.email}"
-                >Email do administrador *</label
-              >
-              <input type="email" class="form-control" name="email" required />
-            </div>
-            <div class="mb-4">
-              <label class="form-label" th:text="#{register.employee.password}"
-                >Senha *</label
-              >
-              <input
-                type="password"
-                class="form-control"
-                name="senha"
-                minlength="8"
-                required
-              />
-              <small
-                class="text-muted"
-                th:text="#{register.company.password.min}"
-                >Mínimo de 8 caracteres.</small
-              >
-            </div>
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              th:text="#{register.company.button}"
-            >
-              Cadastrar empresa
-            </button>
-            <div class="alert alert-danger mt-3 d-none" id="alertErro"></div>
-          </form>
+    <div class="registration-container">
+      <main class="container" style="max-width: 650px">
+        <div class="logo-header">
+          <img
+            src="/img/letreiropng.png"
+            alt="WorkWell"
+            class="logo-text-img"
+          />
         </div>
-      </section>
-    </main>
 
-    <!-- Modal -->
+        <section class="text-center mb-4">
+          <a
+            href="/"
+            class="btn btn-link text-decoration-none p-0 mb-3 d-inline-flex align-items-center"
+            th:text="#{app.back}"
+          >
+            <i class="bi bi-arrow-left me-2"></i>
+            Voltar
+          </a>
+          <h1 class="fw-bold mt-3 mb-2" th:text="#{register.company.title}">
+            Cadastrar empresa
+          </h1>
+          <p class="text-muted" th:text="#{register.company.subtitle}">
+            Preencha os dados abaixo para gerar o token que será compartilhado
+            com a sua equipe.
+          </p>
+        </section>
+
+        <div class="step-indicator">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+        </div>
+
+        <section id="formSection" class="card shadow-lg border-0 fade-in">
+          <div class="card-body p-5">
+            <div class="d-flex align-items-center mb-4">
+              <div
+                class="feature-icon me-3"
+                style="
+                  width: 48px;
+                  height: 48px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background: var(--gradient-light);
+                  border-radius: 12px;
+                  font-size: 24px;
+                "
+              >
+                <i class="bi bi-building text-primary"></i>
+              </div>
+              <div>
+                <h2 class="h4 mb-0" th:text="#{register.company.data}">
+                  Dados da empresa
+                </h2>
+                <small class="text-muted"
+                  >Informações básicas da organização</small
+                >
+              </div>
+            </div>
+
+            <form id="empresaForm" novalidate>
+              <div class="mb-3">
+                <label
+                  class="form-label fw-semibold"
+                  th:text="#{register.company.name} + ' *'"
+                >
+                  Nome da empresa *
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white">
+                    <i class="bi bi-building text-primary"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="nome"
+                    maxlength="120"
+                    placeholder="Ex: Minha Empresa LTDA"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold">CNPJ *</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white">
+                    <i class="bi bi-card-text text-primary"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="cnpj"
+                    placeholder="00.000.000/0000-00"
+                    pattern="\\d{14}"
+                    required
+                  />
+                </div>
+                <small class="text-muted">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Apenas números (14 dígitos)
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <label
+                  class="form-label fw-semibold"
+                  th:text="#{register.company.sector}"
+                >
+                  Descrição
+                </label>
+                <textarea
+                  class="form-control"
+                  name="descricao"
+                  rows="3"
+                  maxlength="255"
+                  placeholder="Breve descrição da empresa e área de atuação..."
+                ></textarea>
+              </div>
+
+              <hr class="my-4" />
+
+              <div class="mb-4">
+                <h5 class="fw-bold mb-3">
+                  <i class="bi bi-person-circle text-primary me-2"></i>
+                  Dados do Administrador
+                </h5>
+              </div>
+
+              <div class="mb-3">
+                <label
+                  class="form-label fw-semibold"
+                  th:text="#{register.company.email}"
+                >
+                  Email do administrador *
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white">
+                    <i class="bi bi-envelope text-primary"></i>
+                  </span>
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="admin@empresa.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label
+                  class="form-label fw-semibold"
+                  th:text="#{register.employee.password}"
+                >
+                  Senha *
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white">
+                    <i class="bi bi-lock text-primary"></i>
+                  </span>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="senha"
+                    minlength="8"
+                    placeholder="Mínimo 8 caracteres"
+                    required
+                  />
+                </div>
+                <small
+                  class="text-muted"
+                  th:text="#{register.company.password.min}"
+                >
+                  <i class="bi bi-shield-check text-accent-green me-1"></i>
+                  Mínimo de 8 caracteres para maior segurança.
+                </small>
+              </div>
+
+              <div class="alert alert-danger d-none" id="alertErro">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span id="alertErroText"></span>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100 btn-lg"
+                th:text="#{register.company.button}"
+              >
+                <i class="bi bi-check-circle me-2"></i>
+                Cadastrar empresa
+              </button>
+
+              <div class="text-center mt-3">
+                <p class="text-muted small mb-0">
+                  Ao cadastrar, você concorda com nossos
+                  <a href="#" class="text-primary">Termos de Uso</a> e
+                  <a href="#" class="text-primary">Política de Privacidade</a>
+                </p>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal de Sucesso -->
     <div
       class="modal fade"
       id="tokenModal"
       tabindex="-1"
       aria-labelledby="tokenModalLabel"
       aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
     >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="tokenModalLabel">
-              Token da organização
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p class="mb-2">
-              Compartilhe este token apenas com pessoas da sua empresa. Ele será
-              solicitado no cadastro de funcionários, psicólogos e RH.
-            </p>
-            <div class="border rounded p-3 text-center bg-light">
-              <code id="tokenValue" class="fs-5"></code>
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-xl">
+          <div class="modal-header bg-gradient-primary text-white border-0">
+            <div>
+              <h1 class="modal-title fs-4 fw-bold" id="tokenModalLabel">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Empresa cadastrada com sucesso!
+              </h1>
+              <p class="mb-0 small opacity-90">
+                Token gerado para sua organização
+              </p>
             </div>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Fechar
-            </button>
+          <div class="modal-body p-5">
+            <div class="alert alert-info border-0 mb-4">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Importante:</strong> Guarde este token com segurança. Ele
+              será solicitado no cadastro de funcionários, psicólogos e RH da
+              sua empresa.
+            </div>
+
+            <div class="card bg-light border-0 p-4 text-center mb-4">
+              <label class="form-label fw-bold mb-3"
+                >Token da Organização</label
+              >
+              <div
+                class="d-flex align-items-center justify-content-center gap-3"
+              >
+                <code
+                  id="tokenValue"
+                  class="fs-3 fw-bold text-primary flex-grow-1"
+                ></code>
+                <button
+                  class="btn btn-outline-primary"
+                  onclick="copiarToken()"
+                  title="Copiar token"
+                >
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <h6 class="fw-bold">Próximos Passos:</h6>
+              <ol class="text-muted">
+                <li>Compartilhe este token apenas com membros da sua equipe</li>
+                <li>Os colaboradores usarão este token para se cadastrarem</li>
+                <li>
+                  Você pode gerenciar todos os usuários através do painel
+                  administrativo
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4">
+            <a href="/login" class="btn btn-primary btn-lg px-5">
+              <i class="bi bi-box-arrow-in-right me-2"></i>
+              Ir para Login
+            </a>
           </div>
         </div>
       </div>
@@ -169,14 +365,40 @@
     <script>
       const empresaForm = document.getElementById("empresaForm");
       const alertErro = document.getElementById("alertErro");
+      const alertErroText = document.getElementById("alertErroText");
       const tokenValue = document.getElementById("tokenValue");
       const tokenModal = new bootstrap.Modal(
         document.getElementById("tokenModal")
       );
 
+      // Função para copiar token
+      window.copiarToken = function () {
+        const token = tokenValue.textContent;
+        navigator.clipboard.writeText(token).then(() => {
+          const btn = event.target.closest("button");
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-check"></i>';
+          btn.classList.remove("btn-outline-primary");
+          btn.classList.add("btn-success");
+
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove("btn-success");
+            btn.classList.add("btn-outline-primary");
+          }, 2000);
+        });
+      };
+
       empresaForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         alertErro.classList.add("d-none");
+
+        // Disable submit button
+        const submitBtn = empresaForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm me-2"></span>Cadastrando...';
 
         const formData = new FormData(empresaForm);
         const payload = Object.fromEntries(formData.entries());
@@ -202,8 +424,10 @@
           tokenModal.show();
           empresaForm.reset();
         } catch (error) {
-          alertErro.textContent = error.message;
+          alertErroText.textContent = error.message;
           alertErro.classList.remove("d-none");
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
         }
       });
     </script>

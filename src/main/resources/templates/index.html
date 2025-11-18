@@ -13,14 +13,33 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <link rel="stylesheet" href="/css/app.css" />
+    <style>
+      .floating-card {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+    </style>
   </head>
   <body>
     <!-- Language Selector -->
@@ -31,118 +50,343 @@
       <header class="bg-white shadow-sm">
         <div class="container py-3">
           <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 fw-bold text-primary" th:text="#{app.name}">
-              WorkWell
-            </h1>
-            <nav>
+            <div class="navbar-brand">
+              <img
+                src="/img/logopng.png"
+                alt="WorkWell Logo"
+                class="logo-image"
+              />
+            </div>
+            <nav class="d-flex gap-2">
               <a
                 href="/login"
-                class="btn btn-outline-primary btn-sm me-2"
+                class="btn btn-outline-primary btn-sm"
                 th:text="#{app.login}"
-                >Entrar</a
               >
+                <i class="bi bi-box-arrow-in-right me-1"></i>
+                Entrar
+              </a>
               <a
                 href="/cadastro"
                 class="btn btn-primary btn-sm"
                 th:text="#{app.register}"
-                >Cadastrar</a
               >
+                <i class="bi bi-person-plus me-1"></i>
+                Cadastrar
+              </a>
             </nav>
           </div>
         </div>
       </header>
 
       <!-- Hero Section -->
-      <main class="flex-grow-1 d-flex align-items-center">
-        <div class="container py-5">
-          <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-              <h2 class="display-4 fw-bold mb-4" th:text="#{home.title}">
-                Bem-estar no trabalho começa aqui
-              </h2>
-              <p class="lead text-muted mb-4" th:text="#{home.subtitle}">
-                Plataforma completa para gestão de saúde mental e bem-estar
-                corporativo. Conecte sua equipe com profissionais qualificados.
-              </p>
-              <div class="d-flex gap-3">
-                <a
-                  href="/login"
-                  class="btn btn-primary btn-lg px-4"
-                  th:text="#{home.login.button}"
-                  >Fazer Login</a
-                >
-                <a
-                  href="/cadastro"
-                  class="btn btn-outline-primary btn-lg px-4"
-                  th:text="#{home.register.button}"
-                  >Criar Conta</a
-                >
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="card shadow-lg border-0 p-4">
-                <div class="card-body">
-                  <h3 class="h5 mb-4" th:text="#{home.first.access}">
-                    Primeiro acesso?
-                  </h3>
-                  <div class="d-grid gap-2">
-                    <a href="/cadastro/empresa" class="btn btn-outline-primary">
-                      <strong th:text="#{home.register.company}"
-                        >Cadastrar Empresa</strong
-                      >
-                      <small
-                        class="d-block text-muted mt-1"
-                        th:text="#{home.register.company.subtitle}"
-                        >Para administradores</small
-                      >
-                    </a>
-                    <a
-                      href="/cadastro/funcionario"
-                      class="btn btn-outline-secondary"
-                      th:text="#{home.register.employee}"
-                    >
-                      Cadastrar como Funcionário
-                    </a>
-                    <a
-                      href="/cadastro/psicologo"
-                      class="btn btn-outline-secondary"
-                      th:text="#{home.register.psychologist}"
-                    >
-                      Cadastrar como Psicólogo
-                    </a>
-                    <a
-                      href="/cadastro/rh"
-                      class="btn btn-outline-secondary"
-                      th:text="#{home.register.rh}"
-                    >
-                      Cadastrar como RH
-                    </a>
-                  </div>
-                  <hr class="my-4" />
-                  <p class="text-center text-muted small mb-0">
-                    <span th:text="#{home.already.account}"
-                      >Já tem uma conta?</span
-                    >
+      <main class="flex-grow-1">
+        <section class="hero-section">
+          <div class="container py-5">
+            <div class="row align-items-center g-5">
+              <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="fade-in">
+                  <h1 class="hero-title" th:text="#{home.title}">
+                    Bem-estar no trabalho começa aqui
+                  </h1>
+                  <p class="hero-subtitle" th:text="#{home.subtitle}">
+                    Plataforma completa para gestão de saúde mental e bem-estar
+                    corporativo. Conecte sua equipe com profissionais
+                    qualificados.
+                  </p>
+                  <div class="d-flex flex-wrap gap-3 mb-4">
                     <a
                       href="/login"
-                      class="text-primary text-decoration-none"
-                      th:text="#{home.already.account.login}"
-                      >Faça login</a
+                      class="btn btn-primary btn-lg px-4"
+                      th:text="#{home.login.button}"
                     >
-                  </p>
+                      <i class="bi bi-arrow-right-circle me-2"></i>
+                      Fazer Login
+                    </a>
+                    <a
+                      href="/cadastro"
+                      class="btn btn-outline-primary btn-lg px-4"
+                      th:text="#{home.register.button}"
+                    >
+                      <i class="bi bi-rocket me-2"></i>
+                      Criar Conta
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="card floating-card shadow-lg border-0 p-4">
+                  <div class="card-body">
+                    <h3 class="h4 mb-4 fw-bold" th:text="#{home.first.access}">
+                      <i class="bi bi-star-fill text-accent-green me-2"></i>
+                      Primeiro acesso?
+                    </h3>
+                    <p class="text-muted mb-4">
+                      Escolha o tipo de cadastro adequado para você:
+                    </p>
+                    <div class="d-grid gap-3">
+                      <a
+                        href="/cadastro/empresa"
+                        class="btn btn-outline-primary text-start p-3"
+                      >
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-building fs-3 me-3 text-primary"></i>
+                          <div class="flex-grow-1">
+                            <strong
+                              class="d-block"
+                              th:text="#{home.register.company}"
+                            >
+                              Cadastrar Empresa
+                            </strong>
+                            <small
+                              class="text-muted"
+                              th:text="#{home.register.company.subtitle}"
+                            >
+                              Para administradores e gestores
+                            </small>
+                          </div>
+                          <i class="bi bi-arrow-right text-primary"></i>
+                        </div>
+                      </a>
+
+                      <a
+                        href="/cadastro/funcionario"
+                        class="btn btn-outline-secondary text-start p-3"
+                      >
+                        <div class="d-flex align-items-center">
+                          <i
+                            class="bi bi-person-badge fs-3 me-3 text-primary"
+                          ></i>
+                          <div class="flex-grow-1">
+                            <strong
+                              class="d-block"
+                              th:text="#{home.register.employee}"
+                            >
+                              Cadastrar como Funcionário
+                            </strong>
+                            <small class="text-muted">
+                              Acesso aos benefícios de bem-estar
+                            </small>
+                          </div>
+                          <i class="bi bi-arrow-right text-primary"></i>
+                        </div>
+                      </a>
+
+                      <a
+                        href="/cadastro/psicologo"
+                        class="btn btn-outline-secondary text-start p-3"
+                      >
+                        <div class="d-flex align-items-center">
+                          <i
+                            class="bi bi-heart-pulse fs-3 me-3 text-accent-green"
+                          ></i>
+                          <div class="flex-grow-1">
+                            <strong
+                              class="d-block"
+                              th:text="#{home.register.psychologist}"
+                            >
+                              Cadastrar como Psicólogo
+                            </strong>
+                            <small class="text-muted">
+                              Ofereça suporte profissional
+                            </small>
+                          </div>
+                          <i class="bi bi-arrow-right text-primary"></i>
+                        </div>
+                      </a>
+
+                      <a
+                        href="/cadastro/rh"
+                        class="btn btn-outline-secondary text-start p-3"
+                      >
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-people fs-3 me-3 text-primary"></i>
+                          <div class="flex-grow-1">
+                            <strong
+                              class="d-block"
+                              th:text="#{home.register.rh}"
+                            >
+                              Cadastrar como RH
+                            </strong>
+                            <small class="text-muted">
+                              Gestão de recursos humanos
+                            </small>
+                          </div>
+                          <i class="bi bi-arrow-right text-primary"></i>
+                        </div>
+                      </a>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <p class="text-center mb-0">
+                      <span
+                        class="text-muted"
+                        th:text="#{home.already.account}"
+                      >
+                        Já tem uma conta?
+                      </span>
+                      <a
+                        href="/login"
+                        class="text-primary fw-semibold ms-1"
+                        th:text="#{home.already.account.login}"
+                      >
+                        Faça login
+                        <i class="bi bi-arrow-right-short"></i>
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-5">
+          <div class="container py-5">
+            <div class="card card-gradient border-0 shadow-lg p-5">
+              <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                  <h2 class="display-6 fw-bold mb-3 text-white">
+                    Pronto para transformar sua empresa?
+                  </h2>
+                  <p class="lead text-white mb-0 opacity-90">
+                    Junte-se a centenas de empresas que já investem no bem-estar
+                    de suas equipes.
+                  </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                  <a
+                    href="/cadastro/empresa"
+                    class="btn btn-light btn-lg px-4 fw-bold"
+                  >
+                    Começar Agora
+                    <i class="bi bi-arrow-right-circle ms-2"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <!-- Footer -->
-      <footer class="bg-light py-4 mt-auto">
-        <div class="container text-center text-muted small">
-          <p class="mb-0" th:text="#{home.footer.copyright}">
-            &copy; 2025 WorkWell. Todos os direitos reservados.
-          </p>
+      <footer class="bg-white py-5 mt-auto">
+        <div class="container">
+          <div class="row g-4">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+              <div class="d-flex align-items-center mb-3">
+                <img
+                  src="/img/letreiropng.png"
+                  alt="WorkWell"
+                  style="height: 32px"
+                />
+              </div>
+              <p class="text-muted">
+                Plataforma completa de bem-estar corporativo e saúde mental para
+                empresas modernas.
+              </p>
+            </div>
+            <div class="col-lg-2 col-md-4">
+              <h6 class="fw-bold mb-3">Produto</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Funcionalidades</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none">Preços</a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Casos de Uso</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-4">
+              <h6 class="fw-bold mb-3">Empresa</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Sobre Nós</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none">Blog</a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Carreiras</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-4">
+              <h6 class="fw-bold mb-3">Suporte</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Central de Ajuda</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Contato</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none">FAQ</a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-4">
+              <h6 class="fw-bold mb-3">Legal</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none"
+                    >Privacidade</a
+                  >
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none">Termos</a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-muted text-decoration-none">LGPD</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <hr class="my-4" />
+          <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+              <p
+                class="mb-0 text-muted small"
+                th:text="#{home.footer.copyright}"
+              >
+                &copy; 2025 WorkWell. Todos os direitos reservados.
+              </p>
+            </div>
+            <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+              <div class="d-inline-flex gap-3">
+                <a href="#" class="text-muted"
+                  ><i class="bi bi-linkedin fs-5"></i
+                ></a>
+                <a href="#" class="text-muted"
+                  ><i class="bi bi-instagram fs-5"></i
+                ></a>
+                <a href="#" class="text-muted"
+                  ><i class="bi bi-twitter fs-5"></i
+                ></a>
+                <a href="#" class="text-muted"
+                  ><i class="bi bi-facebook fs-5"></i
+                ></a>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
