@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaCreateRequest;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaResponse;
 import workwell.WorkWell.dto.avaliacao.RelatorioAvaliacaoProfundaResponse;
@@ -46,10 +48,29 @@ public class AvaliacaoProfundaController {
 		return avaliacaoProfundaService.listarAvaliacoesAtivas(empresaId, usuario.getId());
 	}
 
+	@GetMapping("/paginado")
+	@PreAuthorize("hasAnyRole('PSICOLOGO', 'FUNCIONARIO')")
+	public PageResponse<AvaliacaoProfundaResponse> listarAvaliacoesAtivasPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		UUID empresaId = usuario.getEmpresa().getId();
+		return avaliacaoProfundaService.listarAvaliacoesAtivas(empresaId, usuario.getId(), page, size);
+	}
+
 	@GetMapping("/minhas")
 	@PreAuthorize("hasRole('PSICOLOGO')")
 	public List<AvaliacaoProfundaResponse> listarMinhasAvaliacoes(@AuthenticationPrincipal Usuario usuario) {
 		return avaliacaoProfundaService.listarAvaliacoesPorPsicologo(usuario);
+	}
+
+	@GetMapping("/minhas/paginado")
+	@PreAuthorize("hasRole('PSICOLOGO')")
+	public PageResponse<AvaliacaoProfundaResponse> listarMinhasAvaliacoesPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return avaliacaoProfundaService.listarAvaliacoesPorPsicologo(usuario, page, size);
 	}
 
 	@PostMapping("/responder")

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -58,12 +60,35 @@ public interface ConsultaPsicologicaRepository extends JpaRepository<ConsultaPsi
 	@Query("""
 		select c from ConsultaPsicologica c
 		where c.empresa.id = :empresaId
+			and (c.funcionario.id = :usuarioId or c.psicologo.id = :usuarioId)
+			and c.status in :status
+		order by c.dataHoraInicio
+	""")
+	Page<ConsultaPsicologica> buscarPorParticipanteEStatus(@Param("empresaId") UUID empresaId,
+		@Param("usuarioId") UUID usuarioId,
+		@Param("status") List<ConsultaStatus> status,
+		Pageable pageable);
+
+	@Query("""
+		select c from ConsultaPsicologica c
+		where c.empresa.id = :empresaId
 			and c.aguardandoConfirmacaoDe.id = :usuarioId
 			and c.status = 'PENDENTE_CONFIRMACAO'
 		order by c.dataHoraInicio
 	""")
 	List<ConsultaPsicologica> buscarPendentesParaUsuario(@Param("empresaId") UUID empresaId,
 		@Param("usuarioId") UUID usuarioId);
+
+	@Query("""
+		select c from ConsultaPsicologica c
+		where c.empresa.id = :empresaId
+			and c.aguardandoConfirmacaoDe.id = :usuarioId
+			and c.status = 'PENDENTE_CONFIRMACAO'
+		order by c.dataHoraInicio
+	""")
+	Page<ConsultaPsicologica> buscarPendentesParaUsuario(@Param("empresaId") UUID empresaId,
+		@Param("usuarioId") UUID usuarioId,
+		Pageable pageable);
 
 	Optional<ConsultaPsicologica> findByIdAndEmpresaId(UUID id, UUID empresaId);
 
@@ -75,6 +100,16 @@ public interface ConsultaPsicologicaRepository extends JpaRepository<ConsultaPsi
 	""")
 	List<ConsultaPsicologica> buscarPorFuncionarioOuCriadoPor(@Param("empresaId") UUID empresaId,
 		@Param("usuarioId") UUID usuarioId);
+
+	@Query("""
+		select c from ConsultaPsicologica c
+		where c.empresa.id = :empresaId
+			and (c.funcionario.id = :usuarioId or c.criadoPor.id = :usuarioId)
+		order by c.dataHoraInicio desc
+	""")
+	Page<ConsultaPsicologica> buscarPorFuncionarioOuCriadoPor(@Param("empresaId") UUID empresaId,
+		@Param("usuarioId") UUID usuarioId,
+		Pageable pageable);
 
 	@Query("""
 		select c from ConsultaPsicologica c

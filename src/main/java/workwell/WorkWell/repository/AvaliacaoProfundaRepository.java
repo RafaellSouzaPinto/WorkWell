@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,10 +28,28 @@ public interface AvaliacaoProfundaRepository extends JpaRepository<AvaliacaoProf
 	@Query("""
 		select a from AvaliacaoProfunda a
 		where a.empresa.id = :empresaId
+		and a.ativa = true
+		and a.dataInicio <= CURRENT_TIMESTAMP
+		and a.dataFim >= CURRENT_TIMESTAMP
+		order by a.createdAt desc
+	""")
+	Page<AvaliacaoProfunda> buscarAvaliacoesAtivas(@Param("empresaId") UUID empresaId, Pageable pageable);
+
+	@Query("""
+		select a from AvaliacaoProfunda a
+		where a.empresa.id = :empresaId
 		and a.criadoPor.id = :psicologoId
 		order by a.createdAt desc
 	""")
 	List<AvaliacaoProfunda> buscarAvaliacoesPorPsicologo(@Param("empresaId") UUID empresaId, @Param("psicologoId") UUID psicologoId);
+
+	@Query("""
+		select a from AvaliacaoProfunda a
+		where a.empresa.id = :empresaId
+		and a.criadoPor.id = :psicologoId
+		order by a.createdAt desc
+	""")
+	Page<AvaliacaoProfunda> buscarAvaliacoesPorPsicologo(@Param("empresaId") UUID empresaId, @Param("psicologoId") UUID psicologoId, Pageable pageable);
 
 	List<AvaliacaoProfunda> findByEmpresaIdOrderByCreatedAtDesc(UUID empresaId);
 

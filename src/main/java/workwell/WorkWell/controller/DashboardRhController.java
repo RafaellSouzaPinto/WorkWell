@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarCreateRequest;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarResponse;
 import workwell.WorkWell.dto.dashboard.DashboardRhResponse;
@@ -80,6 +82,15 @@ public class DashboardRhController {
 		return dashboardRhService.listarEnquetesAtivas(empresaId, usuario.getId());
 	}
 
+	@GetMapping("/enquetes/paginado")
+	public PageResponse<EnqueteResponse> listarEnquetesPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		UUID empresaId = usuario.getEmpresa().getId();
+		return dashboardRhService.listarEnquetesAtivas(empresaId, usuario.getId(), page, size);
+	}
+
 	@PostMapping("/enquetes/responder")
 	public ResponseEntity<RespostaEnqueteResponse> responderEnquete(@AuthenticationPrincipal Usuario usuario,
 		@Valid @RequestBody RespostaEnqueteRequest request) {
@@ -101,6 +112,15 @@ public class DashboardRhController {
 		return dashboardRhService.listarAtividades(empresaId, usuario.getId());
 	}
 
+	@GetMapping("/atividades/paginado")
+	public PageResponse<AtividadeBemEstarResponse> listarAtividadesPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		UUID empresaId = usuario.getEmpresa().getId();
+		return dashboardRhService.listarAtividades(empresaId, usuario.getId(), page, size);
+	}
+
 	@PostMapping("/atividades/participar")
 	public ResponseEntity<ParticipacaoAtividadeResponse> participarAtividade(@AuthenticationPrincipal Usuario usuario,
 		@Valid @RequestBody ParticipacaoAtividadeRequest request) {
@@ -115,6 +135,16 @@ public class DashboardRhController {
 		return dashboardRhService.listarRegistrosHumor(empresaId);
 	}
 
+	@GetMapping("/humor/registros/paginado")
+	@PreAuthorize("hasRole('RH')")
+	public PageResponse<RegistroHumorDetalhadoResponse> listarRegistrosHumorPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		UUID empresaId = usuario.getEmpresa().getId();
+		return dashboardRhService.listarRegistrosHumor(empresaId, page, size);
+	}
+
 	@GetMapping("/atividades/{atividadeId}/participantes")
 	@PreAuthorize("hasRole('RH')")
 	public List<ParticipanteAtividadeResponse> listarParticipantesAtividade(
@@ -122,6 +152,17 @@ public class DashboardRhController {
 		@PathVariable UUID atividadeId) {
 		UUID empresaId = usuario.getEmpresa().getId();
 		return dashboardRhService.listarParticipantesAtividade(atividadeId, empresaId);
+	}
+
+	@GetMapping("/atividades/{atividadeId}/participantes/paginado")
+	@PreAuthorize("hasRole('RH')")
+	public PageResponse<ParticipanteAtividadeResponse> listarParticipantesAtividadePaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@PathVariable UUID atividadeId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		UUID empresaId = usuario.getEmpresa().getId();
+		return dashboardRhService.listarParticipantesAtividade(atividadeId, empresaId, page, size);
 	}
 
 	@GetMapping("/funcionario/agenda")

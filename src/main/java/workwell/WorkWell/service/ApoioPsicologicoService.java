@@ -7,7 +7,11 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.apoio.CancelamentoRequest;
 import workwell.WorkWell.dto.apoio.ConsultaCreateRequest;
 import workwell.WorkWell.dto.apoio.ConsultaResponse;
@@ -136,6 +140,16 @@ public class ApoioPsicologicoService {
 			.toList();
 	}
 
+	public PageResponse<ConsultaResponse> listarPendentes(Usuario usuarioAutenticado, int page, int size) {
+		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ConsultaPsicologica> pageResult = consultaRepository.buscarPendentesParaUsuario(empresaId, usuarioAutenticado.getId(), pageable);
+		List<ConsultaResponse> content = pageResult.getContent().stream()
+			.map(c -> mapConsulta(c, usuarioAutenticado))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	public List<ConsultaResponse> listarProximas(Usuario usuarioAutenticado) {
 		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
 		// Apenas consultas confirmadas devem aparecer em "Próximos atendimentos"
@@ -146,6 +160,18 @@ public class ApoioPsicologicoService {
 			.filter(c -> c.getDataHoraFim().isAfter(LocalDateTime.now()))
 			.map(c -> mapConsulta(c, usuarioAutenticado))
 			.toList();
+	}
+
+	public PageResponse<ConsultaResponse> listarProximas(Usuario usuarioAutenticado, int page, int size) {
+		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
+		List<ConsultaStatus> status = List.of(ConsultaStatus.CONFIRMADA);
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ConsultaPsicologica> pageResult = consultaRepository.buscarPorParticipanteEStatus(empresaId, usuarioAutenticado.getId(), status, pageable);
+		List<ConsultaResponse> content = pageResult.getContent().stream()
+			.filter(c -> c.getDataHoraFim().isAfter(LocalDateTime.now()))
+			.map(c -> mapConsulta(c, usuarioAutenticado))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	public List<ConsultaResponse> listarHistorico(Usuario usuarioAutenticado) {
@@ -159,6 +185,19 @@ public class ApoioPsicologicoService {
 			.toList();
 	}
 
+	public PageResponse<ConsultaResponse> listarHistorico(Usuario usuarioAutenticado, int page, int size) {
+		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
+		List<ConsultaStatus> status = List.of(ConsultaStatus.CONFIRMADA, ConsultaStatus.CONCLUIDA, ConsultaStatus.CANCELADA);
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ConsultaPsicologica> pageResult = consultaRepository.buscarPorParticipanteEStatus(empresaId, usuarioAutenticado.getId(), status, pageable);
+		List<ConsultaResponse> content = pageResult.getContent().stream()
+			.filter(c -> c.getDataHoraFim().isBefore(LocalDateTime.now()) || c.getStatus() == ConsultaStatus.CANCELADA
+				|| c.getStatus() == ConsultaStatus.CONCLUIDA)
+			.map(c -> mapConsulta(c, usuarioAutenticado))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	public List<ConsultaResponse> listarMeusAgendamentos(Usuario usuarioAutenticado) {
 		if (usuarioAutenticado.getRole() != RoleType.FUNCIONARIO && usuarioAutenticado.getRole() != RoleType.RH) {
 			throw new BusinessException("Somente funcionários e RH podem visualizar seus agendamentos");
@@ -170,6 +209,19 @@ public class ApoioPsicologicoService {
 			.map(c -> mapConsulta(c, usuarioAutenticado))
 			.sorted((c1, c2) -> c2.dataHoraInicio().compareTo(c1.dataHoraInicio())) // Mais recentes primeiro
 			.toList();
+	}
+
+	public PageResponse<ConsultaResponse> listarMeusAgendamentos(Usuario usuarioAutenticado, int page, int size) {
+		if (usuarioAutenticado.getRole() != RoleType.FUNCIONARIO && usuarioAutenticado.getRole() != RoleType.RH) {
+			throw new BusinessException("Somente funcionários e RH podem visualizar seus agendamentos");
+		}
+		UUID empresaId = garantirEmpresa(usuarioAutenticado).getId();
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ConsultaPsicologica> pageResult = consultaRepository.buscarPorFuncionarioOuCriadoPor(empresaId, usuarioAutenticado.getId(), pageable);
+		List<ConsultaResponse> content = pageResult.getContent().stream()
+			.map(c -> mapConsulta(c, usuarioAutenticado))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	@Transactional

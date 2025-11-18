@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaCreateRequest;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaResponse;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaUpdateStatusRequest;
@@ -45,6 +47,15 @@ public class DenunciaEticaController {
 		return denunciaEticaService.listarDenuncias(usuario);
 	}
 
+	@GetMapping("/paginado")
+	@PreAuthorize("hasRole('ADMIN')")
+	public PageResponse<DenunciaEticaResponse> listarDenunciasPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return denunciaEticaService.listarDenuncias(usuario, page, size);
+	}
+
 	@GetMapping("/status/{status}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public List<DenunciaEticaResponse> listarDenunciasPorStatus(
@@ -52,6 +63,16 @@ public class DenunciaEticaController {
 		@PathVariable String status
 	) {
 		return denunciaEticaService.listarDenunciasPorStatus(usuario, status);
+	}
+
+	@GetMapping("/status/{status}/paginado")
+	@PreAuthorize("hasRole('ADMIN')")
+	public PageResponse<DenunciaEticaResponse> listarDenunciasPorStatusPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@PathVariable String status,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return denunciaEticaService.listarDenunciasPorStatus(usuario, status, page, size);
 	}
 
 	@PutMapping("/{denunciaId}/status")

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,6 +44,14 @@ public interface ParticipacaoAtividadeRepository extends JpaRepository<Participa
 		order by p.atividade.dataHoraInicio desc
 	""")
 	List<ParticipacaoAtividade> buscarHistoricoParticipacoes(@Param("usuarioId") UUID usuarioId, @Param("empresaId") UUID empresaId);
+
+	@Query("""
+		select p from ParticipacaoAtividade p
+		where p.atividade.id = :atividadeId
+		and p.atividade.empresa.id = :empresaId
+		order by p.createdAt desc
+	""")
+	Page<ParticipacaoAtividade> buscarParticipantesPorAtividade(@Param("atividadeId") UUID atividadeId, @Param("empresaId") UUID empresaId, Pageable pageable);
 
 	@Query("""
 		select count(p) from ParticipacaoAtividade p

@@ -11,7 +11,11 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaCreateRequest;
 import workwell.WorkWell.dto.avaliacao.AvaliacaoProfundaResponse;
 import workwell.WorkWell.dto.avaliacao.RelatorioAvaliacaoProfundaResponse;
@@ -143,6 +147,15 @@ public class AvaliacaoProfundaService {
 			.toList();
 	}
 
+	public PageResponse<AvaliacaoProfundaResponse> listarAvaliacoesAtivas(UUID empresaId, UUID usuarioId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AvaliacaoProfunda> pageResult = avaliacaoRepository.buscarAvaliacoesAtivas(empresaId, pageable);
+		List<AvaliacaoProfundaResponse> content = pageResult.getContent().stream()
+			.map(a -> mapAvaliacao(a, usuarioId))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	@Cacheable(value = "avaliacoesAtivas", key = "'psicologo_' + #usuario.empresa.id + '_' + #usuario.id")
 	public List<AvaliacaoProfundaResponse> listarAvaliacoesPorPsicologo(Usuario usuario) {
 		if (usuario.getRole() != RoleType.PSICOLOGO) {
@@ -154,6 +167,20 @@ public class AvaliacaoProfundaService {
 		return avaliacoes.stream()
 			.map(a -> mapAvaliacao(a, usuario.getId()))
 			.toList();
+	}
+
+	public PageResponse<AvaliacaoProfundaResponse> listarAvaliacoesPorPsicologo(Usuario usuario, int page, int size) {
+		if (usuario.getRole() != RoleType.PSICOLOGO) {
+			throw new BusinessException("Somente psicólogos podem visualizar suas avaliações criadas");
+		}
+
+		Empresa empresa = garantirEmpresa(usuario);
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AvaliacaoProfunda> pageResult = avaliacaoRepository.buscarAvaliacoesPorPsicologo(empresa.getId(), usuario.getId(), pageable);
+		List<AvaliacaoProfundaResponse> content = pageResult.getContent().stream()
+			.map(a -> mapAvaliacao(a, usuario.getId()))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	public RelatorioAvaliacaoProfundaResponse obterRelatorio(UUID avaliacaoId, Usuario usuario) {

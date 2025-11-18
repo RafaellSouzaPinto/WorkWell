@@ -13,7 +13,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.dashboard.AlertaResponse;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarCreateRequest;
 import workwell.WorkWell.dto.dashboard.AtividadeBemEstarResponse;
@@ -229,6 +233,15 @@ public class DashboardRhService {
 			.toList();
 	}
 
+	public PageResponse<EnqueteResponse> listarEnquetesAtivas(UUID empresaId, UUID usuarioId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Enquete> pageResult = enqueteRepository.buscarEnquetesAtivas(empresaId, pageable);
+		List<EnqueteResponse> content = pageResult.getContent().stream()
+			.map(e -> mapEnquete(e, usuarioId))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	@Transactional
 	@CacheEvict(value = {"atividadesAtivas", "dashboard", "agendaDia"}, allEntries = true)
 	public AtividadeBemEstarResponse criarAtividade(Usuario usuario, AtividadeBemEstarCreateRequest request) {
@@ -260,6 +273,15 @@ public class DashboardRhService {
 		return atividades.stream()
 			.map(a -> mapAtividade(a, usuarioId))
 			.toList();
+	}
+
+	public PageResponse<AtividadeBemEstarResponse> listarAtividades(UUID empresaId, UUID usuarioId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AtividadeBemEstar> pageResult = atividadeRepository.findByEmpresaIdAndAtivaTrueOrderByDataHoraInicioDesc(empresaId, pageable);
+		List<AtividadeBemEstarResponse> content = pageResult.getContent().stream()
+			.map(a -> mapAtividade(a, usuarioId))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	@Transactional
@@ -454,6 +476,23 @@ public class DashboardRhService {
 			.toList();
 	}
 
+	public PageResponse<RegistroHumorDetalhadoResponse> listarRegistrosHumor(UUID empresaId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<RegistroHumor> pageResult = registroHumorRepository.findByEmpresaIdOrderByCreatedAtDesc(empresaId, pageable);
+		List<RegistroHumorDetalhadoResponse> content = pageResult.getContent().stream()
+			.map(r -> new RegistroHumorDetalhadoResponse(
+				r.getId(),
+				r.getUsuario().getId(),
+				r.getUsuario().getNome(),
+				r.getNivelHumor(),
+				r.getSetor(),
+				r.getObservacoes(),
+				r.getCreatedAt()
+			))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	public List<ParticipanteAtividadeResponse> listarParticipantesAtividade(UUID atividadeId, UUID empresaId) {
 		AtividadeBemEstar atividade = atividadeRepository.findByIdAndEmpresaId(atividadeId, empresaId)
 			.orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada"));
@@ -469,6 +508,25 @@ public class DashboardRhService {
 				p.getCreatedAt()
 			))
 			.toList();
+	}
+
+	public PageResponse<ParticipanteAtividadeResponse> listarParticipantesAtividade(UUID atividadeId, UUID empresaId, int page, int size) {
+		atividadeRepository.findByIdAndEmpresaId(atividadeId, empresaId)
+			.orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada"));
+		
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ParticipacaoAtividade> pageResult = participacaoRepository.buscarParticipantesPorAtividade(atividadeId, empresaId, pageable);
+		List<ParticipanteAtividadeResponse> content = pageResult.getContent().stream()
+			.filter(p -> Boolean.TRUE.equals(p.getVaiParticipar()))
+			.map(p -> new ParticipanteAtividadeResponse(
+				p.getId(),
+				p.getUsuario().getId(),
+				p.getUsuario().getNome(),
+				p.getUsuario().getEmail(),
+				p.getCreatedAt()
+			))
+			.toList();
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	@Cacheable(value = "agendaDia", key = "#usuario.id + '_' + #usuario.empresa.id")

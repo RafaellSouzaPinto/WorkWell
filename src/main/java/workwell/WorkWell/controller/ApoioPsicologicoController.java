@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.apoio.CancelamentoRequest;
 import workwell.WorkWell.dto.apoio.ConsultaCreateRequest;
 import workwell.WorkWell.dto.apoio.ConsultaResponse;
@@ -53,9 +55,25 @@ public class ApoioPsicologicoController {
 		return service.listarPendentes(usuario);
 	}
 
+	@GetMapping("/consultas/pendentes/paginado")
+	public PageResponse<ConsultaResponse> pendentesPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return service.listarPendentes(usuario, page, size);
+	}
+
 	@GetMapping("/consultas/proximas")
 	public List<ConsultaResponse> proximas(@AuthenticationPrincipal Usuario usuario) {
 		return service.listarProximas(usuario);
+	}
+
+	@GetMapping("/consultas/proximas/paginado")
+	public PageResponse<ConsultaResponse> proximasPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return service.listarProximas(usuario, page, size);
 	}
 
 	@GetMapping("/consultas/historico")
@@ -63,10 +81,27 @@ public class ApoioPsicologicoController {
 		return service.listarHistorico(usuario);
 	}
 
+	@GetMapping("/consultas/historico/paginado")
+	public PageResponse<ConsultaResponse> historicoPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return service.listarHistorico(usuario, page, size);
+	}
+
 	@GetMapping("/consultas/meus-agendamentos")
 	@PreAuthorize("hasAnyRole('FUNCIONARIO','RH')")
 	public List<ConsultaResponse> meusAgendamentos(@AuthenticationPrincipal Usuario usuario) {
 		return service.listarMeusAgendamentos(usuario);
+	}
+
+	@GetMapping("/consultas/meus-agendamentos/paginado")
+	@PreAuthorize("hasAnyRole('FUNCIONARIO','RH')")
+	public PageResponse<ConsultaResponse> meusAgendamentosPaginado(
+		@AuthenticationPrincipal Usuario usuario,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return service.listarMeusAgendamentos(usuario, page, size);
 	}
 
 	@PatchMapping("/consultas/{id}/confirmar")

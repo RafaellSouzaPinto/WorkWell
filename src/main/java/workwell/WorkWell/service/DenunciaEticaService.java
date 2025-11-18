@@ -4,7 +4,11 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import workwell.WorkWell.dto.PageResponse;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaCreateRequest;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaResponse;
 import workwell.WorkWell.dto.denuncia.DenunciaEticaUpdateStatusRequest;
@@ -56,6 +60,20 @@ public class DenunciaEticaService {
 			.collect(Collectors.toList());
 	}
 
+	public PageResponse<DenunciaEticaResponse> listarDenuncias(Usuario usuario, int page, int size) {
+		if (usuario.getRole() != RoleType.ADMIN) {
+			throw new BusinessException("Somente ADMIN pode visualizar denúncias");
+		}
+
+		Empresa empresa = garantirEmpresa(usuario);
+		Pageable pageable = PageRequest.of(page, size);
+		Page<DenunciaEtica> pageResult = denunciaEticaRepository.findByEmpresaIdOrderByCreatedAtDesc(empresa.getId(), pageable);
+		List<DenunciaEticaResponse> content = pageResult.getContent().stream()
+			.map(this::mapToResponse)
+			.collect(Collectors.toList());
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
+	}
+
 	public List<DenunciaEticaResponse> listarDenunciasPorStatus(Usuario usuario, String status) {
 		if (usuario.getRole() != RoleType.ADMIN) {
 			throw new BusinessException("Somente ADMIN pode visualizar denúncias");
@@ -69,6 +87,24 @@ public class DenunciaEticaService {
 		return denuncias.stream()
 			.map(this::mapToResponse)
 			.collect(Collectors.toList());
+	}
+
+	public PageResponse<DenunciaEticaResponse> listarDenunciasPorStatus(Usuario usuario, String status, int page, int size) {
+		if (usuario.getRole() != RoleType.ADMIN) {
+			throw new BusinessException("Somente ADMIN pode visualizar denúncias");
+		}
+
+		Empresa empresa = garantirEmpresa(usuario);
+		Pageable pageable = PageRequest.of(page, size);
+		Page<DenunciaEtica> pageResult = denunciaEticaRepository.findByEmpresaIdAndStatusOrderByCreatedAtDesc(
+			empresa.getId(),
+			status,
+			pageable
+		);
+		List<DenunciaEticaResponse> content = pageResult.getContent().stream()
+			.map(this::mapToResponse)
+			.collect(Collectors.toList());
+		return PageResponse.of(content, page, size, pageResult.getTotalElements());
 	}
 
 	@Transactional
