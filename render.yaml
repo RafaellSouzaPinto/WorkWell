@@ -1,0 +1,80 @@
+services:
+  # Web Service - Spring Boot API
+  - type: web
+    name: workwell-api
+    runtime: docker
+    region: oregon
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+
+    # Health check endpoint
+    healthCheckPath: /actuator/health
+
+    # Environment variables
+    envVars:
+      # Database
+      - key: DATABASE_URL
+        value: jdbc:oracle:thin:@oracle.fiap.com.br:1521/orcl
+
+      - key: DATABASE_USERNAME
+        sync: false
+
+      - key: DATABASE_PASSWORD
+        sync: false
+
+      # JWT
+      - key: JWT_SECRET
+        generateValue: true
+
+      - key: JWT_EXPIRATION
+        value: 3600000
+
+      # OpenAI
+      - key: OPENAI_API_KEY
+        sync: false
+
+      # RabbitMQ
+      - key: RABBITMQ_HOST
+        value: woodpecker.rmq.cloudamqp.com
+
+      - key: RABBITMQ_PORT
+        value: 5672
+
+      - key: RABBITMQ_USERNAME
+        value: usuqcvlo
+
+      - key: RABBITMQ_PASSWORD
+        sync: false
+
+      - key: RABBITMQ_VHOST
+        value: usuqcvlo
+
+      # Email
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+
+      - key: MAIL_PORT
+        value: 587
+
+      - key: MAIL_USERNAME
+        sync: false
+
+      - key: MAIL_PASSWORD
+        sync: false
+
+      # Spring Profile
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # Timezone
+      - key: TZ
+        value: America/Sao_Paulo
+
+    # Auto deploy on push
+    autoDeploy: true
+
+    # Build settings
+    buildCommand: ""
+    startCommand: ""
