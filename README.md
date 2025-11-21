@@ -33,9 +33,6 @@
 - [Migrações de Banco de Dados](#-migrações-de-banco-de-dados)
 - [Testes](#-testes)
 - [Deploy](#-deploy)
-- [Contribuindo](#-contribuindo)
-- [Licença](#-licença)
-- [Contato](#-contato)
 
 ---
 
